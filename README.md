@@ -7,20 +7,24 @@ A collection of UI components and backend wrappers. Its focus is on Vue, Vuetify
 >
 > So, do not use it in your projects. As with all things JavaScript, it will be deprecated in three days anyways.
 
-**Note:** this is not a NPM package. It is intended to be used as git subrepo.
-
 ## Requirements
 
+-   A working nodejs project.
+
+## Install
+
 1. Scaffold your base app using some magic tools
-1.
+1. Install:
 
-```sh
-git submodule add git@github.com:
-npm install ./jsl
-```
+    ```sh
+    cd myProject
+    git submodule add git@github.com:sebastian-eichelbaum/jsl.git /./,jsl
+    # This installs the lib as local dependency. npm link might also be used.
+    npm install ./jsl
+    ```
 
-1. Setup import alias: `@jsl`, `@jslassets`, `@jsllocales`
-    - In Vite extend your config to have these alias:
+1. Setup the required import alias: `@jsl`, `@jslassets`, `@jsllocales`. This depends on the packager you use.
+    - In Vite, extend your `vite.config.json`:
     ```js
     export default defineConfig({
         // ...
@@ -34,3 +38,7 @@ npm install ./jsl
         },
     });
     ```
+
+## Usage
+
+TODO
