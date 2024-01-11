@@ -18,7 +18,7 @@ A collection of UI components and backend wrappers. Its focus is on Vue, Vuetify
 
     ```sh
     cd myProject
-    git submodule add git@github.com:sebastian-eichelbaum/jsl.git /./,jsl
+    git submodule add git@github.com:sebastian-eichelbaum/jsl.git ./jsl
     # This installs the lib as local dependency. npm link might also be used.
     npm install ./jsl
     ```
