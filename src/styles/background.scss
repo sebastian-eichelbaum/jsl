@@ -1,0 +1,69 @@
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Background Blur styles
+//
+
+/**
+ * Create a blurred background. This does not make an element transparent. It only blurs it. Use jsl-bgAlpha-XY to also make
+ * something transparent.
+ */
+
+// Base for all blurred BG
+.jsl-bgBlur-Base {
+    transition-duration: 0.5s;
+    transition-property: backdrop-filter;
+}
+
+@mixin jsl-bgBlur-x($from, $to, $scale) {
+  @for $i from $from through $to {
+    .jsl-bgBlur-#{$scale * $i} {
+        @extend .jsl-bgBlur-Base;
+        backdrop-filter: blur(#{$scale*$i}px);
+    }
+  }
+}
+
+// Make from 0 to 10 in 1px steps
+// Generates
+// .jsl-bgBlur-0,
+// .jsl-bgBlur-1,
+// ...
+// .jsl-bgBlur-9,
+@include jsl-bgBlur-x(0, 9, 1);
+
+// Make from 10 to 100 in 10px steps
+// Generates
+// .jsl-bgBlur-10,
+// .jsl-bgBlur-20,
+// ...
+// .jsl-bgBlur-100,
+@include jsl-bgBlur-x(1, 10, 10);
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Background Alpha styles
+//
+
+@mixin jsl-bgAlpha-x($from, $to, $scale) {
+  @for $i from $from through $to {
+    .jsl-bgAlpha-#{$scale * $i} {
+        background-color: rgba(0, 0, 0, calc($scale * $i / 100.0)) !important;
+    }
+  }
+}
+
+// Make from 0 to 10 in 1px steps
+// Generates
+// .jsl-bgAlpha-0,
+// .jsl-bgAlpha-1,
+// ...
+// .jsl-bgAlpha-9,
+@include jsl-bgAlpha-x(0, 9, 1);
+
+// Make from 10 to 100 in 10px steps
+// Generates
+// .jsl-bgAlpha-10,
+// .jsl-bgAlpha-20,
+// ...
+// .jsl-bgAlpha-100,
+@include jsl-bgAlpha-x(1, 10, 10);
+
+

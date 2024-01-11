@@ -1,0 +1,15 @@
+lvimrc
+
+# Ignore artifacts:
+build
+coverage
+dist
+out
+node_modules
+
+package-lock.json
+
+firestore.rules
+
+*.jpg
+*.svg

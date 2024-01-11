@@ -1,0 +1,43 @@
+// Generate the necessary CSS to style scrollbars. Also works for the HTML tag
+@mixin jsl-scrollbars($size, $foreground-color, $background-color: mix($foreground-color, white, 50%)) {
+    $valSize: 0.5rem;
+
+    @if $size == thin {
+        $valSize: 0.4rem;
+    } @else if $size == medium {
+        $valSize: 0.5rem;
+    } @else if $size == auto {
+        $valSize: 0.65rem;
+    } @else if $size == none {
+        $valSize: 0;
+    } @else  {
+        $valSize: $size;
+    }
+
+    // For Google Chrome
+    &::-webkit-scrollbar {
+        width: $valSize;
+        height: $valSize;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background: $foreground-color;
+        border-radius: 10px;
+    }
+
+    &::-webkit-scrollbar-track {
+        background: $background-color;
+    }
+
+    // For Internet Explorer
+    & {
+        scrollbar-face-color: $foreground-color;
+        scrollbar-track-color: $background-color;
+    }
+
+    // Works on Firefox
+    & {
+        scrollbar-width: $size;
+        scrollbar-color: $foreground-color $background-color;
+    }
+}

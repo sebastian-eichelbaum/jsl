@@ -1,0 +1,27 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, minimal-ui" />
+
+        <!-- Set by the app after init
+        <title>App</title>
+        -->
+    </head>
+    <body>
+        <!-- Add this to ensure there is a nice spinber overlay until everything is loaded and started. -->
+        <script type="module">
+            import InitOverlay from "@jsl/InitOverlay.js";
+            InitOverlay.inject({
+                background: "rgb(25,25,25)",
+                spinnerBackground: "rgba(50, 50, 50, 1)",
+                spinnerColor: "#ccc",
+            });
+        </script>
+
+        <div id="app"></div>
+        <script type="module" src="/src/renderer.js"></script>
+
+        <!-- built files will be auto injected -->
+    </body>
+</html>

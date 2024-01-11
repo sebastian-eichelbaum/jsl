@@ -1,0 +1,32 @@
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Customizations
+//
+
+@import "fonts.scss";
+@import "scrollbars.scss";
+@import "background.scss";
+
+html {
+    // Custom scrollbar? 
+    // > Check ScrollbarStyle.vue
+}
+
+// Force this content to be max in size
+.jsl-fullsizeContent {
+    padding: 0;
+    margin: 0;
+    // max-width: 20000px !important;
+    height: 100% !important;
+    width: 100% !important;
+    align-items: baseline !important;
+}
+
+// for v-text-field inputs with jsl-extendedMessages, make the message field larger (suitable for two lines).
+.v-input.jsl-extendedMessages-2 .v-messages{
+    min-height: 2.1em;
+}
+
+// for v-text-field inputs with jsl-extendedMessages, make the message field larger (suitable for two lines).
+.v-input.jsl-extendedMessages-3 .v-messages{
+    min-height: 3.1em;
+}

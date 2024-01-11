@@ -1,0 +1,19 @@
+@import "fonts/NotoSans";
+@import "fonts/Montserrat.scss";
+@import "fonts/Raleway.scss";
+
+// Force Raleway to be used.
+.jsl-font-raleway{
+    font-family: Raleway, sans-serif !important;
+}
+
+// Force Montserrat to be used.
+.jsl-font-montserrat{
+    font-family: Montserrat, sans-serif !important;
+}
+
+// Force NotoSans to be used.
+.jsl-font-notosans{
+    font-family: NotoSans, sans-serif !important;
+}
+

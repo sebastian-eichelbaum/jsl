@@ -1,0 +1,26 @@
+{
+    "name": "jsl",
+    "productName": "jsl",
+    "private": true,
+    "version": "1.0.0",
+    "description": "A collection of UI components and backend wrappers. Its focus is on Vue, Vuetify and Firebase as backend. Its purpose is to simplify generating a simple, yet good looking, UI in my projects.",
+    "keywords": [],
+    "author": {
+        "name": "Dr. Sebastian Eichelbaum",
+        "email": "code@nemtics.com"
+    },
+    "license": "BSD-2-Clause",
+    "devDependencies": {
+        "sass": "^1.69.7",
+        "sass-loader": "^13.3.3"
+    },
+    "dependencies": {
+        "@mdi/font": "^7.3.67",
+        "@vueuse/core": "^10.7.1",
+        "lodash": "^4.17.21",
+        "pinia": "^2.1.7",
+        "vue": "^3.3.7",
+        "vue-i18n": "^9.8.0",
+        "vuetify": "^3.3.23"
+    }
+}
