@@ -5,11 +5,7 @@ It is a v-dialog and a nested v-card with some configuration options.
 -->
 
 <template>
-    <v-dialog
-        :scrim="false"
-        v-model="model"
-        v-bind="{ ...$props, ...$attrs }"
-    >
+    <v-dialog :scrim="false" v-model="model" v-bind="{ ...$props, ...$attrs }">
         <v-card :rounded="rounded" :color="color">
             <slot />
         </v-card>
@@ -28,7 +24,8 @@ It is a v-dialog and a nested v-card with some configuration options.
 
 <script setup>
 import { ref, computed, watch } from "vue";
-import { hexToCssRGBA } from "@jsl/utils/Color";
+
+import { makeBackgroundStyle, computedBackgroundStyle, makeBackgroundStyleProps } from "@jsl/utils/Style";
 
 const model = defineModel();
 
@@ -37,65 +34,38 @@ const props = defineProps({
     // Hint: if you want to brighten or darken, use brightness and set alpha to 0.0. If you also want to re-color, use
     // alpha and modal color.
 
-    // Modal background blur intensity
-    modalBlur: { required: false, default: "5px" },
-    // Brightness of the background - In combination with alpha, the effect is dampened by alpha
-    modalBrightness: { required: false, default: "0.6" },
-    // Modal blur alpha
-    modalAlpha: { required: false, default: "0.0" },
-    // Modal blur color
-    // Warning: does not work with anything EXCEPT 6 letter color hex.
-    modalColor: { required: false, default: "#000000" },
+    // Modal background style color, blur, alpha, brightness
+    ...makeBackgroundStyleProps("modal", { color: "#000000", alpha: 0, brightness: 0.6, blur: 5 }),
 
     // For contained (nested in parent) modal dialogs:
-
-    // Modal background blur intensity
-    containedModalBlur: { required: false, default: "0px" },
-    // Brightness of the background - In combination with alpha, the effect is dampened by alpha
-    containedModalBrightness: { required: false, default: "0.6" },
-    // Modal blur alpha
-    containedModalAlpha: { required: false, default: "0.0" },
-    // Modal blur color
-    // Warning: does not work with anything EXCEPT 6 letter color hex.
-    containedModalColor: { required: false, default: "#000000" },
+    ...makeBackgroundStyleProps("containedModal", { color: "#000000", alpha: 0, brightness: 0.6, blur: 0, sat: 0.5 }),
 
     // Color of the dialog/v-card
     color: { required: false, default: "surface" },
     // The rounded-ness of the dialog v-card
     rounded: { type: String, default: "regular" },
-    // Scroll: 'none' | 'close' | 'block' | 'reposition' 
+    // Scroll: 'none' | 'close' | 'block' | 'reposition'
     // Keep in mind: setting block can trigger a re-layout as the scrollbar disappears.
-    scrollStrategy: { type: String, default: "none"},
+    scrollStrategy: { type: String, default: "none" },
 
     // Should the dialog modal BG be inside the owner?
     contained: { type: Boolean, default: false },
 });
 
 // Set style to element directly as it is teleported to <body>
-const style = computed(() => {
-    const makeStyle = (color, alpha, blur, brightness) => {
-        return (
-            "background-color: " +
-            hexToCssRGBA(color, alpha) +
-            ";" +
-            "backdrop-filter: blur(" +
-            blur +
-            ") brightness(" +
-            brightness +
-            ");"
-        );
-    };
+const style = props.contained ? computedBackgroundStyle(props, "containedModal"): computedBackgroundStyle(props, "modal");
 
+const style2=computed(() => {
     const style = props.contained
-        ? makeStyle(
+        ? makeBackgroundStyle(
               props.containedModalColor,
               props.containedModalAlpha,
-              props.containedModalBlur,
               props.containedModalBrightness,
+              props.containedModalBlur,
           )
-        : makeStyle(props.modalColor, props.modalAlpha, props.modalBlur, props.modalBrightness);
+        : makeBackgroundStyle(props.modalColor, props.modalAlpha, props.modalBrightness, props.modalBlur);
 
-    // console.log(style);
+    console.log(style);
     return style;
 });
 

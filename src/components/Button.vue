@@ -34,13 +34,13 @@ const withText = computed(() => {
 });
 
 const props = defineProps({
-    variant: { type: String, required: false, default: "tonal" },
-    rounded: { type: String, required: false, default: "regular" },
-    icon: { type: String, default: undefined },
+    variant: { default: "tonal" },
+    rounded: { default: "regular" },
+    icon: { default: undefined },
     text: { default: "" },
     hideText: { type: Boolean, default: false },
 
     // Limit the width. Longer texts are shortened using a "..." ellipsis
-    maxWidth: { type: String, default: null /* 100px */ },
+    maxWidth: { default: null /* 100px */ },
 });
 </script>

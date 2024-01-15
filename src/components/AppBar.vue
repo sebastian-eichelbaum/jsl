@@ -1,5 +1,5 @@
 <template>
-    <v-app-bar app scroll-behavior="elevate" class="jsl-bgBlur-20 jsl-bgAlpha-surface-10">
+    <v-app-bar :style="style" v-bind="{ ...$props, ...$attrs }">
         <v-app-bar-title>
             <AppLogo text oneline />
         </v-app-bar-title>
@@ -30,4 +30,17 @@ import LanguageButton from "@jsl/components/i18n/LanguageButton.vue";
 import AppLogo from "@jsl/components/AppLogo.vue";
 import AppCloseButton from "@jsl/components/AppCloseButton.vue";
 import ShopButton from "@jsl/components/ShopButton.vue";
+
+import { makeBackgroundStyle, computedBackgroundStyle, makeBackgroundStyleProps } from "@jsl/utils/Style";
+
+const props = defineProps({
+    // elevate when scrolling
+    scrollBehavior: { default: "elevate" },
+
+    // Background style color, blur, alpha, brightness
+    // This also creates the prop "color" that is also used by v-app-bar.
+    ...makeBackgroundStyleProps("", { color: "surface", alpha: 1.0, brightness: 1.0, blur: 20 }),
+});
+
+const style = computedBackgroundStyle(props, "");
 </script>

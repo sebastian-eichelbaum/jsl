@@ -4,7 +4,7 @@ Generates a background as large as the parent. The slot will be drawn on top.
 
 <template>
     <div id="wrapper">
-        <div id="backgroundblur" />
+        <div id="backgroundFilterLayer" :style="style" />
         <div id="background" />
         <div id="content">
             <slot />
@@ -15,17 +15,15 @@ Generates a background as large as the parent. The slot will be drawn on top.
 <script setup>
 import { ref, computed } from "vue";
 
-import { hexToCssRGBA } from "@jsl/utils/Color";
+import { makeBackgroundStyle, computedBackgroundStyle, makeBackgroundStyleProps } from "@jsl/utils/Style";
 
 import AppCloseButton from "@jsl/components/AppCloseButton.vue";
+
 const props = defineProps({
     image: { type: String, required: false, default: "none" },
 
-    // Note: add the unit px!
-    blur: { required: false, default: "50px" },
-    alpha: { required: false, default: "0.4" },
-    // Warning: does not work with anything EXCEPT 6 letter color hex.
-    color: { required: false, default: "#000000" },
+    // generate blur, color, alpha, brightness props
+    ...makeBackgroundStyleProps("", { color: "background", alpha: 0.0, brightness: 1.0, blur: 50 }),
 });
 
 const bgUrl = computed({
@@ -33,12 +31,7 @@ const bgUrl = computed({
         return "url(" + props.image + ")";
     },
 });
-const bg = computed({
-    get() {
-        return hexToCssRGBA(props.color, props.alpha);
-    },
-});
-
+const style = computedBackgroundStyle(props);
 </script>
 
 <style scoped>
@@ -70,15 +63,9 @@ const bg = computed({
     z-index: 0;
 }
 
-#backgroundblur {
+#backgroundFilterLayer {
     width: 100vw;
     height: 100vh;
-
-    background-color: v-bind("bg");
-    backdrop-filter: blur(v-bind("blur"));
-    
-    transition-property: backdrop-filter;
-    transition-duration: 0.5s;
 
     position: fixed;
     top: 0;

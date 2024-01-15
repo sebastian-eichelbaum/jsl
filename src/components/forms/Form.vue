@@ -38,7 +38,9 @@ This is only a view. It does not provide any control logic. Subscribe to the emi
                 </slot>
 
                 <v-form :disabled="noBusyOverlay && isBusy" validate-on="input" @submit.prevent="submit" ref="form">
-                    <slot :busy="noBusyOverlay && isBusy">TODO: Provide contents as slot</slot>
+                    <slot :busy="noBusyOverlay && isBusy">
+                        {{ tt("common.msg.todo", { what: "default slot!" }) }}
+                    </slot>
                 </v-form>
             </v-col>
         </v-row>
@@ -48,7 +50,7 @@ This is only a view. It does not provide any control logic. Subscribe to the emi
 <script setup>
 import { ref, computed } from "vue";
 
-import { localization } from "@jsl/Localization";
+import { localization, tt } from "@jsl/Localization";
 import BusyOverlay from "@jsl/components/BusyOverlay.vue";
 
 const props = defineProps({

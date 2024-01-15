@@ -3,7 +3,9 @@ import { backend as backendSingleton, make as makeBackend } from "@jsl/Backend";
 import { localization as localizationSingleton, make as makeLocalization } from "@jsl/Localization";
 import { make as makePlatform, platform as platformSingleton } from "@jsl/Platform";
 import { make as makeVuetify, vuetify as vuetifySingleton } from "@jsl/Vuetify";
+
 import _ from "lodash";
+
 import { createApp, ref } from "vue";
 
 /**
