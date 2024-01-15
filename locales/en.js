@@ -13,13 +13,21 @@ export const en = {
                 shop: "Shop",
                 yes: "Yes",
                 no: "No",
+                settings: "Settings",
+                profile: "Profile",
+                options: "Options",
             },
             prompt: {
                 areYouSure: "Are you sure?",
                 areYouSureToQuit: "Are you sure you want to quit?",
             },
             msg: {
-                greet: "Hello {userName}",
+                greet: "Hello {user}",
+                todo: "TODO: {what}",
+                sid: "This part of the application is still in development.",
+                unknownError: "Unknown error. Guru code: {error}",
+                settingsExplanation: "Here, you will find all settings.",
+                settingsAndProfileExplanation: "Here, you will find your profile options and settings.",
             },
         },
 
@@ -46,17 +54,40 @@ export const en = {
         },
 
         user: {
-            msg: {},
+            msg: {
+                loginFailed: "Could not login.",
+                signupFailed: "Could not sign up.",
+                recoverFailed: "Could not recover.",
+                logoutFailed: "Could not logout.",
+
+                loginInvalidCredentials: "@:user.msg.loginFailed Invalid email or password.",
+                loginUserDisabled: "@:user.msg.loginFailed User is disabled.",
+                loginUnknownError: "@:user.msg.loginFailed Unknown error. Guru code: {error}.",
+
+                signupInvalidCredentials: "@:user.msg.signupFailed Invalid email or password.",
+                signupEmailInUse: "@:user.msg.signupFailed Email address is already used.",
+                signupUnknownError: "@:user.msg.signupFailed Unknown error. Guru code: {error}.",
+
+                recoverInvalidCredentials: "@:user.msg.recoverFailed Invalid email.",
+                recoverUnknownUser: "@:user.msg.recoverFailed Unknown user.",
+                recoverUnknownError: "@:user.msg.recoverFailed Unknown error. Guru code: {error}.",
+
+                logoutUnknownError: "@:user.msg.logoutFailed Unknown error. Guru code: {error}.",
+            },
             ui: {
                 login: "Login",
+                logout: "Logout",
                 signup: "Sign Up",
                 passwordReset: "Reset Password",
                 passwordResetLink: "Forgot Password?",
+                anonymous: "Anonymous",
             },
             prompt: {
                 login: "Login using your Email address and your password.",
                 signup: "Sign-up using your Email address.",
                 passwordReset: "Reset your password via Email. Follow the instructions in the sent e-mail.",
+                
+                areYouSureToLogout: "Are you sure you want to logout?",
             },
         },
     },

@@ -57,16 +57,16 @@ The unnamed slot can be used to customize the submit button.
                             </v-btn>
                         </v-col>
 
-                        <v-col cols="12" v-if="offerPasswordReset">
+                        <v-col cols="12" v-if="offerRecover">
                             <v-btn
-                                @click="onPasswordResetRequest"
+                                @click="onRecoverRequest"
                                 variant="text"
                                 rounded="xl"
                                 size="small"
                                 prepend-icon="mdi-account-question"
                                 :disabled="busy"
                             >
-                                {{ localization.tt(offerPasswordResetLabel) }}
+                                {{ localization.tt(offerRecoverLabel) }}
                             </v-btn>
                         </v-col>
                     </v-row>
@@ -137,12 +137,12 @@ const props = defineProps({
     // If set, the signup button is shown
     offerSignup: { type: Boolean, required: false, default: false },
     // If set, the password reset button is shown
-    offerPasswordReset: { type: Boolean, required: false, default: false },
+    offerRecover: { type: Boolean, required: false, default: false },
     // If set, the login button is show
     offerLogin: { type: Boolean, required: false, default: false },
 
     // Label of the "forgot password" request button
-    offerPasswordResetLabel: { type: String, required: false, default: "user.ui.passwordResetLink" },
+    offerRecoverLabel: { type: String, required: false, default: "user.ui.passwordResetLink" },
     // Label of the "register" request button
     offerSignupLabel: { type: String, required: false, default: "user.ui.signup" },
     // Label of the "login" request button
@@ -163,8 +163,8 @@ const props = defineProps({
 const emit = defineEmits([
     // Once the user requests to sign up instead of sign in
     "requestSignup",
-    // Once the user requests to reset their password
-    "requestPasswordReset",
+    // Once the user requests to recover their password
+    "requestRecover",
     // Once the user wants to login instead
     "requestLogin",
 
@@ -174,8 +174,8 @@ const emit = defineEmits([
 // Email value. Use this to sync email between multiple forms
 const emailModel = defineModel();
 
-function onPasswordResetRequest() {
-    emit("requestPasswordReset");
+function onRecoverRequest() {
+    emit("requestRecover");
 }
 
 function onLoginRequest() {

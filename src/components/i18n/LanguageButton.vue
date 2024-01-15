@@ -1,19 +1,20 @@
 <template>
-    <v-btn :variant="variant" :rounded="rounded ? 'xl' : '0'" :prepend-icon="icon">
-        {{ localization.localeName }}
-
+    <Button v-bind="{ ...$props, ...$attrs }" :text="localization.localeName">
         <LanguageMenu compact />
-    </v-btn>
+    </Button>
 </template>
 
 <script setup>
+import { ref, computed } from "vue";
+
 import { localization } from "@jsl/Localization";
 
 import LanguageMenu from "@jsl/components/i18n/LanguageMenu.vue";
+import Button from "@jsl/components/Button.vue";
 
 const props = defineProps({
-    variant: { type: String, required: false, default: "tonal" },
-    rounded: { type: Boolean, required: false, default: false },
     icon: { type: String, required: false, default: "mdi-web" },
+
+    // + Props of jsl/components/Button.vue
 });
 </script>

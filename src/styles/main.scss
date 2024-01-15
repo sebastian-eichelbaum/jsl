@@ -7,6 +7,10 @@
 @import "background.scss";
 
 html {
+    // This hides scroll if not needed. To avoid that the initial overlay is overlaid with a scrollbar, set this to auto
+    // and use ScrollbarStyle.vue to configure it once the app is mounted.
+    overflow: auto;
+
     // Custom scrollbar? 
     // > Check ScrollbarStyle.vue
 }
@@ -30,3 +34,11 @@ html {
 .v-input.jsl-extendedMessages-3 .v-messages{
     min-height: 3.1em;
 }
+
+// This is an experiment: when a dialog opens, it blocks scrolling. This causes the appbar to resize.
+// This tried to eleviate that but did not work (still caused visible resize).
+/*.v-overlay-scroll-blocked header.v-toolbar{
+    padding-right: 0.5rem;
+    transition-duration: 0.1s;
+    transition-property: padding;
+}*/

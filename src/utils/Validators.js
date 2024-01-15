@@ -80,12 +80,15 @@ export class Validations {
      * Check if the value is not empty.
      * Use: :rules=[Validator.required(),...]
      *
+     * @param {Boolean} trim  - if true, the string is trimmed before checking emptyness.
+     *
      * @return {Function} that returns True if valid or handler("form.msg.inputRequired")
      */
-    required() {
+    required(trim = true) {
         return (value) => {
-            if (value) return true;
-            return this.m_handler("form.msg.inputRequired");
+            if (!value) return this.m_handler("form.msg.inputRequired");
+            if (!value?.trim()) return this.m_handler("form.msg.inputRequired");
+            return true;
         };
     }
 

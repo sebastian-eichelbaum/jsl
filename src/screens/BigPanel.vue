@@ -10,7 +10,7 @@ It provides a named slots:
 Example:
 import myImage from "@assets/myImage.png";
 ...
-<BigPanel :background="myImage">
+<BigPanel :background="{image: myImage, blur: '5px', ... // all props from Background.vue}">
     <template v-slot:header>
         Header
     </template>
@@ -22,12 +22,12 @@ import myImage from "@assets/myImage.png";
 -->
 
 <template>
-    <Background :image="background" blur="0px" alpha="0.0">
+    <Background v-bind="fwd_background">
         <v-container class="fill-height ma-0 pa-0" fluid>
             <v-row class="fill-height" no-gutters>
                 <v-col xs="12" md="4" cols="12">
                     <v-sheet
-                        class="fill-height pa-7 jsl-bgBlur-30 jsl-bgAlpha-30"
+                        class="fill-height pa-7 jsl-bgBlur-30 jsl-bgAlpha-background-30"
                         :maxWidth="xs ? '100000px' : maxWidth"
                         elevation="5"
                     >
@@ -43,7 +43,7 @@ import myImage from "@assets/myImage.png";
 
                             <v-col cols="12" :align="footerAlign" align-self="end" class="mt-3">
                                 <slot name="footer">
-                                    <LanguageSwitch rounded class="ma-5 mb-10" v-if="!hideLanguage" />
+                                    <LanguageButton rounded class="ma-5 mb-10" v-if="!hideLanguage" />
                                     <MadeByCompany v-if="!hideMadeBy" />
                                     <LegalLinks v-if="!hideLegal" />
                                 </slot>
@@ -57,7 +57,7 @@ import myImage from "@assets/myImage.png";
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { useDisplay } from "vuetify";
 
 import { appConfig } from "@jsl/AppConfig";
@@ -67,14 +67,17 @@ import Background from "@jsl/components/Background.vue";
 
 import AppLogo from "@jsl/components/AppLogo.vue";
 
-import LanguageSwitch from "@jsl/components/i18n/LanguageSwitch.vue";
+import LanguageButton from "@jsl/components/i18n/LanguageButton.vue";
 import MadeByCompany from "@jsl/components/MadeByCompany.vue";
 import LegalLinks from "@jsl/components/LegalLinks.vue";
+
+import { fwdProps } from "@jsl/utils/ForwardVueProps";
 
 const { xs, mdAndUp } = useDisplay();
 
 const props = defineProps({
-    background: { type: String, required: false, default: DefaultBackground },
+    // Forward some component props.
+    ...fwdProps("background", { alpha: "0.0", blur: "0px", image: DefaultBackground }),
 
     // Hide the language switch?
     hideLanguage: { type: Boolean, required: false, default: false },
@@ -89,7 +92,7 @@ const props = defineProps({
     // Alignment of the header contents
     headerAlign: { type: String, required: false, default: "center" },
 
-    // Alignment of the  bodycontents
+    // Alignment of the  body contents
     bodyAlign: { type: String, required: false, default: "start" },
 
     // Alignment of the footer contents

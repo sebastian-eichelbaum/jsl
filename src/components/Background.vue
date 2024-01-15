@@ -76,7 +76,9 @@ const bg = computed({
 
     background-color: v-bind("bg");
     backdrop-filter: blur(v-bind("blur"));
-    transition: 0.5s;
+    
+    transition-property: backdrop-filter;
+    transition-duration: 0.5s;
 
     position: fixed;
     top: 0;

@@ -20,7 +20,7 @@ This is only a view. It does not provide any control logic. Subscribe to the emi
                 </p>
             </v-col>
             <v-col cols="12">
-                <slot name="error" errorMsg="_errorMsg">
+                <slot name="error" :errorMsg="_errorMsg">
                     <v-scale-transition>
                         <v-row no-gutters class="mb-7" v-if="_errorMsg">
                             <v-col cols="12">
@@ -106,31 +106,46 @@ async function submit(submitEvent) {
     await form.value.validate();
 
     // Generate an object containing each item by name, its value and some state info
-    const valuesOf = (items) => {
-        let result = {};
+    const valuesOf = (srcitems) => {
+        let items = {};
+        let values = {};
         let valid = true;
-        items.forEach((item) => {
+        srcitems.forEach((item) => {
             valid = valid && item.isValid === true;
-            result[item.id] = {
+            values[item.id] = submitEvent.target.elements[item.id].value;
+            items[item.id] = {
                 valid: item.isValid === true,
-                value: submitEvent.target.elements[item.id].value,
+                value: values[item.id],
                 component: item,
                 reset: item.reset,
             };
         });
-        return { valid: valid, values: result };
+        return { valid: valid, items: items, values: values };
     };
     let result = valuesOf(form.value.items);
 
     // Inject the reset function for convenience
     result["formReset"] = () => {
+        if (!form.value) {
+            // The component that contained the form was unmounted already.
+            return;
+        }
+
+        console.log(form.value);
         form.value.reset();
         _errorMsg.value = "";
         _busy.value = false;
     };
 
-    result["formBusy"] = (value = true) => {
-        _busy.value = value;
+    // Set busy state, if setting false, a delay can be used.
+    result["formBusy"] = (value = true, outDelayMs = 0) => {
+        if (value == false) {
+            setTimeout(() => {
+                _busy.value = value;
+            }, outDelayMs);
+        } else {
+            _busy.value = value;
+        }
     };
 
     result["formErrorMsg"] = (value = "") => {

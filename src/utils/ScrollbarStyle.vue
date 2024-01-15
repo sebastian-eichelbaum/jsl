@@ -49,6 +49,9 @@ const color = computed({
 }
 
 .jslapp-custom-scrollbar-html {
+    // This is required as the default main scss sets this to auto. This causes size changes whenever a dialog opens.
+    overflow-x: hidden;
+    overflow-y: unset;
     @include jsl-scrollbars(var(--jsl-scrollbarWidth), var(--jsl-scrollbarColor), var(--jsl-scrollbarBackground));
 }
 </style>

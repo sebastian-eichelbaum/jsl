@@ -1,17 +1,15 @@
 <template>
     <ModalDialog v-model="model" width="auto" v-bind="{ ...$props, ...$attrs }" @close="onNo">
-        <v-card>
-            <v-card-text>
-                <slot>{{ $t("common.prompt.areYouSure") }}</slot>
-            </v-card-text>
-            <v-card-actions>
-                <v-spacer v-if="spacer.l"></v-spacer>
-                <v-btn :color="noColor" :variant="noVariant" @click="onNo">{{ $t(no) }}</v-btn>
-                <v-spacer v-if="spacer.c"></v-spacer>
-                <v-btn :color="yesColor" :variant="yesVariant" @click="onYes">{{ $t(yes) }}</v-btn>
-                <v-spacer v-if="spacer.r"></v-spacer>
-            </v-card-actions>
-        </v-card>
+        <v-card-text>
+            <slot>{{ $t("common.prompt.areYouSure") }}</slot>
+        </v-card-text>
+        <v-card-actions>
+            <v-spacer v-if="spacer.l"></v-spacer>
+            <v-btn :color="noColor" :variant="noVariant" @click="onNo">{{ $t(no) }}</v-btn>
+            <v-spacer v-if="spacer.c"></v-spacer>
+            <v-btn :color="yesColor" :variant="yesVariant" @click="onYes">{{ $t(yes) }}</v-btn>
+            <v-spacer v-if="spacer.r"></v-spacer>
+        </v-card-actions>
     </ModalDialog>
 </template>
 

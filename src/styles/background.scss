@@ -42,28 +42,49 @@
 // Background Alpha styles
 //
 
-@mixin jsl-bgAlpha-x($from, $to, $scale) {
+@mixin jsl-bgAlpha-x($from, $to, $scale, $color, $name) {
   @for $i from $from through $to {
-    .jsl-bgAlpha-#{$scale * $i} {
-        background-color: rgba(0, 0, 0, calc($scale * $i / 100.0)) !important;
+    .jsl-bgAlpha-#{$name}-#{$scale * $i} {
+        background-color: rgba($color, calc($scale * $i / 100.0)) !important;
     }
   }
 }
 
 // Make from 0 to 10 in 1px steps
 // Generates
-// .jsl-bgAlpha-0,
-// .jsl-bgAlpha-1,
+// .jsl-bgAlpha-black-0,
+// .jsl-bgAlpha-black-1,
 // ...
-// .jsl-bgAlpha-9,
-@include jsl-bgAlpha-x(0, 9, 1);
+// .jsl-bgAlpha-black-9,
+@include jsl-bgAlpha-x(0, 9, 1, #000000, "black");
 
 // Make from 10 to 100 in 10px steps
 // Generates
-// .jsl-bgAlpha-10,
-// .jsl-bgAlpha-20,
+// .jsl-bgAlpha-black-10,
+// .jsl-bgAlpha-black-20,
 // ...
-// .jsl-bgAlpha-100,
-@include jsl-bgAlpha-x(1, 10, 10);
+// .jsl-bgAlpha-black-100,
+@include jsl-bgAlpha-x(1, 10, 10, #000000, "black");
+
+
+// As .jsl-bgBlur-black-... but white
+@include jsl-bgAlpha-x(0, 9, 1, #ffffff, "white");
+@include jsl-bgAlpha-x(1, 10, 10, #ffffff, "white");
+
+// As .jsl-bgBlur-black-... but theme background
+@include jsl-bgAlpha-x(0, 9, 1,  var(--v-theme-background), "background");
+@include jsl-bgAlpha-x(1, 10, 10, var(--v-theme-background), "background");
+
+// As .jsl-bgBlur-black-... but theme surface
+@include jsl-bgAlpha-x(0, 9, 1,  var(--v-theme-surface), "surface");
+@include jsl-bgAlpha-x(1, 10, 10, var(--v-theme-surface), "surface");
+
+// As .jsl-bgBlur-black-... but theme primary
+@include jsl-bgAlpha-x(0, 9, 1,  var(--v-theme-primary), "primary");
+@include jsl-bgAlpha-x(1, 10, 10, var(--v-theme-primary), "primary");
+
+// As .jsl-bgBlur-black-... but theme secondary
+@include jsl-bgAlpha-x(0, 9, 1,  var(--v-theme-secondary), "secondary");
+@include jsl-bgAlpha-x(1, 10, 10, var(--v-theme-secondary), "secondary");
 
 

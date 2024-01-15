@@ -45,6 +45,13 @@ export class Platform {
     closeApp() {
         window.close();
     }
+
+    /**
+     * Returns true if this platforms allows to close the app. Browsers do not support it.
+     */
+    get canCloseApp() {
+        return true;
+    }
 }
 
 // The platform instance

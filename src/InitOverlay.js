@@ -105,6 +105,11 @@ export default class InitOverlay {
     // Hide the overlay
     static hide() {
         const target = document.getElementById("jsl_InitialLoadOverlay");
+        if(!target)
+        {
+            // Already gone
+            return;
+        }
         target.addEventListener("transitionend", () => target.remove());
         // To avoid initial flicker, the transition is set when hiding. When set from the beginning, you might
         // see a build up of the app in background for a fraction of a second

@@ -29,15 +29,10 @@
         background: $background-color;
     }
 
-    // For Internet Explorer
-    & {
-        scrollbar-face-color: $foreground-color;
-        scrollbar-track-color: $background-color;
-    }
-
-    // Works on Firefox
+    // Works on Firefox and newer Chrome-based browsers
     & {
         scrollbar-width: $size;
         scrollbar-color: $foreground-color $background-color;
+        scrollbar-gutter: stable;
     }
 }

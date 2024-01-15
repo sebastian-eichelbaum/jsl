@@ -38,6 +38,14 @@ A collection of UI components and backend wrappers. Its focus is on Vue, Vuetify
         },
     });
     ```
+1. Add a Backend. By default, jsl does not install a backend package in its `package.json`. You have to install it in your project:
+    - Install according to the backend docs:
+    ```sh
+    npm install firebase
+    # Configure according to google. Create an app and copy the firebase project config.
+    # ...
+    ```
+    - Now you can use `@jsl/backends/Firebase`
 
 ## Usage
 

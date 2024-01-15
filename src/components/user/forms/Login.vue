@@ -7,7 +7,8 @@ A specialization of @jsl/components/forms/Authentication.vue geared towards LOGI
         @submit="onSubmit"
         @invalid="onInvalid"
         requireEmail
-        offerLogin
+        requirePassword
+        offerRecover
         offerSignup
         v-bind="{ ...$props, ...$attrs }"
     >
@@ -20,13 +21,13 @@ import { ref } from "vue";
 import Validators from "@jsl/utils/Validators";
 import { localization } from "@jsl/Localization";
 
-import Authentication from "@jsl/components/forms/Authentication.vue";
+import Authentication from "@jsl/components/user/forms/Authentication.vue";
 
 const props = defineProps({
     // Title text. Hides the column if empty
-    title: { type: String, required: false, default: "user.ui.passwordReset" },
+    title: { type: String, required: false, default: "user.ui.login" },
     // Prompt text. Hides the column if empty
-    prompt: { type: String, required: false, default: "user.prompt.passwordReset" },
+    prompt: { type: String, required: false, default: "user.prompt.login" },
 
     // Also: @jsl/components/forms/Authentication.vue
 });
@@ -43,10 +44,10 @@ const emit = defineEmits([
 ]);
 
 function onInvalid(state) {
-    emit("invalid", { type: "resetPassword", ...state });
+    emit("invalid", { type: "login", ...state });
 }
 
 function onSubmit(state) {
-    emit("submit", { type: "resetPassword", ...state });
+    emit("submit", { type: "login", ...state });
 }
 </script>

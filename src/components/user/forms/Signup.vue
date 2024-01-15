@@ -8,10 +8,9 @@ A specialization of @jsl/components/forms/Authentication.vue geared towards LOGI
         @invalid="onInvalid"
         requireEmail
         requireName
-        requireCompany
         requireNewPassword
         offerLogin
-        offerPasswordReset
+        offerRecover
         v-bind="{ ...$props, ...$attrs }"
     >
     </Authentication>
@@ -23,7 +22,7 @@ import { ref } from "vue";
 import Validators from "@jsl/utils/Validators";
 import { localization } from "@jsl/Localization";
 
-import Authentication from "@jsl/components/forms/Authentication.vue";
+import Authentication from "@jsl/components/user/forms/Authentication.vue";
 
 const props = defineProps({
     // Title text. Hides the column if empty

@@ -3,6 +3,8 @@ import { createI18n } from "vue-i18n";
 
 import _ from "lodash";
 
+import Iterate from "@jsl/utils/Iterate";
+
 import { de as jslDE } from "@jsllocales/de";
 import { en as jslEN } from "@jsllocales/en";
 
@@ -67,6 +69,10 @@ export class Localization {
             // The fallback locale used if a translation is not given in any matching locale. This must be one of the
             // locales given. If not, construction throws.
             fallback: "en",
+
+            // Handle locale changes. Usually, this is used to forward locale info to backends. The new locale iso is
+            // provided.
+            onLocaleUpdate: (newLocale) => {},
         };
     }
 
@@ -90,7 +96,14 @@ export class Localization {
         }
 
         this.m_config.overrides.forEach((override) => this._mergeOverride(override));
+    }
 
+    /**
+     * Init localization system and trigger initial callbacks.
+     *
+     * @return {Promise} - The init result
+     */
+    async init() {
         this._makeVuei18n();
     }
 
@@ -194,6 +207,8 @@ export class Localization {
         localStorage.setItem("jsl.localization.locale", this.m_vuei18n.global.locale);
 
         this._setHTMLLang();
+
+        this.config.onLocaleUpdate?.(this.m_vuei18n.global.locale);
     }
 
     // Get an array of user-preferred locales
@@ -253,6 +268,7 @@ export class Localization {
             messages: messages,
         });
         this._setHTMLLang();
+        this.config.onLocaleUpdate?.(this.m_vuei18n.global.locale);
 
         return this.m_vuei18n;
     }
@@ -260,28 +276,32 @@ export class Localization {
     /**
      * Tries to translate a plural and returns the value silently if not translatable.
      *
-     * @param {String} what - The translation key
+     * @param {String|Object|Translatable} what - The translation key or an object {key, ...args}.
      * @param {} ...args - The arguments to pass to this.tc
      */
     ttc(what, ...args) {
-        if (!this.exists(what)) {
-            return what;
+        const msg = resolve(what);
+
+        if (!this.exists(msg.key)) {
+            return msg.key;
         }
 
-        return this.tc(what, ...args);
+        return this.tc(msg.key, msg.details, ...args);
     }
     /**
      * Tries to translate and returns the value silently if not translatable.
      *
-     * @param {String} what - The translation key
+     * @param {String|Object|Translatable} what - The translation key or an object {key, ...args}.
      * @param {} ...args - The arguments to pass to this.t
      */
     tt(what, ...args) {
-        if (!this.exists(what)) {
-            return what;
+        const msg = resolve(what);
+
+        if (!this.exists(msg.key)) {
+            return msg.key;
         }
 
-        return this.t(what, ...args);
+        return this.t(msg.key, msg.details, ...args);
     }
 
     /**
@@ -324,8 +344,96 @@ export class Localization {
     }
 }
 
+/**
+ * Declares a class instance translatable. If the class can provide some translation id, thats enough.
+ */
+export class Translatable {
+    /**
+     * Create the translatable by giving a key and some details
+     *
+     * @param {String} key  - error code as string or anything else that can be converted to string.
+     * @param {any} details - some details. If any of the details is an Translatable, it will be converted NOW.
+     */
+    constructor(key, details = null) {
+        this.m_key = key;
+
+        // Convert Translatable now as nested calls to vuei18n.t triggers an exception.
+        this.m_details = Iterate.mapInstancesOf(Translatable, details, (item) => {
+            return item.toString();
+        });
+    }
+
+    /**
+     * The translation id.
+     *
+     * @return {String} id as string after being mapped by the sender's mapErrorCode
+     */
+    get key() {
+        return this.m_key;
+    }
+
+    /**
+     * The optional details. Can be anything or null/undefined.
+     *
+     * @return {any} message details.
+     */
+    get details() {
+        return this.m_details;
+    }
+
+    /**
+     * Convert the translatable to an actually translated string
+     */
+    toString() {
+        return localization.tt(this);
+    }
+}
+
 // The localization instance
 export let localization = null;
+
+/**
+ * Factory to make a Translatable from a given key and details. The key might be a Translatable already and will be
+ * extended with the given details.
+ *
+ * @param {String|Object|Translatable} key - The translation key as Translatable or String or string convertible.
+ * @param {Object} details - The message details. The keys in this overwrite any pre-existing key in a given translatable.
+ *
+ * @return {Object} the resolved object as new Translatable.
+ *
+ * @throws Error if the message is not a string and not an object with a key property.
+ */
+export function tt(key, details) {
+    return resolve(key, details);
+}
+
+/**
+ * Resolves a message into key and arguments, creating a new Translatable.
+ *
+ * @param {String|Object|Translatable} what - The translation key or an object {key, ...args} or a string.
+ * @param {Object} details - The message details. The keys in this overwrite any pre-existing key in a given
+ *  translatable.
+ *
+ * @return {Object} the resolved object as {key, ...}.
+ *
+ * @throws Error if the message is not a string and not an object with a key property.
+ */
+function resolve(msg, details = {}) {
+    if (msg instanceof Translatable) {
+        return new Translatable(msg.key, _.merge(msg.details, details));
+    }
+
+    if (typeof msg === "string" || msg instanceof String) {
+        return new Translatable(msg, details);
+    }
+
+    const asString = msg?.toString();
+    if (!asString) {
+        throw new Error("Translation messages must be strings, translatable, {key,...} or convertible to string.");
+    }
+
+    return new Translatable(asString, details);
+}
 
 /**
  * Construct the Localization singleton and return the vue plugin instance. If
@@ -341,5 +449,5 @@ export function make(config) {
     }
 
     localization = new Localization(config);
-    return localization.vuei18n;
+    return localization;
 }

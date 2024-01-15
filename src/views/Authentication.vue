@@ -11,7 +11,7 @@
                 v-model="emailModel"
                 @submit="onSubmit"
                 @requestSignup="onRequestSignup"
-                @requestPasswordReset="onRequestPasswordReset"
+                @requestRecover="onRequestRecover"
                 v-bind="{ ...$props, ...$attrs }"
             />
         </template>
@@ -20,12 +20,12 @@
                 v-model="emailModel"
                 @submit="onSubmit"
                 @requestLogin="onRequestLogin"
-                @requestPasswordReset="onRequestPasswordReset"
+                @requestRecover="onRequestRecover"
                 v-bind="{ ...$props, ...$attrs }"
             />
         </template>
-        <template #resetPassword>
-            <ResetPassword
+        <template #recover>
+            <Recover
                 v-model="emailModel"
                 @submit="onSubmit"
                 @requestLogin="onRequestLogin"
@@ -38,30 +38,60 @@
 
 <script setup>
 import { ref, computed } from "vue";
+import { UserService } from "@jsl/Backend";
 
 import Multiplexer from "@jsl/components/Multiplexer.vue";
-import Login from "@jsl/components/forms/Login.vue";
-import Signup from "@jsl/components/forms/Signup.vue";
-import ResetPassword from "@jsl/components/forms/ResetPassword.vue";
+import Login from "@jsl/components/user/forms/Login.vue";
+import Signup from "@jsl/components/user/forms/Signup.vue";
+import Recover from "@jsl/components/user/forms/ResetPassword.vue";
 
 const screen = ref("");
 
 const props = defineProps({
-    // The initial screen. "login", "signup", "resetPassword"
+    // The initial screen. "login", "signup", "recover"
     initialScreen: { type: String, required: false, default: "login" },
+    service: { type: UserService, required: true },
 });
 
 const emailModel = ref();
 
-function onSubmit(state) {
-    console.log(state);
+async function onSubmit(state) {
+    if (props.service == null) {
+        state.formErrorMsg({ key: "common.msg.unknownError", error: "service is null" });
+    }
 
-    //state.formEnabled(false);
     state.formBusy(true);
-    
-    setTimeout(()=>{state.formErrorMsg("wurst");}, 2000);
-    setTimeout(()=>{state.formBusy(false);}, 2200);
-    //screen.value = "busy";
+
+    // Choose one of the ops
+    const handle = async (state) => {
+        switch (state.type) {
+            case "login":
+                await props.service.login(state.values.email, state.values.password);
+                break;
+            case "signup":
+                await props.service.signup(state.values.email, state.values.password, state.values.name, {
+                    // Optional
+                    // company: state.values.company,
+                });
+                break;
+            case "recover":
+                await props.service.recover(state.values.email);
+                break;
+            default:
+                throw new Error("Unknown auth type");
+        }
+    };
+
+    await handle(state)
+        .then(() => {
+            state.formBusy(false);
+            state.formReset();
+        })
+        .catch((error) => {
+            state.formBusy(false, 500);
+            console.error(error);
+            state.formErrorMsg(error);
+        });
 }
 
 function onRequestLogin() {
@@ -72,7 +102,7 @@ function onRequestSignup() {
     screen.value = "signup";
 }
 
-function onRequestPasswordReset() {
-    screen.value = "resetPassword";
+function onRequestRecover() {
+    screen.value = "recover";
 }
 </script>

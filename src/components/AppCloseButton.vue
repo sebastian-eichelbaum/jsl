@@ -1,14 +1,14 @@
 <template>
+    <v-divider v-if="dividerL" :thickness="1" class="border-opacity-10 mr-3" color="#aaaaaa88" vertical></v-divider>
     <v-btn
         @click="askClose"
         :class="{ hoverbtn: !nofloat }"
-        size="large"
+        v-bind="{ ...$props, ...$attrs }"
         class="raise"
-        :rounded="rounded ? 'xl' : '0'"
-        :variant="variant"
-        icon="mdi-close"
+        v-if="platform.canCloseApp"
     >
     </v-btn>
+    <v-divider v-if="dividerR" :thickness="1" class="border-opacity-10 ml-3" color="#aaaaaa88" vertical></v-divider>
     <QuitDialog v-model="dialog" variant="evenly" @yes="close" />
 </template>
 
@@ -19,9 +19,15 @@ import { platform } from "@jsl/Platform";
 import QuitDialog from "@jsl/components/dialogs/QuitDialog.vue";
 
 const props = defineProps({
-    variant: { type: String, required: false, default: "text" },
-    rounded: { type: Boolean, required: false, default: false },
+    variant: { default: "text" },
+    icon: { default: "mdi-close" },
+    size: { default: "large" },
     nofloat: { type: Boolean, required: false, default: false },
+
+    // Add a divider to the right?
+    dividerR: { type: Boolean, required: false, default: false },
+    // Add a divider to the left?
+    dividerL: { type: Boolean, required: false, default: false },
 });
 
 let dialog = ref(false);

@@ -159,5 +159,5 @@ export function make(config) {
     }
 
     vuetify = new Vuetify(config);
-    return vuetify.vuetify;
+    return vuetify;
 }
