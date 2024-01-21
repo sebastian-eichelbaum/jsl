@@ -24,7 +24,7 @@ This can be seen as an inspiration and tutorial on how to setup an app.
     </v-app>
 
     <InitOverlay delay="200" />
-    <ScrollbarStyle :color="vuetify.themeColors.primary" />
+    <ScrollbarStyle />
 </template>
 
 <script setup>

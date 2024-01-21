@@ -1,10 +1,17 @@
+<!--
+Displays the app logo. 
+
+* If an HTML override is given, it will be used. (see AppConfig.logos.appHTML/appCompactHTML.
+* If no AppConfig.urls.app is given and no explicit href prop is set, the link is disabled.
+-->
+
 <template>
     <Link :href="_href" tab :disabled="nolink" unstyled>
-        <span v-if="text">
-            <span v-html="appName" :style="{ 'font-size': textSize + 'rem' }" />
+        <span v-if="asHTMLOverride">
+            <span v-html="asHTMLOverride" :style="{ 'font-size': textSize + 'rem' }" />
         </span>
         <span v-else>
-            <v-img v-if="oneline" max-width="200px" cover :src="appConfig.logos.appCompact"></v-img>
+            <v-img v-if="compact" max-width="200px" cover :src="appConfig.logos.appCompact"></v-img>
             <v-img v-else :max-width="imgMaxWidth" cover :src="appConfig.logos.app"></v-img>
         </span>
     </Link>
@@ -18,12 +25,10 @@ import Link from "@jsl/components/Link.vue";
 
 const props = defineProps({
     imgMaxWidth: { type: String, required: false, default: "200px" },
-    // Text size
+    // Text size override for html logos (if AppConfig logos.appHTML/appCompactHTML is defined).
     textSize: { type: String, required: false, default: "1.5" },
-    // Force the logo to be a compact one-liner
-    oneline: { type: Boolean, required: false, default: false },
-    // Force the logo to consist of text only
-    text: { type: Boolean, required: false, default: false },
+    // Force the logo to be compact
+    compact: { type: Boolean, required: false, default: false },
     // Disable the link around the logo
     nolink: { type: Boolean, required: false, default: false },
     // Allows to override the link referred to when clicking the logo. If unset, the AppConfig app url is used.
@@ -31,17 +36,15 @@ const props = defineProps({
 });
 
 const _href = computed(() => {
-    return props.href ?? appConfig.urls.app;
+    return props.href || appConfig.urls.app || ""; // NOTE: if both are nullish, the link is disabled
 });
 
-const appName = computed({
-    get() {
-        if (props.oneline) {
-            return appConfig.logos.appCompactHTML || appConfig.name;
-        }
-        if (!props.oneline) {
-            return appConfig.logos.appHTML || appConfig.name;
-        }
-    },
+const asHTMLOverride = computed(() => {
+    if (props.compact) {
+        return appConfig.logos.appCompactHTML;
+    }
+    if (!props.compact) {
+        return appConfig.logos.appHTML;
+    }
 });
 </script>

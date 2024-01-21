@@ -47,9 +47,11 @@ export class AppConfig {
                 // A compact logo of the app itself
                 appCompact: DefaultLogo,
 
-                // A HTML-ified logo. Allows to inject HTML as Logo.
+                // A HTML-ified logo. Allows to inject HTML as Logo. Takes precedence over the given "app" logo if
+                // not nullish.
                 appHTML: null,
-                // A HTML-ified compact logo. Allows to inject HTML as Logo.
+                // A HTML-ified compact logo. Allows to inject HTML as Logo. Takes precedence over the given "appCompact"
+                // logo if not nullish.
                 appCompactHTML: null,
             },
         };

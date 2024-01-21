@@ -1,6 +1,6 @@
 <template>
     <a
-        v-if="!disabled"
+        v-if="!disabled && href"
         @click="onClick"
         id="link"
         class="ma-0 pa-0"

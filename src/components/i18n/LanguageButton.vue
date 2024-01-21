@@ -1,5 +1,12 @@
+<!--
+Provides a button that opens the shop iff localization.multipleLocalesSupported or "alwaysShow" is true.
+-->
 <template>
-    <Button v-bind="{ ...$props, ...$attrs }" :text="localization.localeName">
+    <Button
+        v-if="alwaysShow || localization.multipleLocalesSupported"
+        v-bind="{ ...$props, ...$attrs }"
+        :text="localization.localeName"
+    >
         <LanguageMenu compact />
     </Button>
 </template>
@@ -14,6 +21,7 @@ import Button from "@jsl/components/Button.vue";
 
 const props = defineProps({
     icon: { type: String, required: false, default: "mdi-web" },
+    alwaysShow: { type: Boolean, default: false },
 
     // + Props of jsl/components/Button.vue
 });

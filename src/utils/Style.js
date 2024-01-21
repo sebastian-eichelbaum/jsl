@@ -22,8 +22,13 @@ function addRGBAHelpers(rgba) {
     return rgba;
 }
 
+function isThemeColor(color, theme) {
+    return theme[color];
+}
+
 /**
- * Resolve a given color string into rgba tuple.
+ * Resolve a given color string into rgba tuple. It supports css style colors, vuetify color names, manually added
+ * vuetify color names, jsl color names.
  *
  * @param {String|Object} color - A color by name (the vuetify colors like 'red
  *     darken-1' or 'primary'), a Hex or css
@@ -36,11 +41,29 @@ function addRGBAHelpers(rgba) {
  *     converts to CSS rgab
  */
 export function resolveColor(color, themeColors = null) {
-    const c = parseColor(
-        isCssColor(color) ? color : classToHex(color, colorPalette, themeColors ?? vuetify.themeColors),
-    );
+    const th = themeColors || vuetify.themeColors;
+    let resolveColor = color;
 
-    return addRGBAHelpers(_.merge({ r: 0, g: 0, b: 0, a: 1 }, c));
+    // Resolve colors starting with "jsl."
+    if (resolveColor.startsWith("jsl.")) {
+        resolveColor = vuetify.themeConfig?.jsl[resolveColor.replace(/^(jsl\.)/, "")];
+        if (!resolveColor) {
+            console.error("Try to resolve unset jsl color:", color);
+            resolveColor = "grey";
+        }
+    }
+
+    // Explicitly resolve those colors that are unknown by vuetify but got added to its color scheme. classToHex does not
+    // resolve them - we have to do it.
+    if (th[resolveColor]) {
+        resolveColor = th[resolveColor];
+    }
+
+    const c = parseColor(isCssColor(resolveColor) ? resolveColor : classToHex(resolveColor, colorPalette, th));
+    const rgba = addRGBAHelpers(_.merge({ r: 0, g: 0, b: 0, a: 1 }, c));
+
+    // console.log(color, rgba);
+    return rgba;
 }
 
 /**

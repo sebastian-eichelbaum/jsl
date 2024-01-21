@@ -1,5 +1,8 @@
+<!--
+Show a user button with name and profile dialog if the backend supports users.
+-->
 <template>
-    <Button v-bind="{ ...$props, ...$attrs }" :text="userName()">
+    <Button v-if="backend.user" v-bind="{ ...$props, ...$attrs }" :text="userName()">
         <UserDialog v-model="dialog" activator="parent" />
     </Button>
 </template>
@@ -12,6 +15,7 @@ import Button from "@jsl/components/Button.vue";
 import UserDialog from "@jsl/components/user/UserDialog.vue";
 
 import { userName } from "@jsl/utils/Backend";
+import { backend } from "@jsl/Backend";
 
 const dialog = ref(false);
 

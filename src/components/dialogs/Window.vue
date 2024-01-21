@@ -6,7 +6,7 @@ Use windows for more complex dialogs. The plain ModalDialog is good for question
 
 <template>
     <ModalDialog v-model="model" @close="onClose" v-bind="{ ...$props, ...$attrs }">
-        <v-toolbar density="comfortable" color="primary-darken-3">
+        <v-toolbar density="comfortable" :color="windowTitleBG">
             <v-icon v-if="icon" class="ml-5">{{ icon }}</v-icon>
             <v-toolbar-title class="font-weight-medium">
                 {{ title }}
@@ -46,6 +46,7 @@ Use windows for more complex dialogs. The plain ModalDialog is good for question
 import { computed } from "vue";
 
 import { tt } from "@jsl/Localization";
+import { useTheme } from "@jsl/Vuetify";
 
 import ModalDialog from "@jsl/components/dialogs/ModalDialog.vue";
 import Button from "@jsl/components/Button.vue";
@@ -59,6 +60,8 @@ const props = defineProps({
     // Titlebar
     icon: { default: "mdi-cog" },
     title: { default: tt("common.msg.todo", { what: "title!" }) },
+    // Titlebar background color - set null to use the default
+    titleBackground: { type: String, default: null },
 
     // The greet and message area below the titlebar
     greetText: { default: tt("common.msg.todo", { what: "greetText!" }) },
@@ -67,6 +70,10 @@ const props = defineProps({
     noGreetBox: { type: Boolean, default: false },
     // The brightness of the box. If > 1, it gets brighter
     greetBrightness: { type: Number, default: 0.66 },
+});
+
+const windowTitleBG = computed(() => {
+    return props.titleBackground || useTheme()?.jsl?.windowTitleBG || "black";
 });
 
 function doClose() {

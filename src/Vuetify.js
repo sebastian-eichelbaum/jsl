@@ -28,6 +28,15 @@ export class Vuetify {
                 //         secondary: "#0b43a4",
                 //         surface: "#252428",
                 //     },
+                //     // Alows provide more fine-grained control over some JSL components. Either use css rgb/rgba, hex
+                //     // or named vuetify colors like "primary-darken-1"
+                //     jsl: {
+                //         // Default colors for jsl Windows.vue
+                //         windowTitleBG: "#ff0000",
+                //         scrollbarBG: "background",
+                //         scrollbarFG: "primary",
+                //         // The components can define their own keys. Refer to the component you want to modify.
+                //     }
                 // },
             },
 
@@ -114,7 +123,6 @@ export class Vuetify {
      * Set the active theme if it exists. If not, the theme is not changed.
      *
      * @param {String} name The theme name
-     *
      */
     set theme(name) {
         if (!this.isValidTheme(name)) {
@@ -145,6 +153,15 @@ export class Vuetify {
 
 // The vuetify instance
 export let vuetify = null;
+
+/**
+ * Gets the currently active theme. Shortcut for vuetify.themeConfig
+ *
+ * @returns {Object} The current vuetify theme instance.
+ */
+export function useTheme(){
+    return vuetify.themeConfig;
+}
 
 /**
  * Construct the Vuetify singleton and return the vue plugin instance. If called multiple times, this throws.

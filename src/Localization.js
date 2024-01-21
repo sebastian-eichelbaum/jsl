@@ -195,6 +195,24 @@ export class Localization {
     }
 
     /**
+     * The number of known locales.
+     *
+     * @returns {Number} The number of locales known.
+     */
+    get numLocales() {
+        return this.locales.length;
+    }
+
+    /**
+     * Returns true if there are more than one locales known. Abbreviation to numLocales>1.
+     *
+     * @returns {Boolean} True if more than one locale is known.
+     */
+    get multipleLocalesSupported() {
+        return this.numLocales > 1;
+    }
+
+    /**
      * Set the specified locale. If the locale is not found or invalid, the
      * fallback is used.
      *
@@ -216,14 +234,27 @@ export class Localization {
         return usePreferredLanguages();
     }
 
-    // Get the most user-preferred locale.
+    /**
+     * Checks if the given locale exists and is not black-listed.
+     *
+     * @param {String} locale - The locale to check
+     * @returns {Boolean} True if the locale is existing and can be used.
+     */
+    localeExists(locale) {
+        return Boolean(this._findLocaleInfo(locale));
+    }
+
+    // Get the most user-preferred locale. Or the fallback if the locale is not known
     get preferredLocale() {
-        const storedLocale = localStorage.getItem("jsl.localization.locale");
-        if (storedLocale != null) {
-            return storedLocale;
-        }
-        const pref = this.preferredLocales;
-        return pref[0] || "en";
+        return [
+            // Candidates are:
+            // A stored locale:
+            localStorage.getItem("jsl.localization.locale"),
+            // The ones the users browser requests
+            ...this.preferredLocales.value,
+            // Or the fallback
+            this.m_config.fallback,
+        ].find((l) => this.localeExists(l));
     }
 
     // Updates the HTML lang attribute.
@@ -307,7 +338,7 @@ export class Localization {
     /**
      * Check if the given key exists in the given locale
      *
-     * @param {String} what - The khe
+     * @param {String} what - The key
      * @param {String} locale - Optional locale to check against
      */
     exists(what, locale) {

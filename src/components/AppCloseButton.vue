@@ -1,14 +1,26 @@
 <template>
-    <v-divider v-if="dividerL" :thickness="1" class="border-opacity-10 mr-3" color="#aaaaaa88" vertical></v-divider>
+    <v-divider
+        v-if="platform.canCloseApp && dividerL"
+        :thickness="1"
+        class="border-opacity-10 ml-1 mr-1"
+        color="#aaaaaa88"
+        vertical
+    ></v-divider>
     <v-btn
         @click="askClose"
         :class="{ hoverbtn: !nofloat }"
         v-bind="{ ...$props, ...$attrs }"
-        class="raise"
+        class="raise mr-0"
         v-if="platform.canCloseApp"
     >
     </v-btn>
-    <v-divider v-if="dividerR" :thickness="1" class="border-opacity-10 ml-3" color="#aaaaaa88" vertical></v-divider>
+    <v-divider
+        v-if="platform.canCloseApp && dividerR"
+        :thickness="1"
+        class="border-opacity-10 ml-1 mr-1"
+        color="#aaaaaa88"
+        vertical
+    ></v-divider>
     <QuitDialog v-model="dialog" variant="evenly" @yes="close" />
 </template>
 

@@ -1,13 +1,31 @@
+<!--
+An AppBar that provides some common functions
+
+* Anonymous slot: set to override the whole right hand side of the app bar. By default, this contains the shop button,
+language switcher and the user button.
+* Slot "append": allows to add content to the right of the anonymous slot. Use this if the default should be kept but
+extended.
+-->
 <template>
     <v-app-bar :style="style" v-bind="{ ...$props, ...$attrs }">
         <v-app-bar-title>
-            <AppLogo text oneline />
+            <AppLogo compact />
         </v-app-bar-title>
 
         <template v-slot:append>
-            <ShopButton :hideText="smAndDown" class="mr-5" />
-            <LanguageButton :hideText="smAndDown" maxWidth="150px" rounded="xl" class="mr-5" />
-            <UserButton :hideText="smAndDown" maxWidth="150px" rounded="xl" class="mr-5" />
+            <slot>
+                <ShopButton v-if="!noShopButton" :hideText="smAndDown" class="mr-5" />
+                <LanguageButton
+                    v-if="!noLanguageButton"
+                    :hideText="smAndDown"
+                    maxWidth="150px"
+                    rounded="xl"
+                    class="mr-5"
+                />
+                <UserButton v-if="!noUserButton" :hideText="smAndDown" maxWidth="150px" rounded="xl" class="mr-5" />
+            </slot>
+
+            <slot name="append" />
 
             <AppCloseButton nofloat dividerL />
         </template>
@@ -31,21 +49,27 @@ import AppLogo from "@jsl/components/AppLogo.vue";
 import AppCloseButton from "@jsl/components/AppCloseButton.vue";
 import ShopButton from "@jsl/components/ShopButton.vue";
 
-import { makeBackgroundStyle, computedBackgroundStyle, makeBackgroundStyleProps } from "@jsl/utils/Style";
- 
-import { useDisplay } from 'vuetify'
+import { computedBackgroundStyle, makeBackgroundStyleProps } from "@jsl/utils/Style";
+
+import { useDisplay } from "vuetify";
 
 const props = defineProps({
     // elevate when scrolling
     scrollBehavior: { default: "elevate" },
+
+    // Allows to explicitly disable the shop button in the append area
+    noShopButton: { type: Boolean, default: false },
+    // Allows to explicitly disable the language button in the append area
+    noLanguageButton: { type: Boolean, default: false },
+    // Allows to explicitly disable the user button in the append area
+    noUserButton: { type: Boolean, default: false },
 
     // Background style color, blur, alpha, brightness
     // This also creates the prop "color" that is also used by v-app-bar.
     ...makeBackgroundStyleProps("", { color: "surface", alpha: 1.0, brightness: 1.0, blur: 20 }),
 });
 
- 
-const {  smAndDown } = useDisplay()
+const { smAndDown } = useDisplay();
 
 const style = computedBackgroundStyle(props, "");
 </script>

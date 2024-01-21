@@ -1,5 +1,8 @@
+<!--
+Provides a button that opens the shop iff appConfig.urls.shop is not nullish.
+-->
 <template>
-    <LinkButton :href="appConfig.urls.shop" v-bind="{ ...$props, ...$attrs }">
+    <LinkButton v-if="appConfig.urls.shop" :href="appConfig.urls.shop" v-bind="{ ...$props, ...$attrs }">
         <slot />
     </LinkButton>
 </template>
