@@ -25,7 +25,7 @@ import _ from "lodash";
  * In B.vue that uses A
  * <A :background="{alpha: '0', image: myImage}" />
  *
- * @param {String} name The name of the property expozed by the component using this
+ * @param {String} name The name of the property exported by the component using this
  * @param {Object} defaultValue - The default value.
  *
  * @return
@@ -41,7 +41,7 @@ export function fwdProps(name, defaultValue = {}) {
         throw new Error("Property-default must be an object. Got: " + typeof defaultValue);
     }
 
-    // Generate the property expozed to the outside world:
+    // Generate the property exported to the outside world:
     result[name] = {
         type: Object,
         required: false,
