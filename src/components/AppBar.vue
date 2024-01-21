@@ -5,9 +5,9 @@
         </v-app-bar-title>
 
         <template v-slot:append>
-            <ShopButton class="mr-5" />
-            <LanguageButton maxWidth="150px" rounded="xl" class="mr-5" />
-            <UserButton maxWidth="150px" rounded="xl" class="mr-5" />
+            <ShopButton :hideText="smAndDown" class="mr-5" />
+            <LanguageButton :hideText="smAndDown" maxWidth="150px" rounded="xl" class="mr-5" />
+            <UserButton :hideText="smAndDown" maxWidth="150px" rounded="xl" class="mr-5" />
 
             <AppCloseButton nofloat dividerL />
         </template>
@@ -32,6 +32,8 @@ import AppCloseButton from "@jsl/components/AppCloseButton.vue";
 import ShopButton from "@jsl/components/ShopButton.vue";
 
 import { makeBackgroundStyle, computedBackgroundStyle, makeBackgroundStyleProps } from "@jsl/utils/Style";
+ 
+import { useDisplay } from 'vuetify'
 
 const props = defineProps({
     // elevate when scrolling
@@ -41,6 +43,9 @@ const props = defineProps({
     // This also creates the prop "color" that is also used by v-app-bar.
     ...makeBackgroundStyleProps("", { color: "surface", alpha: 1.0, brightness: 1.0, blur: 20 }),
 });
+
+ 
+const {  smAndDown } = useDisplay()
 
 const style = computedBackgroundStyle(props, "");
 </script>

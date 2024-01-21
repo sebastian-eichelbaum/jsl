@@ -1,21 +1,19 @@
 <template>
-    <v-btn @click="onClick" :variant="variant" :rounded="rounded" :prepend-icon="icon" :color="color">
+    <Button @click.prevent="onClick" v-bind="{ ...$props, ...$attrs }">
         <span v-if="maxWidth != null" :style="cropStyle" class="text-truncate">
-            <slot>
-                {{ href }}
-            </slot>
+            <slot />
         </span>
         <span v-else>
-            <slot>
-                {{ href }}
-            </slot>
+            <slot />
         </span>
-    </v-btn>
+    </Button>
 </template>
 
 <script setup>
 import { computed } from "vue";
 import { platform } from "@jsl/Platform";
+
+import Button from "@jsl/components/Button.vue";
 
 // Handle Clicks
 function onClick() {
@@ -24,11 +22,12 @@ function onClick() {
 
 const props = defineProps({
     href: { type: String, required: true },
-    variant: { type: String, required: false, default: "flat" },
-    rounded: { type: String, required: false, default: "xl" },
-    icon: { type: String, required: false, default: "mdi-link" },
-    color: { type: String, required: false, default: "primary" },
-    maxWidth: { type: String, required: false, default: null },
+
+    variant: { default: "flat" },
+    rounded: { default: "xl" },
+    icon: { default: "mdi-link" },
+    color: { default: "primary" },
+    maxWidth: { default: null },
 });
 
 const cropStyle = computed({

@@ -67,23 +67,23 @@
 @include jsl-bgAlpha-x(1, 10, 10, #000000, "black");
 
 
-// As .jsl-bgBlur-black-... but white
+// As .jsl-bgAlpha-black-... but white
 @include jsl-bgAlpha-x(0, 9, 1, #ffffff, "white");
 @include jsl-bgAlpha-x(1, 10, 10, #ffffff, "white");
 
-// As .jsl-bgBlur-black-... but theme background
+// As .jsl-bgAlpha-black-... but theme background
 @include jsl-bgAlpha-x(0, 9, 1,  var(--v-theme-background), "background");
 @include jsl-bgAlpha-x(1, 10, 10, var(--v-theme-background), "background");
 
-// As .jsl-bgBlur-black-... but theme surface
+// As .jsl-bgAlpha-black-... but theme surface
 @include jsl-bgAlpha-x(0, 9, 1,  var(--v-theme-surface), "surface");
 @include jsl-bgAlpha-x(1, 10, 10, var(--v-theme-surface), "surface");
 
-// As .jsl-bgBlur-black-... but theme primary
+// As .jsl-bgAlpha-black-... but theme primary
 @include jsl-bgAlpha-x(0, 9, 1,  var(--v-theme-primary), "primary");
 @include jsl-bgAlpha-x(1, 10, 10, var(--v-theme-primary), "primary");
 
-// As .jsl-bgBlur-black-... but theme secondary
+// As .jsl-bgAlpha-black-... but theme secondary
 @include jsl-bgAlpha-x(0, 9, 1,  var(--v-theme-secondary), "secondary");
 @include jsl-bgAlpha-x(1, 10, 10, var(--v-theme-secondary), "secondary");
 

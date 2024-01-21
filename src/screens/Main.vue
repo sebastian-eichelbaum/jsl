@@ -6,12 +6,12 @@ A flexible main screen default.
 
 <template>
     <Background v-bind="fwd_background" v-if="useBackground">
-        <v-container fluid :class="{ 'fill-height': fillHeight }">
-            <slot>TODO: fill </slot>
+        <v-container :class="{ 'fill-height': fillHeight }" v-bind="{ ...$props, ...$attrs }">
+            <slot>{{ tt("common.msg.todo", { what: "default slot!" }) }}</slot>
         </v-container>
     </Background>
-    <v-container fluid :class="{ 'fill-height': fillHeight }" v-else>
-        <slot>TODO: fill </slot>
+    <v-container :class="{ 'fill-height': fillHeight }" v-bind="{ ...$props, ...$attrs }" v-else>
+        <slot>{{ tt("common.msg.todo", { what: "default slot!" }) }}</slot>
     </v-container>
 </template>
 
@@ -19,6 +19,8 @@ A flexible main screen default.
 import { ref, reactive } from "vue";
 
 import { fwdProps } from "@jsl/utils/ForwardVueProps";
+
+import { tt } from "@jsl/Localization";
 
 import Background from "@jsl/components/Background.vue";
 
