@@ -35,7 +35,17 @@ export class Vuetify {
                 //         windowTitleBG: "#ff0000",
                 //         scrollbarBG: "background",
                 //         scrollbarFG: "primary",
+                //
+                //         // Style defaults are also supported
+                //         style: {
+                //             card: {
+                //                 rounded: "xl",
+                //                 elevation: 5,
+                //             },
+                //         }
+                //
                 //         // The components can define their own keys. Refer to the component you want to modify.
+                //         // Search for "styleDefaultProp" in the component you want to modify
                 //     }
                 // },
             },
@@ -159,8 +169,17 @@ export let vuetify = null;
  *
  * @returns {Object} The current vuetify theme instance.
  */
-export function useTheme(){
+export function useTheme() {
     return vuetify.themeConfig;
+}
+
+/**
+ * Gets the currently active theme's JSL style extension. Shortcut for vuetify.themeConfig.jsl.style
+ *
+ * @returns {Object} The current style or an empty object if not present.
+ */
+export function useJslStyle() {
+    return vuetify?.themeConfig?.jsl?.style || {};
 }
 
 /**

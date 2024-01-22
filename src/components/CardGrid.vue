@@ -1,104 +1,139 @@
+<!--
+CardGrid is a Grid with some defaults and options that are tuned towards "media" or "infocard" views.
+-->
 <template>
-    <div class="grid">
-        <div class="gridHeaderRow">
-            <slot name="header" />
-        </div>
+    <Grid
+        v-bind="{ ...$props, ...$attrs }"
+        :cellWidth="cellSize.w"
+        :cellHeight="cellSize.h"
+        :rowGap="cellGaps.r"
+        :columnGap="cellGaps.c"
+    >
+        <template #header>
+            <div class="titleContainer" :class="{ titleContainerWrap: xs }">
+                <slot name="header">
+                    <v-icon v-if="titleIcon" class="titleIcon" :class="titleClasses">{{ titleIcon }}</v-icon>
+                    <span :class="titleClasses">{{ tt(title) }}</span>
+                </slot>
+                <v-spacer />
+                <slot name="actions">
+                    <!--<v-btn variant="tonal" icon="mdi-plus" />-->
+                </slot>
+            </div>
+        </template>
 
-        <slot>
-            <v-card v-for="n in 5" :key="n">
-                <v-card-title>
-                    {{ tt("common.msg.todo", { what: "default slot!" }) }}
-                </v-card-title>
-            </v-card>
-        </slot>
-    </div>
+        <slot />
+    </Grid>
 </template>
 
 <script setup>
+import { computed } from "vue";
+import { useDisplay } from "vuetify";
+const { xs } = useDisplay();
+
 import { tt } from "@jsl/Localization";
 
+import Grid from "@jsl/components/Grid.vue";
+
 const props = defineProps({
-    // Width of a cell. Include units!
-    cellWidth: { type: String, default: "350px" },
-    // Height of a cell. Include units!
-    cellHeight: { type: String, default: "350px" },
+    // Some common card size presets: x-small, small, medium, large, x-large, xx-large, xxx-large.
+    // Specify Grid's cellWidth/cellHeight explicitly to override the size manually.
+    size: { type: String, default: "medium" },
 
-    // Gap between rows
-    rowGap: { type: String, default: "2rem" },
-    // Gap between cols
-    columnGap: { type: String, default: "2rem" },
+    // Defines the gaps between grids. compact, comfortable, normal, expanded, x-expanded. Can be specified explicitly
+    // using rowGap and columnGap.
+    density: { type: String, default: "normal" },
 
-    // A grid that is smaller than the grid container horizontally, align or space out:
-    // start, end, center, space-between, space-evenly, ...
-    justifyContent: { type: String, default: "center" },
-    // A grid that is smaller than the grid container vertically, align or space out:
-    // start, end, center, space-between, space-evenly, ...
-    alignContent: { type: String, default: "start" },
+    // Cell aspect ratio as width / height. Quadratic by default. Is only in effect, if cellWidth/cellHeight are not
+    // explicitly set.
+    aspect: { type: Number, default: 1 / 1 },
 
-    // Items that do not match the size of the cell horizontally:
-    // start, center, end, stretch, baseline, ...
-    // Items can override this using "justify-self"
-    justifyItems: { type: String, default: "stretch" },
+    // Default header text if the header slot is not overwritten
+    title: { default: tt("common.msg.todo", { what: "title!" }) },
 
-    // Items that do not match the size of the cell vertically:
-    // start, center, end, stretch, baseline, ...
-    // Items can override this using "align-self"
-    alignItems: { type: String, default: "stretch" },
+    // The style classes of the header/title
+    titleClasses: { default: "text-h2 text-uppercase font-weight-thin jsl-font-montserrat" },
 
-    // How many columns to generate? Can be a number or a special keyword:
-    //
-    // Assume the container is large enough to accommodate 4 cells but only 2 are given.
-    // - auto-fill tells the grid to fill in empty cells, causing the 2 given items to be on the left.
-    // - auto-fit tells the grid to not fill empty cells, causing the grid to shrink and be aligned according to
-    //            justifyContent.
-    columns: { type: String, default: "auto-fill" },
+    // An optional icon to show next to the title.
+    titleIcon: { type: String, default: "" },
 
-    // Height of the header row. If auto, it is scaled to the contents, including margins.
-    headerHeight: { type: String, default: "auto" },
+    // ... and the Grid props.
 });
+
+const cellSize = computed(() => {
+    let w = 350;
+    switch (props.size) {
+        case "x-small":
+            w = 150;
+            break;
+        case "small":
+            w = 250;
+            break;
+        case "large":
+            w = 450;
+            break;
+        case "x-large":
+            w = 550;
+            break;
+        case "xx-large":
+            w = 750;
+            break;
+        case "xxx-large":
+            w = 950;
+            break;
+        case "medium":
+        default:
+            w = 350;
+            break;
+    }
+    const h = w / props.aspect;
+
+    return { w: w + "px", h: h + "px" };
+});
+
+const cellGaps = computed(() => {
+    let w = 2;
+    switch (props.density) {
+        case "compact":
+            w = 1;
+            break;
+        case "comfortable":
+            w = 1.5;
+            break;
+        case "expanded":
+            w = 3;
+            break;
+        case "x-expanded":
+            w = 4;
+            break;
+        case "medium":
+        default:
+            w = 2;
+            break;
+    }
+    return { r: w + "rem", c: w + "rem" };
+});
+
 </script>
 
 <style scoped>
-.grid {
-    display: grid;
+.titleContainer {
+    width: 100%;
 
-    /* Not yet fully working in most browsers */
-    transition: all 0.5s;
+    padding-bottom: 1rem;
 
-    /* Make columns with given width or 100% if the given width is too large */
-    grid-template-columns: repeat(v-bind("columns"), min(v-bind("cellWidth"), 100%));
-
-    /* Create an explizit header row */
-    grid-template-rows: [headrow-start] v-bind(headerHeight) [headrow-end] auto [lastrow];
-
-    /* Unnamed rows/cols are used. So this defines the dynamically generated cells */
-    grid-auto-columns: v-bind("cellWidth");
-    grid-auto-rows: v-bind("cellHeight");
-
-    row-gap: v-bind("rowGap");
-    column-gap: v-bind("columnGap");
-
-    justify-content: v-bind("justifyContent");
-    align-content: v-bind("alignContent");
-
-    justify-items: v-bind("justifyItems");
-    align-items: v-bind("alignItems");
-}
-
-.gridItem {
-    background: black;
-}
-
-.gridHeaderRow {
-    grid-row-start: headrow-start;
-    grid-row-end: headrow-end;
-
-    /* Makes the header span from first cell to last (-1) */
-    grid-column-start: 1;
-    grid-column-end: -1;
-
-    /* Setting contents breaks the grid column selection? */
-    /* Setting flex ensures the real size is used. Other implications? */
     display: flex;
+    align-items: center;
+
+    /* Computed in containerFlexWrap
+    flex-wrap: wrap*/
+}
+
+.titleContainerWrap {
+    flex-wrap: wrap;
+}
+
+.titleIcon {
+    margin-right: 1rem;
 }
 </style>

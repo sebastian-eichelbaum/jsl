@@ -1,4 +1,6 @@
 import { vuetify } from "@jsl/Vuetify";
+import { useJslStyle } from "@jsl/Vuetify";
+
 import _ from "lodash";
 import { computed } from "vue";
 import colorPalette from "vuetify/lib/util/colors";
@@ -159,4 +161,41 @@ export function makeBackgroundStyleProps(prefix, defaults = {}) {
     props[makePropName(prefix, "blur")] = { type: [String, Number], default: defaults.blur ?? "0" };
 
     return props;
+}
+
+/**
+ * Create a value that matches either the property value if explicitly given, the default from the current
+ * style or a default.
+ *
+ * @param {String} styleId - An id to search in the vuetify.themeConfig.jsl.style
+ * @param {Object} prop - If this property is given and not null, it is used as is.
+ * @param {any} def - If nothing else provides a value, use this. Forwarded as is.
+
+ * @returns {any} The derived property or some preset
+ */
+export function styleDefaultProp(styleId, prop, def = undefined) {
+    return computed(() => {
+        if (prop != null) {
+            return prop;
+        }
+        if (styleId == null || useJslStyle() == null) {
+            return def;
+        }
+
+        const getIn = (value, key) => {
+            let v = value;
+            for (const k of key.split(".")) {
+                v = v[k];
+                if (v == null) {
+                    return undefined;
+                }
+            }
+
+            return v;
+        };
+
+        const result = getIn(useJslStyle(), styleId);
+        // console.log(result);
+        return result;
+    });
 }

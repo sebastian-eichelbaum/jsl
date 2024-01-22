@@ -39,5 +39,7 @@ const props = defineProps({
 
     // Button texts
     logoutText: { default: tt("user.ui.logout") },
+
+    // ... and the Window props.
 });
 </script>
