@@ -1,66 +1,68 @@
 import _ from "lodash";
 
 /**
- * Generates a forward prop that takes the value passed by the component user of a named prop an merges it with
- * the defaults defined.
+ * Generates a forward prop dummy.
  *
- * This allows to forward props as structs.
+ * NOTE: Forwarding props in Vue works automatically. Use this for forwarding props of nested objects and extend them
+ * with partially defined defaults.
  *
  * Usage:
  *
  * In A.vue
  * const props = defineProps({
- *     // Define a prop "background" in A. Provide some defaults.
- *     ...fwdProps("background", { alpha: "0.0", blur: "0px", image: DefaultBackground }),
+ *     // Define a prop "background" in A.
+ *     ...fwdProps("background"),
  *
  *     // ... more
  * });
  *
  * In A.vue <template>
- * // assuming that BackgroundComponent is the final consuming component:
- * <BackgroundComponent v-bind="fwd_background" />
- * // If BackgroundComponent also just forwards, use the usual syntax
- * <BackgroundComponent :background="fwd_background" />
+ * // assuming that BackgroundComponent is the final consuming component, use v-bind to destructure the object into the
+ * // properties to pass to the final component.
+ * <BackgroundComponent v-bind="fwdBindProps("background", $props, {alpha:0.5}) />
+ * // If BackgroundComponent also just forwards with the same name and you do not want to add defaults:
+ * // ... done automatically bye VUE:
+ * <BackgroundComponent v-bind="{ ...$props, ...$attrs }"/>
+ * // If BackgroundComponent consumes the prop with a different name or you want to add a default override:
+ * <BackgroundComponent :backgroundOptions="fwdBindProps("background", $props, {alpha:0.33}) />
  *
  * In B.vue that uses A
  * <A :background="{alpha: '0', image: myImage}" />
  *
  * @param {String} name The name of the property exported by the component using this
- * @param {Object} defaultValue - The default value.
  *
- * @return
+ * @return {Object} an unrollable list of properties and meta props that are used to store defaults
  */
-export function fwdProps(name, defaultValue = {}) {
-    let result = {};
-
+export function fwdProps(name) {
     if (!(typeof name === "string" || name instanceof String)) {
         throw new Error("Property-name must be a string. Got: " + typeof name);
     }
 
-    if (typeof defaultValue !== "object") {
-        throw new Error("Property-default must be an object. Got: " + typeof defaultValue);
-    }
-
-    // Generate the property exported to the outside world:
+    // Generate the property exported to the outside world. This helps vue to know that "name" is an accepted prop -
+    // this avoids those "unused prop" warnings.
+    let result = {};
     result[name] = {
         type: Object,
         required: false,
         default: {},
     };
 
-    // Generate the prop that will not be set by the component user. This defines the default.
-    result["fwd_" + name] = {
-        type: Object,
-        required: false,
-        // This uses the fact that the default function gets all passed props as parameter. We can merge the given value
-        // in the prop "name" with the defaults. The component can just v-bind="fwd_name" to forward everything,
-        // properly merged.
-        default: (p) => {
-            //console.log(p);
-            //console.log(p[name]);
-            return _.merge(defaultValue, p[name]);
-        },
-    };
-
     return result;
+}
+
+/**
+ * This takes a previously forwarded prop (@see fwdProp) and extends with custom default if they are not yet set.
+ *
+ * @param {String} name - Name of the property. Must be the same as the fwdProp name
+ * @param {Object} props - The VUE properties object (the one you defined via defineProps).
+ * @param {Object} [defaultValue] - The defaults to merge in.
+ * @throws {Error} - If the defaults are not an object
+ * @returns {Object} The object that contains a member per property as named in the original forwarded prop.
+ */
+export function fwdBindProps(name, props, defaultValue = {}) {
+    if (typeof defaultValue !== "object") {
+        throw new Error("Property-default must be an object. Got: " + typeof defaultValue);
+    }
+
+    return _.merge(defaultValue, props[name]);
 }

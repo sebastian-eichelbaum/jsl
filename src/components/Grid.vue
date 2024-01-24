@@ -25,15 +25,15 @@ A component that allows to define regular grids easily. This reflects some of th
 import { tt } from "@jsl/Localization";
 
 const props = defineProps({
-    // Width of a cell. Include units!
+    // Width of a cell. Include units! You can use percent to grow cells to a certain size of the enclosing container
     cellWidth: { type: String, default: "350px" },
-    // Height of a cell. Include units!
+    // Height of a cell. Include units! Use "auto" to make cells match the content height.
     cellHeight: { type: String, default: "350px" },
 
     // Gap between rows
-    rowGap: { type: String, default: "2rem" },
+    rowGap: { type: String, default: "1rem" },
     // Gap between cols
-    columnGap: { type: String, default: "2rem" },
+    columnGap: { type: String, default: "1rem" },
 
     // A grid that is smaller than the grid container horizontally, align or space out:
     // start, end, center, space-between, space-evenly, ...
@@ -62,6 +62,9 @@ const props = defineProps({
 
     // Height of the header row. If auto, it is scaled to the contents, including margins.
     headerHeight: { type: String, default: "auto" },
+
+    // Set the max width of the grid container. Handy in combination with cellWidth percentages.
+    maxWidth: { type: String, default: "unset" },
 });
 </script>
 
@@ -90,6 +93,8 @@ const props = defineProps({
 
     justify-items: v-bind("justifyItems");
     align-items: v-bind("alignItems");
+
+    max-width: v-bind(maxWidth);
 }
 
 .gridItem {

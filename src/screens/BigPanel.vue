@@ -22,7 +22,7 @@ import myImage from "@assets/myImage.png";
 -->
 
 <template>
-    <Background v-bind="fwd_background">
+    <Background v-bind="fwdBindProps('background', $props, { alpha: '0.0', blur: '0px', image: DefaultBackground })">
         <v-container class="fill-height ma-0 pa-0" fluid>
             <v-row class="fill-height" no-gutters>
                 <v-col xs="12" md="4" cols="12">
@@ -71,13 +71,13 @@ import LanguageButton from "@jsl/components/i18n/LanguageButton.vue";
 import MadeByCompany from "@jsl/components/MadeByCompany.vue";
 import LegalLinks from "@jsl/components/LegalLinks.vue";
 
-import { fwdProps } from "@jsl/utils/ForwardVueProps";
+import { fwdProps, fwdBindProps } from "@jsl/utils/ForwardVueProps";
 
 const { xs, mdAndUp } = useDisplay();
 
 const props = defineProps({
     // Forward some component props.
-    ...fwdProps("background", { alpha: "0.0", blur: "0px", image: DefaultBackground }),
+    ...fwdProps("background"),
 
     // Hide the language switch?
     hideLanguage: { type: Boolean, required: false, default: false },

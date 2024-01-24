@@ -9,7 +9,12 @@ A convenient wrapper around v-btn. It provides some more useful defaults like
 -->
 
 <template>
-    <v-btn :variant="variant" :rounded="rounded" :prepend-icon="icon" :icon="!withText">
+    <v-btn
+        :prepend-icon="icon"
+        :icon="!withText"
+        :style="{ 'justify-self': justifySelf, 'align-self': alignSelf }"
+        v-bind="{ ...$props, ...$attrs }"
+    >
         <v-icon v-if="!withText">{{ icon }}</v-icon>
 
         <span v-if="withText" :style="maxWidthStyle" class="text-truncate">
@@ -42,5 +47,10 @@ const props = defineProps({
 
     // Limit the width. Longer texts are shortened using a "..." ellipsis
     maxWidth: { default: null /* 100px */ },
+
+    // The self justify property if this is used in a grid or flex
+    justifySelf: { type: String, required: false, default: "unset" },
+    // The self align property if this is used in a grid or flex
+    alignSelf: { type: String, required: false, default: "unset" },
 });
 </script>

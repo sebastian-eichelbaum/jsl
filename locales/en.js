@@ -25,6 +25,7 @@ export const en = {
                 greet: "Hello {user}",
                 todo: "TODO: {what}",
                 sid: "This part of the application is still in development.",
+                devhint: "Developer Hint: {what}",
                 unknownError: "Unknown error. Guru code: {error}",
                 settingsExplanation: "Here, you will find all settings.",
                 settingsAndProfileExplanation: "Here, you will find your profile options and settings.",
@@ -40,6 +41,7 @@ export const en = {
                 inputPasswordTooWeak: "Password too weak: use mixed case, spaces, numbers and special characters.",
                 inputPasswordTooShort: "Password too short: min {min} characters",
                 inputPasswordsDoNotMatch: "Passwords do not match",
+                inputBlacklistedChar: 'Character not allowed: {chars}', // "char" is the offending char
             },
             ui: {
                 email: "Email",

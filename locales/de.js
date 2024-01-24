@@ -24,6 +24,7 @@ export const de = {
             msg: {
                 greet: "Hallo {user}",
                 todo: "TODO: {what}",
+                devhint: "Entwickler Hinweis: {what}",
                 sid: "Dieser Teil der Anwendung ist noch in Entwicklung.",
                 unknownError: "Unbekannter Fehler. Guru code: {error}.",
                 settingsExplanation: "Hier findest du alle Einstellungmöglichkeiten.",
@@ -41,6 +42,7 @@ export const de = {
                     "Passwort zu schwach: Nutze Groß-/Kleinschreibung, Leerzeichen, Zahlen und Sonderzeichen",
                 inputPasswordTooShort: "Passwort zu kurz: Min. {min} Zeichen",
                 inputPasswordsDoNotMatch: "Passwort stimmt nicht überein",
+                inputBlacklistedChar: 'Zeichen nicht erlaubt: {chars}', // "char" is the offending char
             },
             ui: {
                 email: "E-Mail",

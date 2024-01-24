@@ -12,7 +12,7 @@ This can be seen as an inspiration and tutorial on how to setup an app.
             <Multiplexer :selected="screen">
                 <template #auth>
                     <AppCloseButton />
-                    <BigPanel :background="fwd_authBackground">
+                    <BigPanel :background="authBackground">
                         <Authentfication :service="backend.user" titleAlign="center" />
                     </BigPanel>
                 </template>
@@ -32,7 +32,7 @@ import { ref, computed } from "vue";
 
 import { vuetify } from "@jsl/Vuetify";
 
-import { fwdProps } from "@jsl/utils/ForwardVueProps";
+import { fwdProps, fwdBindProps } from "@jsl/utils/ForwardVueProps";
 
 import InitOverlay from "@jsl/utils/InitOverlay.vue";
 import ScrollbarStyle from "@jsl/utils/ScrollbarStyle.vue";
@@ -55,6 +55,6 @@ const screen = computed(() => {
 
 const props = defineProps({
     // Forward all those nested component props
-    ...fwdProps("authBackground", {}),
+    ...fwdProps("authBackground"),
 });
 </script>

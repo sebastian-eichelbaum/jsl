@@ -100,7 +100,7 @@ export function makeBackgroundStyle(color, alpha, brightness, blur) {
         ") brightness(" +
         brightness +
         "); " +
-        "transition-property: backdrop-filter;" +
+        "transition-property: backdrop-filter, background-color;" +
         "transition-duration: 0.5s;"
     );
 }

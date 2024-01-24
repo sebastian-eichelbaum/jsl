@@ -319,6 +319,7 @@ export class Localization {
 
         return this.tc(msg.key, msg.details, ...args);
     }
+
     /**
      * Tries to translate and returns the value silently if not translatable.
      *
@@ -454,8 +455,8 @@ function resolve(msg, details = {}) {
         return new Translatable(msg.key, _.merge(msg.details, details));
     }
 
-    if (typeof msg === "string" || msg instanceof String) {
-        return new Translatable(msg, details);
+    if (msg == null || typeof msg === "string" || msg instanceof String) {
+        return new Translatable(msg || "", details);
     }
 
     const asString = msg?.toString();

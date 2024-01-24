@@ -86,8 +86,8 @@ export class Validations {
      */
     required(trim = true) {
         return (value) => {
-            if (!value) return this.m_handler("form.msg.inputRequired");
-            if (!value?.trim()) return this.m_handler("form.msg.inputRequired");
+            const v = trim ? value?.trim() : value;
+            if (!v) return this.m_handler("form.msg.inputRequired");
             return true;
         };
     }
@@ -97,13 +97,15 @@ export class Validations {
      * Use: :rules=[Validator.lengthMin(3),...]
      *
      * @param {Number} min the min length to satisfy
+     * @param {Boolean} trim - if true, trim before testing length
      *
      * @return {Function} that returns {Boolean|String}. True if valid or
      *     handler("form.msg.inputTooShort", min)
      */
-    lengthMin(min) {
+    lengthMin(min, trim = true) {
         return (value) => {
-            if (value?.length >= min) return true;
+            const v = trim ? value?.trim() : value;
+            if (v?.length >= min) return true;
             return this.m_handler("form.msg.inputTooShort", { min: min });
         };
     }
@@ -113,12 +115,14 @@ export class Validations {
      * Use: :rules=[Validator.lengthMax(3),...]
      *
      * @param {Number} max the max length to satisfy
+     * @param {Boolean} trim - if true, trim before testing length
      *
      * @return {Function} that returns {Boolean|String}. True if valid or
      *     handler("form.msg.inputTooLong", max)
      */
-    lengthMax(max) {
+    lengthMax(max, trim = true) {
         return (value) => {
+            const v = trim ? value?.trim() : value;
             if (value?.length <= max) return true;
             return this.m_handler("form.msg.inputTooLong", { max: max });
         };
@@ -130,12 +134,13 @@ export class Validations {
      *
      * @param {Number} min the min length to satisfy
      * @param {Number} max the max length to satisfy
+     * @param {Boolean} trim - if true, trim before testing length
      *
      * @return {Function} that returns {Boolean|String}. True if valid or
      *     handler("form.msg.inputTooShort") or handler("form.msg.inputTooLong")
      */
-    lengthRange(min, max) {
-        return (value) => Validations.combined(value, this.lengthMin(min), this.lengthMax(max));
+    lengthRange(min, max, trim = true) {
+        return (value) => Validations.combined(value, this.lengthMin(min, trim), this.lengthMax(max, trim));
     }
 
     /**
@@ -187,6 +192,32 @@ export class Validations {
         return (value) => {
             if (!value) return this.m_handler("form.msg.inputRequired");
             if (value !== other.toString()) return this.m_handler("form.msg.inputPasswordsDoNotMatch");
+            return true;
+        };
+    }
+
+    /**
+     * Allows to blacklist a set of chars.
+     *
+     * @param {Array} chars - An array of single-character strings. Each char is added to the blacklist.
+     * @returns {Function} that returns {Boolean|String}. True if valid or
+     *     - handler("form.msg.inputBlacklistedChar", {char:..., chars:... })
+     *
+     * @throws Error if the chars parameter is not an array of length-1 strings.
+     */
+    charBlacklist(chars) {
+        if (!Array.isArray(chars)) {
+            throw new Error("Character list must be an array");
+        }
+        if (!chars.every((c) => (typeof c === "string" || c instanceof String) && c.length == 1)) {
+            throw new Error("Each element in the character array must be a string of length 1.");
+        }
+
+        return (value) => {
+            for (const c of chars) {
+                if (value.includes(c))
+                    return this.m_handler("form.msg.inputBlacklistedChar", { char: c, chars: chars.toString() });
+            }
             return true;
         };
     }

@@ -3,6 +3,33 @@
  */
 export default class Iterate {
     /**
+     * Iterate all object properties
+     *
+     * @static
+     * @param {Object} iteratable - The object to iterate. If this is not an object, it is ognored.
+     * @param {Function} callback - The callback(name, value) that can retun a promise
+     * @returns {Promise} A promise that will resolve once all callbacks are done. @see instanceOf for a detailled
+     * explanation.
+     */
+    static properties(iteratable, callback) {
+        if (!(iteratable instanceof Object)) {
+            return Promise.all([]);
+        }
+
+        let promises = [];
+
+        for (const prop in iteratable) {
+            if (!Object.prototype.hasOwnProperty.call(iteratable, prop)) {
+                continue;
+            }
+
+            promises.push(callback(prop, iteratable[prop]));
+        }
+
+        return Promise.all(promises);
+    }
+
+    /**
      * Iterate over some iteratable and call for each instance of a given type. If no or not all elements match, this does
      * not complain or throw.
      *

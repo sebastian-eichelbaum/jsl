@@ -5,7 +5,7 @@ A flexible main screen default.
 -->
 
 <template>
-    <Background v-bind="fwd_background" v-if="useBackground">
+    <Background v-bind="fwdBindProps('background', $props, { blur: '40px', alpha: '0.1' })" v-if="useBackground">
         <v-container :class="{ 'fill-height': fillHeight }" v-bind="{ ...$props, ...$attrs }">
             <slot>{{ tt("common.msg.todo", { what: "default slot!" }) }}</slot>
         </v-container>
@@ -18,7 +18,7 @@ A flexible main screen default.
 <script setup>
 import { ref, reactive } from "vue";
 
-import { fwdProps } from "@jsl/utils/ForwardVueProps";
+import { fwdProps, fwdBindProps } from "@jsl/utils/ForwardVueProps";
 
 import { tt } from "@jsl/Localization";
 
@@ -26,7 +26,7 @@ import Background from "@jsl/components/Background.vue";
 
 const props = defineProps({
     // Forward all those nested component props
-    ...fwdProps("background", { blur: "40px", alpha: "0.1" }),
+    ...fwdProps("background"),
 
     // Enable the nice background? If not, the content is drawn directly
     useBackground: { type: Boolean, default: false },
@@ -35,4 +35,6 @@ const props = defineProps({
     // In most situations, this is not recommended
     fillHeight: { type: Boolean, default: false },
 });
+
+const bgProps = fwdBindProps("background", props, { blur: "40px", alpha: "0.1" });
 </script>
