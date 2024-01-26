@@ -35,6 +35,4 @@ const props = defineProps({
     // In most situations, this is not recommended
     fillHeight: { type: Boolean, default: false },
 });
-
-const bgProps = fwdBindProps("background", props, { blur: "40px", alpha: "0.1" });
 </script>

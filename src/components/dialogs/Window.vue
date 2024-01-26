@@ -72,6 +72,7 @@ const props = defineProps({
     greetBrightness: { type: Number, default: 0.66 },
 });
 
+// TODO: add background style?
 const windowTitleBG = computed(() => {
     return props.titleBackground || useTheme()?.jsl?.windowTitleBG || "black";
 });

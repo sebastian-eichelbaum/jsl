@@ -49,31 +49,20 @@ export class FirebaseApp extends Service {
      */
     constructor(config = {}) {
         super(_.merge(FirebaseApp.defaultConfig(), config || {}));
-
-        this.m_app = null;
     }
 
     /**
-     * Init firebase. Does not expect any context.
+     * Init firebase.
      *
-     * @param  args - The context that was provided to the backend config.
+     * @param  args - The backend ref and more. @see Backend.init for details.
      *
      * @return {Promise} The initialization promise.
      */
     async init(...args) {
         await super.init(...args);
 
-        this.m_app = initializeApp(this.config.api);
+        this._native = initializeApp(this.config.api);
         this._markReady();
-    }
-
-    /**
-     * Get the firebase App instance.
-     *
-     * @return {FirebaseApp} The firebase app implementation
-     */
-    get firebaseApp() {
-        return this.m_app;
     }
 }
 
@@ -99,7 +88,6 @@ export class FirebaseUserService extends UserService {
      */
     constructor(config = {}) {
         super(_.merge(FirebaseUserService.defaultConfig(), config || {}));
-        this.m_auth = null;
     }
 
     /**
@@ -113,10 +101,10 @@ export class FirebaseUserService extends UserService {
         await super.init(...args);
 
         // Init
-        this.m_auth = getAuth(this.context.firebaseApp);
+        this._native = getAuth(this.context.native);
         this._onLocaleUpdate();
 
-        onAuthStateChanged(this.firebaseAuth, (fbUser) => {
+        onAuthStateChanged(this.native, (fbUser) => {
             // On first auth update, mark the service ready
             this._markReady();
 
@@ -145,22 +133,13 @@ export class FirebaseUserService extends UserService {
     }
 
     /**
-     * Get the firebase auth instance.
-     *
-     * @return {Object} the firebase auth instance
-     */
-    get firebaseAuth() {
-        return this.m_auth;
-    }
-
-    /**
      * Get the user id of the currently authorized user. Null/undef if no user is
      * authorized.
      *
      * @return {String|undefined} The user id or nullish
      */
     get uid() {
-        return this.firebaseAuth?.currentUser?.uid;
+        return this.native?.currentUser?.uid;
     }
 
     /**
@@ -169,7 +148,7 @@ export class FirebaseUserService extends UserService {
      * @return {Boolean} true if logged in.
      */
     get isLoggedIn() {
-        return this.firebaseAuth?.currentUser != null;
+        return this.native?.currentUser != null;
     }
 
     /**
@@ -178,7 +157,7 @@ export class FirebaseUserService extends UserService {
     async login(email, password) {
         const data = await super.login(email, password);
 
-        await signInWithEmailAndPassword(this.firebaseAuth, data.email, data.password)
+        await signInWithEmailAndPassword(this.native, data.email, data.password)
             .then((userCredential) => {
                 // Load user info
             })
@@ -204,9 +183,9 @@ export class FirebaseUserService extends UserService {
     async signup(email, password, name, details) {
         const data = await super.signup(email, password, name, details);
 
-        await createUserWithEmailAndPassword(this.firebaseAuth, data.email, data.password)
+        await createUserWithEmailAndPassword(this.native, data.email, data.password)
             .then((userCredential) => updateProfile(userCredential.user, { displayName: data.name }))
-            .then(() => sendEmailVerification(this.firebaseAuth.currentUser))
+            .then(() => sendEmailVerification(this.native.currentUser))
             .catch((error) => {
                 switch (error.code) {
                     case "auth/email-already-in-use":
@@ -227,7 +206,7 @@ export class FirebaseUserService extends UserService {
     async recover(email) {
         const data = await super.recover(email);
 
-        await sendPasswordResetEmail(this.firebaseAuth, data.email).catch((error) => {
+        await sendPasswordResetEmail(this.native, data.email).catch((error) => {
             switch (error.code) {
                 case "auth/invalid-email":
                 case "auth/user-not-found":
@@ -244,7 +223,7 @@ export class FirebaseUserService extends UserService {
      */
     async logout() {
         await super.logout();
-        await signOut(this.firebaseAuth).catch((error) => {
+        await signOut(this.native).catch((error) => {
             console.error(error);
             throw new ServiceError(this, "logoutUnknownError", data, error);
         });
@@ -254,8 +233,8 @@ export class FirebaseUserService extends UserService {
      * Use the locale as language code in firebase
      */
     _onLocaleUpdate() {
-        if (this.firebaseAuth) {
-            this.firebaseAuth.languageCode = this.locale;
+        if (this.native) {
+            this.native.languageCode = this.locale;
         }
     }
 }

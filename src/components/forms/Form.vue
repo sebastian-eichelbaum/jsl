@@ -9,12 +9,31 @@ the chain, ok or failed HAS to be called. If not, the form stays busy forever.
 
 Example:
 
-<Form ... @submit="do">...</Form>
+<Form ... @submit="do">
+    // It is important that all fields use the model provided by the form.
+    // This ensures that the form can get and forward all values properly.
+    <template v-slot="{ busy, model }">
+        // use jsl Field. It is rather generic and provides some common title+prompt UI and gutter
+        <Field 
+            // Use the model and store the values in some property of the model
+            v-model="model.someName"
+            // The name (passed down to HTML) has to match the v-model property used
+            name="someName"
+        />
+        // OR: use your own
+        <v-text-field v-model
+            v-model="model.someName"
+            name="someName"
+        />
+    </template>
+</Form>
 
 async function do(state)
 {
-    // do the heavy lifting
+    // state.values contains the model values of all fields that used the model
+    // Make sure that all fields use the form-provided model!
     console.log(state.values);
+    
     // All good?
     state.ok({reset:false, ...}); // @see setState
     // Not good?
@@ -86,7 +105,7 @@ async function do(state)
 </template>
 
 <script setup>
-import { ref, reactive, computed, watch } from "vue";
+import { ref, reactive, computed, markRaw } from "vue";
 import _ from "lodash";
 
 import { Translatable, tt } from "@jsl/Localization";
@@ -154,9 +173,11 @@ const props = defineProps({
 });
 
 const emit = defineEmits([
-    // Triggered on valid submission. An object is passed that provides all values.
+    // Triggered on valid submission. An object is passed that provides all values. This is called once all fields
+    // comply to the given rules
     "submit",
-    // Triggered only when an invalid submission was done.  An object is passed that provides all values.
+    // Triggered only when an invalid submission was done. An object is passed that provides all values. Some of them
+    // might be nullish or did not pass the validation.
     "invalid",
 
     // Triggered on field value update
@@ -185,55 +206,92 @@ const isBusy = computed(() => {
 const _errorMsg = ref();
 
 async function submit(submitEvent) {
-    setState({ busy: true });
+    try {
+        setState({ busy: true });
 
-    // This is necessary to ensure a validation is done in any case.
-    await form.value.validate();
+        // This is necessary to ensure a validation is done in any case.
+        await form.value.validate();
 
-    // Generate an object containing each item by name, its value and some state info
-    const valuesOf = (srcitems) => {
-        let items = {};
-        let values = {};
-        let valid = true;
-        srcitems.forEach((item) => {
-            valid = valid && item.isValid === true;
-            values[item.id] = submitEvent.target.elements[item.id].value;
-            items[item.id] = {
-                valid: item.isValid === true,
-                value: values[item.id],
-                component: item,
-                reset: item.reset,
-            };
-        });
-        return { valid: valid, items: items, values: values };
-    };
-    let result = valuesOf(form.value.items);
+        // Generate an object containing each item by name, its value and some state info
+        const valuesOf = (srcitems) => {
+            let items = {};
+            let values = {};
+            let valid = true;
+            srcitems.forEach((item) => {
+                valid = valid && item.isValid === true;
 
-    // Not supported everywhere yet
-    // const {promise, resolve, reject } = Promise.withResolvers();
-    // Alternative:
-    let resolve, reject;
-    const promise = new Promise((res, rej) => {
-        resolve = res;
-        reject = rej;
-    });
+                // inputs that are not plain text will not provide "value"
+                // We prefer the form model value for this item if it exists.
+                values[item.id] = valuesModel?.value?.[item.id] || submitEvent.target.elements[item.id].value;
 
-    result["ok"] = resolve;
-    result["failed"] = reject;
+                items[item.id] = {
+                    valid: item.isValid === true,
+                    value: values[item.id],
+                    component: item,
+                    reset: item.reset,
+                };
+            });
+            return { valid: valid, items: items, values: values };
+        };
+        let result = valuesOf(form.value.items);
 
-    if (result.valid) {
-        emit("submit", result);
-    } else {
-        emit("invalid", result);
-    }
+        // For debugging, print those model values, derived values, ...
+        // console.log(submitEvent);
+        // console.log(valuesModel.value);
+        // console.log(result);
+        // await new Promise((resolve) => setTimeout(resolve, 100000));
 
-    await promise
-        .then((newState) => {
-            setState(_.merge({ reset: !noAutoReset, busy: false, busyDelay: 0, error: null }, newState));
+        // Not supported everywhere yet
+        // const {promise, resolve, reject } = Promise.withResolvers();
+        // Alternative:
+        let resolve, reject;
+        const promise = new Promise((res, rej) => {
+            resolve = res;
+            reject = rej;
         })
-        .catch((newState) => {
-            setState(_.merge({ reset: false, busy: false, busyDelay: 500, error: null }, newState));
+            .then((newState) => {
+                setState(_.merge({ reset: !props.noAutoReset, busy: false, busyDelay: 0, error: null }, newState));
+            })
+            .catch((newState) => {
+                setState(
+                    _.merge(
+                        {
+                            reset: false,
+                            busy: false,
+                            // Be sure that invalid forms do not necessarily cause the busy overlay
+                            busyDelay: result.valid ? 500 : 0,
+                            error: null,
+                        },
+                        newState,
+                    ),
+                );
+            });
+
+        result["ok"] = resolve;
+        result["failed"] = reject;
+
+        if (result.valid) {
+            emit("submit", result);
+        } else {
+            emit("invalid", result);
+        }
+
+        // Finally, wait for this promise. 
+        await promise;
+    } catch (e) {
+        // This will catch any issues with the form-value magic. The promise that is passed using the emits already
+        // catches
+        setState({
+            busy: false,
+            busyDelay: 100,
+            error: "common.msg.unknownError",
+            errorDetail: { error: e },
         });
+
+        // It does not matter if we rethrow or not. Nobody will be able to catch and handle it.
+        // throw e;
+        console.error("Error during form submission", e);
+    }
 }
 
 /**

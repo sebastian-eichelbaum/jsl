@@ -86,7 +86,8 @@ export class Validations {
      */
     required(trim = true) {
         return (value) => {
-            const v = trim ? value?.trim() : value;
+            // This ensures that non-strings also check, even if trim is not defined 
+            const v = trim ? value?.trim?.() || value : value;
             if (!v) return this.m_handler("form.msg.inputRequired");
             return true;
         };

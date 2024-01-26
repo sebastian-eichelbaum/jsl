@@ -21,13 +21,14 @@
         color="#aaaaaa88"
         vertical
     ></v-divider>
-    <QuitDialog v-model="dialog" variant="evenly" @yes="close" />
+    <QuitDialog v-model="dialog" @yes="close" />
 </template>
 
 <script setup>
 import { ref } from "vue";
 
 import { platform } from "@jsl/Platform";
+
 import QuitDialog from "@jsl/components/dialogs/QuitDialog.vue";
 
 const props = defineProps({

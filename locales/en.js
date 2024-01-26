@@ -16,10 +16,12 @@ export const en = {
                 settings: "Settings",
                 profile: "Profile",
                 options: "Options",
+                abort: "Abort",
             },
             prompt: {
                 areYouSure: "Are you sure?",
                 areYouSureToQuit: "Are you sure you want to quit?",
+                areYouSureToAbort: "Are you sure you want to abort?",
             },
             msg: {
                 greet: "Hello {user}",
@@ -29,6 +31,8 @@ export const en = {
                 unknownError: "Unknown error. Guru code: {error}",
                 settingsExplanation: "Here, you will find all settings.",
                 settingsAndProfileExplanation: "Here, you will find your profile options and settings.",
+                unsavedChangesWillBeLost: "Unsaved changes will be lost!",
+                noDataAvailable: "No data available.",
             },
         },
 
@@ -41,7 +45,7 @@ export const en = {
                 inputPasswordTooWeak: "Password too weak: use mixed case, spaces, numbers and special characters.",
                 inputPasswordTooShort: "Password too short: min {min} characters",
                 inputPasswordsDoNotMatch: "Passwords do not match",
-                inputBlacklistedChar: 'Character not allowed: {chars}', // "char" is the offending char
+                inputBlacklistedChar: "Character not allowed: {chars}", // "char" is the offending char
             },
             ui: {
                 email: "Email",
@@ -88,7 +92,7 @@ export const en = {
                 login: "Login using your Email address and your password.",
                 signup: "Sign-up using your Email address.",
                 passwordReset: "Reset your password via Email. Follow the instructions in the sent e-mail.",
-                
+
                 areYouSureToLogout: "Are you sure you want to logout?",
             },
         },

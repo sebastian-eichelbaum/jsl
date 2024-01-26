@@ -36,8 +36,9 @@ export class Service {
      */
     constructor(config = {}) {
         this.m_config = _.merge(Service.defaultConfig(), config);
-        this.m_context = null;
+        this.m_backend = null;
         this.m_ready = false;
+        this.m_client = null;
     }
 
     /**
@@ -55,17 +56,50 @@ export class Service {
      * @return {any} The context
      */
     get context() {
-        return this.m_context;
+        return this.backend.context;
     }
+
+    /**
+     * The backend reference that created this service.
+     *
+     * @returns {Backend} The backend instance.
+     */
+    get backend() {
+        return this.m_backend;
+    }
+
+    /**
+     * Get the native context if any (i.e. the SDK specific classes) - the native implementation of the thing that
+     * represents the entry point to the backend service.
+     *
+     * @return {Object} The instantiated real backend implementation.
+     */
+    get native() {
+        return this.m_client;
+    }
+
+    /**
+     * Set the native client instance. Call this in your implementation. You can overwrite the value as some SDKs
+     * compose their client in multuple steps
+     *
+     * @param {any} value - The client instance
+     */
+    set _native(value) {
+        this.m_client = value;
+    }
+
     /**
      * Initialize the service. Managed by the Backend instance.
      *
-     * @param {any} context - The context that was provided to the backend config.
+     * @param {any} backend - The backend that manages this instance.
      *
      * @return {Promise} Async promise
      */
-    async init(context) {
-        this.m_context = context;
+    async init(backend) {
+        if (backend == null) {
+            throw new Error("No backend given while initializing a service.");
+        }
+        this.m_backend = backend;
     }
 
     /**
@@ -262,7 +296,7 @@ export class UserService extends Service {
     /**
      * Create the backend service.
      *
-     * @param {Object} config - The config as in @see Service.defaultConfig.
+     * @param {Object} config - The config as in @see UserService.defaultConfig.
      *     Merged with the default.
      */
     constructor(config = {}) {
@@ -378,6 +412,78 @@ export class UserService extends Service {
     }
 }
 
+/**
+ * Provides common DB functionality.
+ *
+ * TODO: this is currently an empty interface.
+ */
+export class DatabaseService extends Service {
+    /**
+     * Default configuration
+     */
+    static defaultConfig() {
+        return {
+            ...{
+                // ?
+            },
+            ...Service.defaultConfig(),
+        };
+    }
+
+    /**
+     * Create the backend service.
+     *
+     * @param {Object} config - The config as in @see DatabaseService.defaultConfig.
+     *     Merged with the default.
+     */
+    constructor(config = {}) {
+        super(_.merge(DatabaseService.defaultConfig(), config || {}));
+    }
+
+    /**
+     * The set of options that are supported for searching a collection by all backends.
+     *
+     * @returns {Object} default search options
+     */
+    static defaultSearchOptions() {
+        return {
+            // Limit the search results.
+            limit: 100,
+        };
+    }
+
+    /**
+     * Search a given collection for anything that contains any of the given words. This is perfect for fuzzy matching
+     * in a collection based on a set of words.
+     *
+     * @async
+     * @param {String} collection - The collection name to search in
+     * @param {Array<String>} fields - A set of fields to search in, at least one
+     * @param {Array<String>} words - A set of words to search in the fields using case-insensitive matching. At least
+     * one.
+     * @param {Object} [options] - The search options as defined in @see defaultSearchOptions
+     * @returns {Promise<Array<Object>>} The results as list of objects
+     */
+    async search(collection, fields, words, options = {}) {
+        if (!(typeof collection === "string" || collection instanceof String) || !collection) {
+            throw new Error("Collection must be given as string");
+        }
+        if (!Array.isArray(fields) || fields.length < 1) {
+            throw new Error("Fields must be given as non-empty array");
+        }
+        if (!Array.isArray(words) || words.length < 1) {
+            throw new Error("Words must be given as non-empty array");
+        }
+
+        return this._search(collection, fields, words, _.merge(DatabaseService.defaultSearchOptions(), options || {}));
+    }
+
+    // Implement this
+    async _search(...args) {
+        throw new Error("Abstract function called.");
+    }
+}
+
 // A wrapper around common backend tasks.
 export class Backend {
     /**
@@ -457,20 +563,21 @@ export class Backend {
      * @return {Promise} Async promise
      */
     async init() {
-        if (this.isInitialized) {
+        if (this.m_isInitialized) {
             return;
         }
+        this.m_isInitialized = true;
 
         // Init the contexts
         await Iterate.instancesOf(Service, this.config.context, async (item) => {
-            await item.init();
+            await item.init(this);
         }).catch((error) => {
             this.m_initError = error;
             throw error;
         });
 
         await Iterate.instancesOf(Service, this.services, async (item) => {
-            await item.init(this.config.context);
+            await item.init(this);
         }).catch((error) => {
             this.m_initError = error;
             throw error;
@@ -493,6 +600,15 @@ export class Backend {
      */
     get user() {
         return this.services?.user;
+    }
+
+    /**
+     * The backend database service, if any.
+     *
+     * @returns {DatabaseService} The service or null
+     */
+    get database() {
+        return this.services?.database;
     }
 
     /**
@@ -551,6 +667,26 @@ export class Backend {
         Iterate.instancesOf(Service, this.services, (item) => {
             item.locale = this.locale;
         });
+    }
+
+    /**
+     * Get the native context if any (i.e. DirectusClient, FirebaseApp, ....) - the native implementation of the thing that
+     * represents the entry point to the backend service.
+     *
+     * @return {Object} The instantiated real backend implementation. For example, the firebase app as provided by
+     * google, the directus client as provided by their sdk, ....
+     */
+    get native() {
+        return this.m_config.context.native;
+    }
+
+    /**
+     * The context that was given while constructing the backend.
+     *
+     * @returns {any} The context or undefined/null
+     */
+    get context() {
+        return this.config.context;
     }
 }
 

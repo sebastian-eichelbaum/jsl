@@ -10,10 +10,11 @@ A convenient wrapper around v-btn. It provides some more useful defaults like
 
 <template>
     <v-btn
+        v-bind="{ ...$props, ...$attrs }"
         :prepend-icon="icon"
         :icon="!withText"
         :style="{ 'justify-self': justifySelf, 'align-self': alignSelf }"
-        v-bind="{ ...$props, ...$attrs }"
+        :text="undefined"
     >
         <v-icon v-if="!withText">{{ icon }}</v-icon>
 

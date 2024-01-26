@@ -16,10 +16,12 @@ export const de = {
                 settings: "Einstellungen",
                 profile: "Profil",
                 options: "Optionen",
+                abort: "Abbrechen",
             },
             prompt: {
                 areYouSure: "Bist du sicher?",
                 areYouSureToQuit: "Bist du sicher, dass du beenden willst?",
+                areYouSureToAbort: "Bist du sicher, dass du abbrechen willst?",
             },
             msg: {
                 greet: "Hallo {user}",
@@ -29,6 +31,8 @@ export const de = {
                 unknownError: "Unbekannter Fehler. Guru code: {error}.",
                 settingsExplanation: "Hier findest du alle Einstellungmöglichkeiten.",
                 settingsAndProfileExplanation: "Hier findest du deine Profiloptionen and Einstellungen.",
+                unsavedChangesWillBeLost: "Ungespeicherte Änderungen gehen verloren!",
+                noDataAvailable: "Keine Daten vorhanden.",
             },
         },
 

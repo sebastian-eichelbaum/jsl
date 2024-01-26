@@ -34,6 +34,7 @@ function onOK(result)
         </template>
 
         <template #___done>
+            <!-- Show the steps and their results as JSON -->
             <slot name="done" :result="_steps">
                 {{ _steps }}
             </slot>

@@ -55,13 +55,19 @@ export function fwdProps(name) {
  *
  * @param {String} name - Name of the property. Must be the same as the fwdProp name
  * @param {Object} props - The VUE properties object (the one you defined via defineProps).
- * @param {Object} [defaultValue] - The defaults to merge in.
+ * @param {Object} [defaultValue] - The defaults to merge in. IF this is a function it has to return the defaults. Very
+ *  handy to make defaults dependent on other props.
+ *  (allProps, fwdProps) =>{ return {myDefaults:false}; }
  * @throws {Error} - If the defaults are not an object
  * @returns {Object} The object that contains a member per property as named in the original forwarded prop.
  */
 export function fwdBindProps(name, props, defaultValue = {}) {
+    if (typeof defaultValue === "function") {
+        return _.merge(defaultValue(props, props[name]), props[name]);
+    }
+
     if (typeof defaultValue !== "object") {
-        throw new Error("Property-default must be an object. Got: " + typeof defaultValue);
+        throw new Error("Property-default must be an object or function. Got: " + typeof defaultValue);
     }
 
     return _.merge(defaultValue, props[name]);
