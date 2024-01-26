@@ -11,8 +11,8 @@ Slots:
 
 Example: 
 
-<ActionForm or Form
-    ... // see jsl ActionForm
+<Form
+    ... // see jsl Form
 >
     <template v-slot="{ busy, model }">
         <Field
@@ -30,7 +30,7 @@ Example:
 
         </Field>
     </template>
-</ActionForm>
+</Form>
 -->
 
 <template>

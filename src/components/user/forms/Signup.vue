@@ -5,7 +5,6 @@ A specialization of @jsl/components/forms/Authentication.vue geared towards LOGI
 <template>
     <Authentication
         @submit="onSubmit"
-        @invalid="onInvalid"
         requireEmail
         requireName
         requireNewPassword
@@ -37,18 +36,12 @@ const emit = defineEmits([
     // The user filled and submitted the form. The form state struct, as created in
     // @jsl/components/forms/Form.vue is passed.
     "submit",
-    // Triggered if the user submitted an invalid form. The form state struct, as created in
-    // @jsl/components/forms/Form.vue is passed.
-    "invalid",
 
     // Also: @jsl/components/forms/Authentication.vue
 ]);
 
-function onInvalid(state) {
-    emit("invalid", { type: "signup", ...state });
-}
-
 function onSubmit(state) {
-    emit("submit", { type: "signup", ...state });
+    state.type = "signup";
+    emit("submit", state);
 }
 </script>

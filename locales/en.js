@@ -46,6 +46,8 @@ export const en = {
                 inputPasswordTooShort: "Password too short: min {min} characters",
                 inputPasswordsDoNotMatch: "Passwords do not match",
                 inputBlacklistedChar: "Character not allowed: {chars}", // "char" is the offending char
+                
+                inputNotValidated: "Correct the highlighted fields",
             },
             ui: {
                 email: "Email",

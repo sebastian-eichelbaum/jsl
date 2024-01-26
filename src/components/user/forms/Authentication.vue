@@ -9,18 +9,20 @@ The unnamed slot can be used to customize the submit button.
 
 <template>
     <Form :title="title" :prompt="prompt" v-bind="{ ...$props, ...$attrs }" asRow :row="{ noGutters: !larger }">
-        <template v-slot="{ busy }">
+        <template v-slot="{ busy, model }">
             <v-col cols="12" :class="{ 'mb-2': !larger }" v-if="requireName">
-                <Name :label="nameLabel" />
+                <Name v-model="model.name" name="name" :label="nameLabel" />
             </v-col>
             <v-col cols="12" :class="{ 'mb-2': !larger }" v-if="requireCompany">
-                <Company optional :label="companyLabel" />
+                <Company optional v-model="model.company" name="company" :label="companyLabel" />
             </v-col>
             <v-col cols="12" :class="{ 'mb-2': !larger }" v-if="requireEmail">
-                <Email v-model="emailModel" :label="emailLabel" />
+                <Email v-model="model.email" name="email" :label="emailLabel" />
             </v-col>
-            <v-col cols="12" :class="{ 'mb-0': !larger }" v-if="requirePassword || requireNewPassword">
+            <v-col cols="12" :class="{ 'mb-2': !larger }" v-if="requirePassword || requireNewPassword">
                 <Password
+                    v-model="model.password"
+                    name="password"
                     :label="passwordLabel"
                     :confirmLabel="passwordConfirmLabel"
                     :requireNewPassword="requireNewPassword"
@@ -28,53 +30,48 @@ The unnamed slot can be used to customize the submit button.
                     :newPasswordLength="newPasswordLength"
                 />
             </v-col>
-            <v-col class="text-left" align="center" align-self="center" cols="9" :class="{ 'mt-3': !larger }">
-                <v-row no-gutters>
-                    <v-col cols="12" v-if="offerLogin">
-                        <v-btn
-                            @click="onLoginRequest"
-                            variant="text"
-                            rounded="xl"
-                            size="small"
-                            prepend-icon="mdi-account"
-                            :disabled="busy"
-                        >
-                            {{ localization.tt(offerLoginLabel) }}
-                        </v-btn>
-                    </v-col>
+        </template>
+        <template v-slot:footerStart="{ busy, model }">
+            <v-row no-gutters>
+                <v-col cols="12" v-if="offerLogin">
+                    <v-btn
+                        @click="onLoginRequest"
+                        variant="text"
+                        rounded="xl"
+                        size="small"
+                        prepend-icon="mdi-account"
+                        :disabled="busy"
+                    >
+                        {{ localization.tt(offerLoginLabel) }}
+                    </v-btn>
+                </v-col>
 
-                    <v-col cols="12" v-if="offerSignup">
-                        <v-btn
-                            @click="onSignupRequest"
-                            variant="text"
-                            rounded="xl"
-                            size="small"
-                            prepend-icon="mdi-account-plus"
-                            :disabled="busy"
-                        >
-                            {{ localization.tt(offerSignupLabel) }}
-                        </v-btn>
-                    </v-col>
+                <v-col cols="12" v-if="offerSignup">
+                    <v-btn
+                        @click="onSignupRequest"
+                        variant="text"
+                        rounded="xl"
+                        size="small"
+                        prepend-icon="mdi-account-plus"
+                        :disabled="busy"
+                    >
+                        {{ localization.tt(offerSignupLabel) }}
+                    </v-btn>
+                </v-col>
 
-                    <v-col cols="12" v-if="offerRecover">
-                        <v-btn
-                            @click="onRecoverRequest"
-                            variant="text"
-                            rounded="xl"
-                            size="small"
-                            prepend-icon="mdi-account-question"
-                            :disabled="busy"
-                        >
-                            {{ localization.tt(offerRecoverLabel) }}
-                        </v-btn>
-                    </v-col>
-                </v-row>
-            </v-col>
-            <v-col class="text-right" align="center" align-self="center" cols="3" :class="{ 'mt-3': !larger }">
-                <slot>
-                    <SubmitButton :loading="busy" :text="submitText" :color="submitColor" :icon="submitIcon"
-                /></slot>
-            </v-col>
+                <v-col cols="12" v-if="offerRecover">
+                    <v-btn
+                        @click="onRecoverRequest"
+                        variant="text"
+                        rounded="xl"
+                        size="small"
+                        prepend-icon="mdi-account-question"
+                        :disabled="busy"
+                    >
+                        {{ localization.tt(offerRecoverLabel) }}
+                    </v-btn>
+                </v-col>
+            </v-row>
         </template>
     </Form>
 </template>
@@ -164,9 +161,6 @@ const emit = defineEmits([
 
     // ALSO: emits by @jsl/components/forms/Form.vue
 ]);
-
-// Email value. Use this to sync email between multiple forms
-const emailModel = defineModel();
 
 function onRecoverRequest() {
     emit("requestRecover");

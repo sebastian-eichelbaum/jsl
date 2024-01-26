@@ -43,18 +43,24 @@ import Multiplexer from "@jsl/components/Multiplexer.vue";
 
 import Authentfication from "@jsl/views/Authentication.vue";
 
-import { backend } from "@jsl/Backend";
+import { UserService, backend } from "@jsl/Backend";
 
+const props = defineProps({
+    // The user service to utilize
+    userService: { type: UserService, default: null },
+
+    // Forward all those nested component props
+    ...fwdProps("authBackground"),
+});
+
+const userBackend = props.userService || backend?.user;
 const screen = computed(() => {
-    if (backend.user) {
-        return backend.user.user?.isLoggedIn ? "main" : "auth";
+    if (userBackend) {
+        return userBackend.user?.isLoggedIn ? "main" : "auth";
     }
 
     return "main";
 });
 
-const props = defineProps({
-    // Forward all those nested component props
-    ...fwdProps("authBackground"),
-});
+
 </script>

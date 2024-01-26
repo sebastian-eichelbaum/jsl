@@ -10,7 +10,7 @@ Slots:
 
 
 Example:
-<Form or ActionForm ...>
+<Form ...>
     // You must use the provided model - see jsl Form for details
     <template v-slot="{ busy, model }">
         <Field

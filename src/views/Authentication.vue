@@ -8,7 +8,7 @@
 
         <template #login>
             <Login
-                v-model="emailModel"
+                v-model="model"
                 @submit="onSubmit"
                 @requestSignup="onRequestSignup"
                 @requestRecover="onRequestRecover"
@@ -17,7 +17,7 @@
         </template>
         <template #signup>
             <Signup
-                v-model="emailModel"
+                v-model="model"
                 @submit="onSubmit"
                 @requestLogin="onRequestLogin"
                 @requestRecover="onRequestRecover"
@@ -26,7 +26,7 @@
         </template>
         <template #recover>
             <Recover
-                v-model="emailModel"
+                v-model="model"
                 @submit="onSubmit"
                 @requestLogin="onRequestLogin"
                 @requestSignup="onRequestSignup"
@@ -38,7 +38,9 @@
 
 <script setup>
 import { ref, computed } from "vue";
+
 import { UserService } from "@jsl/Backend";
+import { tt, Translatable } from "@jsl/Localization";
 
 import Multiplexer from "@jsl/components/Multiplexer.vue";
 import Login from "@jsl/components/user/forms/Login.vue";
@@ -50,20 +52,19 @@ const screen = ref("");
 const props = defineProps({
     // The initial screen. "login", "signup", "recover"
     initialScreen: { type: String, required: false, default: "login" },
+
+    // The user service to utilize
     service: { type: UserService, required: true },
 });
 
-const emailModel = ref();
+const model = ref();
 
 async function onSubmit(state) {
-    if (props.service == null) {
-        state.formErrorMsg({ key: "common.msg.unknownError", error: "service is null" });
-    }
+    await state.action(async (state) => {
+        if (props.service == null) {
+            throw new Error("Service is null");
+        }
 
-    state.formBusy(true);
-
-    // Choose one of the ops
-    const handle = async (state) => {
         switch (state.type) {
             case "login":
                 await props.service.login(state.values.email, state.values.password);
@@ -80,18 +81,7 @@ async function onSubmit(state) {
             default:
                 throw new Error("Unknown auth type");
         }
-    };
-
-    await handle(state)
-        .then(() => {
-            state.formBusy(false);
-            state.formReset();
-        })
-        .catch((error) => {
-            state.formBusy(false, 500);
-            console.error(error);
-            state.formErrorMsg(error);
-        });
+    });
 }
 
 function onRequestLogin() {

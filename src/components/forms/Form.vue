@@ -1,11 +1,23 @@
 <!--
-A form template that provides quite some customization points as well as the base form and value validation logic.
+A form template that provides quite some customization points as well as the base form and value validation logic. 
 
-* The anonymous slot forwards the disabled and loading properties. Use them in your component if needed.
+Forms are used to collect data, not to perform operations. Always create a second component that does the actual stuff.
 
-This is only a view. It does not provide any control logic. Subscribe to the emitted events and act accordingly.
--> the @submit handler gets a struct that represents the sate. It provides a function "ok" and "failed". Somewhere in
-the chain, ok or failed HAS to be called. If not, the form stays busy forever.
+Slots:
+
+* anonymous slot: { busy, model } - use to fill the form with fields. NOTE: you HAVE to use the provided model to make
+                  the automatic value collection work properly. See example below!
+* footer: { busy, model } - The area below the contents. If overwritten, you have to provide your own SubmitButton
+* footerStart: { busy, model } - if the footer slot is not overwritten, this is the left side of the footer. Empty by
+               default.
+* footerEnd: { busy, model } - if the footer slot is not overwritten, this is the right side of the footer and provides
+             a submit button by default.
+
+Emits:
+
+@submit(formState) - When the form is valid and the user submitted it.
+@ok(formState, result) - Once the action has completed successfully .
+@failed(formState, error) - If an action on a submitted form failed.
 
 Example:
 
@@ -26,6 +38,9 @@ Example:
             name="someName"
         />
     </template>
+
+    // There are more slots: footerStart, footerEnd, footer - a default submit button is present in the footer.
+    // If you want to keep the default submit button but add something at footer-left, use the footerStart slot.
 </Form>
 
 async function do(state)
@@ -34,10 +49,21 @@ async function do(state)
     // Make sure that all fields use the form-provided model!
     console.log(state.values);
     
-    // All good?
-    state.ok({reset:false, ...}); // @see setState
-    // Not good?
-    state.failed({error:"Damn!"});
+    // DO NOT handle the form directly. There is a safely wrapped callback that, if you throw, shows a nice error and
+    // puts the form in a defined error state.
+    state.action( 
+        // Custom  handler, OR: provide this handler via the submitAction property of the form
+        async (state) => {
+        
+        if(state.damn)
+        {
+            // Throw errors, BUT: for known errors, provide a Translatable! It will be shown in the form.
+            throw tt("common.msg.greet", {user: 'Hans'})
+        }
+
+        await api(); // if this fails, the form handles the error nicely. You might want to consider translating API
+                     // specific errors to some Translatable or string.
+    });
 }
 -->
 
@@ -54,7 +80,7 @@ async function do(state)
                     </p>
                 </v-col>
                 <v-col cols="12">
-                    <Error v-if="alertPosition == 'aboveForm'" v-bind="alertProps" :message="_errorMsg" />
+                    <FormError v-if="alertPosition == 'aboveForm'" v-bind="alertProps" :message="_errorMsg" />
 
                     <v-form :disabled="noBusyOverlay && isBusy" validate-on="input" @submit.prevent="submit" ref="form">
                         <!-- Define a full width default grid. To override, provide grid props as property "grid" -->
@@ -71,9 +97,27 @@ async function do(state)
                                 {{ tt("common.msg.todo", { what: "default slot!" }) }}
                             </slot>
 
-                            <Error v-if="alertPosition == 'aboveFooter'" v-bind="alertProps" :message="_errorMsg" />
-                            <slot name="footer" :busy="noBusyOverlay && isBusy" />
-                            <Error v-if="alertPosition == 'belowFooter'" v-bind="alertProps" :message="_errorMsg" />
+                            <FormError v-if="alertPosition == 'aboveFooter'" v-bind="alertProps" :message="_errorMsg" />
+                            <slot name="footer" :busy="noBusyOverlay && isBusy" :model="valuesModel">
+                                <v-row style="align-content: center">
+                                    <v-col align="start">
+                                        <slot name="footerStart" :busy="noBusyOverlay && isBusy" :model="valuesModel">
+                                        </slot>
+                                    </v-col>
+                                    <v-spacer />
+                                    <v-col align="end">
+                                        <slot name="footerEnd" :busy="noBusyOverlay && isBusy" :model="valuesModel">
+                                            <SubmitButton
+                                                :loading="busy"
+                                                :text="submitText"
+                                                :color="submitColor"
+                                                :icon="submitIcon"
+                                            />
+                                        </slot>
+                                    </v-col>
+                                </v-row>
+                            </slot>
+                            <FormError v-if="alertPosition == 'belowFooter'" v-bind="alertProps" :message="_errorMsg" />
                         </Grid>
                         <v-row v-else-if="asRow" v-bind="row">
                             <slot :busy="noBusyOverlay && isBusy" :model="valuesModel">
@@ -82,22 +126,42 @@ async function do(state)
 
                             <!-- NOTE: do not make an assumption on how the user designs its footer. DO NOT wrap this in
                             v-col! Users might want to split the footer, align it, ... They provide the v-col. -->
-                            <Error v-if="alertPosition == 'aboveFooter'" v-bind="alertProps" :message="_errorMsg" />
-                            <slot name="footer" :busy="noBusyOverlay && isBusy" />
-                            <Error v-if="alertPosition == 'belowFooter'" v-bind="alertProps" :message="_errorMsg" />
+                            <FormError v-if="alertPosition == 'aboveFooter'" v-bind="alertProps" :message="_errorMsg" />
+                            <slot name="footer" :busy="noBusyOverlay && isBusy" :model="valuesModel">
+                                <v-row style="align-content: center">
+                                    <v-col align="start">
+                                        <slot name="footerStart" :busy="noBusyOverlay && isBusy" :model="valuesModel">
+                                        </slot>
+                                    </v-col>
+                                    <v-spacer />
+                                    <v-col align="end">
+                                        <slot name="footerEnd" :busy="noBusyOverlay && isBusy" :model="valuesModel">
+                                            <SubmitButton
+                                                :loading="busy"
+                                                :text="submitText"
+                                                :color="submitColor"
+                                                :icon="submitIcon"
+                                            />
+                                        </slot>
+                                    </v-col>
+                                </v-row>
+                            </slot>
+                            <FormError v-if="alertPosition == 'belowFooter'" v-bind="alertProps" :message="_errorMsg" />
                         </v-row>
                         <template v-else>
                             <slot :busy="noBusyOverlay && isBusy" :model="valuesModel">
                                 {{ tt("common.msg.todo", { what: "default slot!" }) }}
                             </slot>
 
-                            <Error v-if="alertPosition == 'aboveFooter'" v-bind="alertProps" :message="_errorMsg" />
-                            <slot name="footer" :busy="noBusyOverlay && isBusy" />
-                            <Error v-if="alertPosition == 'belowFooter'" v-bind="alertProps" :message="_errorMsg" />
+                            <FormError v-if="alertPosition == 'aboveFooter'" v-bind="alertProps" :message="_errorMsg" />
+                            <slot name="footer" :busy="noBusyOverlay && isBusy" :model="valuesModel">
+                                {{ tt("common.msg.todo", { what: "footer slot!" }) }}
+                            </slot>
+                            <FormError v-if="alertPosition == 'belowFooter'" v-bind="alertProps" :message="_errorMsg" />
                         </template>
                     </v-form>
 
-                    <Error v-if="alertPosition == 'belowForm'" v-bind="alertProps" :message="_errorMsg" />
+                    <FormError v-if="alertPosition == 'belowForm'" v-bind="alertProps" :message="_errorMsg" />
                 </v-col>
             </v-row>
         </BusyOverlay>
@@ -114,7 +178,9 @@ import { fwdProps, fwdBindProps } from "@jsl/utils/ForwardVueProps";
 import BusyOverlay from "@jsl/components/BusyOverlay.vue";
 import Grid from "@jsl/components/Grid.vue";
 
-import Error from "@jsl/components/forms/Error.vue";
+import SubmitButton from "@jsl/components/forms/SubmitButton.vue";
+
+import FormError from "@jsl/components/forms/Error.vue";
 
 const props = defineProps({
     // Title text. Hides the column if empty
@@ -135,6 +201,15 @@ const props = defineProps({
     promptClass: { type: String, required: false, default: "text-justify" },
     // Prompt style to add.
     promptStyle: { type: String, required: false, default: "" },
+
+    // Icon to use for the default submit button
+    submitIcon: { type: String, required: false, default: "mdi-check" },
+    // Button color to use for the default submit button
+    submitColor: { type: String, required: false, default: "primary" },
+    // Button text for the default submit button.
+    submitText: { type: String, required: false, default: null },
+    // If set, invalid forms get submitted. The submit-handler has to take care of it.
+    submitInvalid: { type: Boolean, required: false, default: false },
 
     // v-alert props to use for error messages
     ...fwdProps("alert"),
@@ -170,18 +245,31 @@ const props = defineProps({
     // Model for field values. Forwarded to the default slot. You can set this to capture or modify field values easily.
     // The object members are named as the fields "name" properties.
     values: { type: Object, default: reactive({}) },
+
+    // This function (if set) will be called upon submission, if all values pass the validation. This should be an async
+    // function that takes the data and performs the action. If it fails/throws, the form shows an error and emits
+    // @failed. If it succeeds, the form sends @ok.
+    //
+    // NOTE: Set this ONLY in the consuming component. Chaining these is not intended.
+    //
+    // Signature: (formState)=>{ return someThing }
+    submitAction: { type: Function, default: null },
 });
 
 const emit = defineEmits([
     // Triggered on valid submission. An object is passed that provides all values. This is called once all fields
-    // comply to the given rules
+    // comply to the given rules.
     "submit",
-    // Triggered only when an invalid submission was done. An object is passed that provides all values. Some of them
-    // might be nullish or did not pass the validation.
-    "invalid",
 
     // Triggered on field value update
     "update:values",
+
+    // The submitted form worked as expected. An object {state, result} is provided. Values is the set of
+    // original form values, result is the result of the action function.
+    "ok",
+    // The submitted form failed. An object {state, error} is provided. Values is the set of
+    // original form values, error is the caught exception.
+    "failed",
 ]);
 
 const valuesModel = computed({
@@ -210,7 +298,10 @@ async function submit(submitEvent) {
         setState({ busy: true });
 
         // This is necessary to ensure a validation is done in any case.
-        await form.value.validate();
+        if (!(await form.value.validate()).valid && !props.submitInvalid) {
+            setState({ busy: false });
+            return;
+        }
 
         // Generate an object containing each item by name, its value and some state info
         const valuesOf = (srcitems) => {
@@ -233,50 +324,79 @@ async function submit(submitEvent) {
             });
             return { valid: valid, items: items, values: values };
         };
-        let result = valuesOf(form.value.items);
-
-        // For debugging, print those model values, derived values, ...
-        // console.log(submitEvent);
-        // console.log(valuesModel.value);
-        // console.log(result);
-        // await new Promise((resolve) => setTimeout(resolve, 100000));
+        let formState = valuesOf(form.value.items);
 
         // Not supported everywhere yet
         // const {promise, resolve, reject } = Promise.withResolvers();
-        // Alternative:
+
+        // Create a promise that can be resolved/rejected somewhere in a submit handler.
         let resolve, reject;
         const promise = new Promise((res, rej) => {
             resolve = res;
             reject = rej;
         })
-            .then((newState) => {
-                setState(_.merge({ reset: !props.noAutoReset, busy: false, busyDelay: 0, error: null }, newState));
+            // Once the user calls "action", we reach this
+            .then((handler) => {
+                const action = handler || props.submitAction;
+                if (action == null) {
+                    throw new Error(
+                        "No action handler defined. Define submitAction to the form or provide it when calling 'action'",
+                    );
+                }
+                if (!formState.valid) {
+                    throw tt("form.msg.inputNotValidated");
+                }
+
+                return action(formState);
             })
-            .catch((newState) => {
+            .then((result) => {
                 setState(
                     _.merge(
+                        { reset: !props.noAutoReset, busy: false, busyDelay: 500, error: null },
                         {
-                            reset: false,
-                            busy: false,
-                            // Be sure that invalid forms do not necessarily cause the busy overlay
-                            busyDelay: result.valid ? 500 : 0,
-                            error: null,
+                            // TODO: find a way to inject this from the action handler
                         },
-                        newState,
                     ),
                 );
+
+                emit("ok", { state: formState, result: result });
+                return result;
+            })
+            // If anything goes wrong along the way:
+            .catch((error) => {
+                let err = { error: error, errorDetail: null }; // works nicely for Translatable
+                if (typeof error === "string" || error instanceof String) {
+                    err.error = tt(error);
+                } else if (error instanceof Error) {
+                    console.error("Unknown error during submission", error);
+                    err.error = "common.msg.unknownError";
+                    err.errorDetail = { error: error.name + " - " + tt(error.message) };
+                }
+
+                setState({
+                    reset: false,
+                    busy: false,
+                    busyDelay: formState.valid ? 500 : 0,
+                    ...err,
+                });
+
+                emit("failed", { state: formState || {}, error: error });
             });
 
-        result["ok"] = resolve;
-        result["failed"] = reject;
+        // A comfortable handler that calls a given submit action and handles its outcome properly.
+        formState["action"] = (handler = null) => {
+            resolve(handler);
+            // Allows the caller of "action" to await it and get its result or error
+            return promise;
+        };
 
-        if (result.valid) {
-            emit("submit", result);
-        } else {
-            emit("invalid", result);
-        }
+        // Call in your submit handler if something is wrong. Pass in an Exeption or Translatable or string - it will be
+        // shown as error in the form
+        formState["fail"] = (error) => reject(error);
 
-        // Finally, wait for this promise. 
+        emit("submit", formState);
+
+        // Finally, wait for this promise.
         await promise;
     } catch (e) {
         // This will catch any issues with the form-value magic. The promise that is passed using the emits already
@@ -287,6 +407,8 @@ async function submit(submitEvent) {
             error: "common.msg.unknownError",
             errorDetail: { error: e },
         });
+
+        emit("failed", { state: null, error: e });
 
         // It does not matter if we rethrow or not. Nobody will be able to catch and handle it.
         // throw e;

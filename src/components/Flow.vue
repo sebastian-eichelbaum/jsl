@@ -1,5 +1,6 @@
 <!--
-Flow is a tool to go through ActionForm components, step by step. Each steps result is recorded.
+Flow is a tool to go through Form components, step by step. Each steps result is recorded. Perfect for building wizards
+and the like.
 
 * slot "done" is show once all steps have finished
 
@@ -21,7 +22,7 @@ const steps = [
 function onOK(result)
 {
     // Result is an array, one entry per step. Each step is enriched with a field "result" that contains the original
-    // result of the ActionForm of that step
+    // result of the Form of that step
     console.log(result);
 }
 

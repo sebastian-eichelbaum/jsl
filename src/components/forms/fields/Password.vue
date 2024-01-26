@@ -11,7 +11,7 @@
                 :append-inner-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
                 :type="showPassword ? 'text' : 'password'"
                 @click:append-inner="showPassword = !showPassword"
-                class="jsl-extendedMessages-3"
+                :class="{ 'jsl-extendedMessages-3': requireNewPassword}"
                 :name="name"
                 v-model="password"
             />
