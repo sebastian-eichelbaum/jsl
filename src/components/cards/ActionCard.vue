@@ -17,6 +17,11 @@ Anonymous slot extends the icon, "isHovering" is passed
                 <slot :isHovering="isHovering" />
             </div>
         </template>
+
+        <!-- Also remember: Card offers a nice #overlay-->
+        <template #overlay>
+            <slot name="overlay" />
+        </template>
     </Card>
 </template>
 

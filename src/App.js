@@ -89,7 +89,6 @@ export class App {
             // Init them.
             await localization.init();
             await backend.init();
-            await backend.ready();
 
             // init vue
             this.m_vueApp = createApp(this.config.vue.mainComponent);

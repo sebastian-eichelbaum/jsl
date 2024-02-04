@@ -10,9 +10,25 @@ import {
     signOut,
 } from "firebase/auth";
 
+import {
+    collection,
+    getDocs,
+    query,
+    where,
+    doc,
+    getDoc,
+    Timestamp,
+    initializeFirestore,
+    CACHE_SIZE_UNLIMITED,
+    persistentMultipleTabManager,
+    persistentLocalCache,
+} from "firebase/firestore";
+
+import { getDownloadURL, getStorage, ref } from "firebase/storage";
+
 import _ from "lodash";
 
-import { Service, ServiceError, UserService } from "../Backend";
+import { Service, ServiceError, UserService, DatabaseService, StorageService } from "../Backend";
 
 /**
  * Firebase backend implementation for a firebase App. Create a firebase
@@ -54,15 +70,12 @@ export class FirebaseApp extends Service {
     /**
      * Init firebase.
      *
-     * @param  args - The backend ref and more. @see Backend.init for details.
-     *
      * @return {Promise} The initialization promise.
      */
-    async init(...args) {
-        await super.init(...args);
+    async _init() {
+        super._init();
 
         this._native = initializeApp(this.config.api);
-        this._markReady();
     }
 }
 
@@ -93,21 +106,21 @@ export class FirebaseUserService extends UserService {
     /**
      * Initialize the service. Managed by the Backend instance.
      *
-     * @param  args - The context that was provided to the backend config.
-     *
      * @return {Promise} Async promise
      */
-    async init(...args) {
-        await super.init(...args);
+    async _init() {
+        super._init();
 
-        // Init
         this._native = getAuth(this.context.native);
         this._onLocaleUpdate();
 
-        onAuthStateChanged(this.native, (fbUser) => {
-            // On first auth update, mark the service ready
-            this._markReady();
+        // Create a promise that can be resolved/rejected somewhere in a callback.
+        let resolve;
+        const promise = new Promise((res, rej) => {
+            resolve = res;
+        });
 
+        onAuthStateChanged(this.native, (fbUser) => {
             // update the user state
             if (fbUser == null) {
                 this._updateUser(UserService.defaultUser());
@@ -126,10 +139,15 @@ export class FirebaseUserService extends UserService {
                     signupTime: fbUser.metadata.createdAt,
                 });
             }
-            // console.log(fbUser);
 
-            this.config.onAuthUpdate?.(this);
+            // On first auth update, mark the service ready
+            resolve();
+
+            this._handleAuthUpdate(this);
         });
+
+        // Do not mark the service ready. Its done during the first onAuthStateChanged
+        return promise;
     }
 
     /**
@@ -236,5 +254,186 @@ export class FirebaseUserService extends UserService {
         if (this.native) {
             this.native.languageCode = this.locale;
         }
+    }
+}
+
+/**
+ * The Firebase Firestore database service.
+ */
+export class FirestoreService extends DatabaseService {
+    /**
+     * Default configuration
+     */
+    static defaultConfig() {
+        return {
+            ...{},
+            ...DatabaseService.defaultConfig(),
+        };
+    }
+
+    /**
+     * Create the backend service.
+     *
+     * @param {Object} config - The config as in @see Service.defaultConfig.
+     *     Merged with the default.
+     */
+    constructor(config = {}) {
+        super(config);
+    }
+
+    /**
+     * Initialize the service. Managed by the Backend instance.
+     *
+     * @return {Promise} Async promise
+     */
+    async _init() {
+        super._init();
+
+        this._native = initializeFirestore(this.context.native, {
+            localCache: persistentLocalCache({
+                cacheSizeBytes: CACHE_SIZE_UNLIMITED,
+                tabManager: persistentMultipleTabManager(),
+            }),
+        });
+    }
+
+    /**
+     * Make firestore collection instance
+     *
+     * @param {String} name - Collection name
+     * @return {Object} The handle
+     */
+    _makeCollection(name) {
+        return collection(this.native, name);
+    }
+
+    /**
+     * Make firestore collection instance
+     *
+     * @param {any} collection - Collection as firebase collection
+     * @param {String} id - Doc id
+     * @return {Object} The handle
+     */
+    _makeDoc(collection, id) {
+        return doc(collection, id);
+    }
+
+    /**
+     * Create an API specific document handle
+     *
+     * @param {Date|Number|any} t - The timestamp as JS date, unix time (if number) or something else, up to you to
+     * interpret. Probably your own handle type.
+     * @throws {Error} - If not implemented by the specific service
+     *
+     * @return {any} The API specific thing that represents a doc
+     */
+    _makeTimestamp(t) {
+        if (typeof t === "number") {
+            return Timestamp.fromMillis(t);
+        }
+        if (t instanceof Date) {
+            return Timestamp.fromDate(t);
+        }
+
+        if (t instanceof Timestamp) {
+            return t;
+        }
+
+        throw new Error("Undefined timestamp");
+    }
+
+    /**
+     * Create a Firestore where filter constraint
+     *
+     * @param {Arra} args - The args as given to @see DatabaseService.where
+     * @returns {any} - The firestore where-handle
+     */
+    _makeWhere(...args) {
+        return where(...args);
+    }
+
+    /**
+     * Implements the search functionality as described in @see DatabaseService.query
+     */
+    async _query(collection, queries) {
+        return getDocs(query(collection, ...queries)).then((snapshot) => {
+            let result = [];
+
+            // Re-format to fullfill the return value spec of DatabaseService.query
+            snapshot.forEach((doc) => {
+                result.push({ id: doc.id, data: doc.data() });
+            });
+
+            return result;
+        });
+    }
+
+    /**
+     * Implements the search functionality as described in @see DatabaseService.getDoc
+     */
+    async _getDoc(doc) {
+        return getDoc(doc).then((snapshot) => {
+            if (!snapshot.exists()) {
+                return null;
+            }
+            return snapshot.data();
+        });
+    }
+}
+
+/**
+ * The Firebase Storage service.
+ */
+export class FirebaseStorage extends StorageService {
+    /**
+     * Default configuration
+     */
+    static defaultConfig() {
+        return {
+            ...{},
+            ...StorageService.defaultConfig(),
+        };
+    }
+
+    /**
+     * Create the backend service.
+     *
+     * @param {Object} config - The config as in @see Service.defaultConfig.
+     *     Merged with the default.
+     */
+    constructor(config = {}) {
+        super(config);
+    }
+
+    /**
+     * Initialize the service. Managed by the Backend instance.
+     *
+     * @return {Promise} Async promise
+     */
+    async _init() {
+        super._init();
+
+        this._native = getStorage();
+    }
+
+    /**
+     * Create a Firestore storage ref
+     *
+     * @param {Arra} args - The args as given to @see StorageService.path
+     * @returns {any} - The firestore file ref handle
+     */
+    _makePath(...args) {
+        return ref(this.native, ...args);
+    }
+
+    /**
+     * Generate the URL to load the file pointed to by path
+     *
+     * @param {Object} path - The path to convert - as generated by _makePath
+     *
+     * @return {Promise<String>} the URL
+     */
+    async _getUrlOfPath(path) {
+        return getDownloadURL(path);
     }
 }

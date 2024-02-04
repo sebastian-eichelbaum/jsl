@@ -41,20 +41,16 @@ export class DirectusClient extends Service {
     /**
      * Init directus. Does not expect any context.
      *
-     * @param  args - The context that was provided to the backend config.
-     *
      * @return {Promise} The initialization promise.
      */
-    async init(...args) {
-        await super.init(...args);
+    async _init() {
+        super._init();
 
         // The directus client is composable. Lets add all the features requested as
         // service:
         this._native = createDirectus(this.config.api.url).with(staticToken(this.config.api.apiKey));
         this.addFeature(authentication("cookie", { credentials: "include" }));
         this.native.setToken(this.config.api.apiKey);
-
-        this._markReady();
     }
 
     /**
@@ -95,16 +91,23 @@ export class DirectusRestDBService extends DatabaseService {
     /**
      * Initialize the service. Managed by the Backend instance.
      *
-     * @param  args - The context that was provided to the backend config.
-     *
      * @return {Promise} Async promise
      */
-    async init(...args) {
-        await super.init(...args);
+    async _init() {
+        super._init();
 
         this.backend.context.addFeature(rest({ credentials: "include" }));
         this._native = this.backend.context.native;
-        this._markReady();
+    }
+
+    /**
+     * Make firestore collection instance
+     *
+     * @param {String} name - Collection name
+     * @return {Object} The handle
+     */
+    _makeCollection(name) {
+        return { name: name };
     }
 
     /**
@@ -134,7 +137,7 @@ export class DirectusRestDBService extends DatabaseService {
         let q = makeWordAndQuery(fields, words);
 
         return this.native.request(
-            readItems(collection, {
+            readItems(collection.name, {
                 filter: q,
                 limit: options.limit,
             }),

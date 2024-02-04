@@ -305,35 +305,31 @@ export class Localization {
     }
 
     /**
-     * Tries to translate a plural and returns the value silently if not translatable.
-     *
-     * @param {String|Object|Translatable} what - The translation key or an object {key, ...args}.
-     * @param {} ...args - The arguments to pass to this.tc
-     */
-    ttc(what, ...args) {
-        const msg = resolve(what);
-
-        if (!this.exists(msg.key)) {
-            return msg.key;
-        }
-
-        return this.tc(msg.key, msg.details, ...args);
-    }
-
-    /**
      * Tries to translate and returns the value silently if not translatable.
      *
-     * @param {String|Object|Translatable} what - The translation key or an object {key, ...args}.
+     * @param {String|Object|Translatable|TranslatedString} what - The translation key or an object {key, ...args}.
      * @param {} ...args - The arguments to pass to this.t
      */
     tt(what, ...args) {
-        const msg = resolve(what);
+        return _tt(Translatable.makeFrom(what).unfolded);
+    }
 
-        if (!this.exists(msg.key)) {
-            return msg.key;
+    /**
+     * Like @see tt but expects an unfolded Translatable.
+     */
+    _tt(what, ...args) {
+        if (!(what instanceof Translatable)) {
+            throw new Error("_tt expects an Translatable");
         }
 
-        return this.t(msg.key, msg.details, ...args);
+        if (!this.exists(what.key)) {
+            return what.key;
+        }
+
+        if (what.count !== 1) {
+            return this.tc(what.key, what.count, what.details, ...args);
+        }
+        return this.t(what.key, what.details, ...args);
     }
 
     /**
@@ -377,28 +373,190 @@ export class Localization {
 }
 
 /**
+ * Represents a translatable string. Its a string with added translations.
+ */
+export class TranslatedString {
+    /**
+     * Create the string using a given value.
+     *
+     * @param {String|Object} value - The string value or an object {ts, translations}
+     * @param {Object} translations - The initially given translations. Merged as default for given translations in
+     * value
+     */
+    constructor(value, translations = {}) {
+        // Strings are consumed as strings
+        if (value == null || typeof value === "string" || value instanceof String) {
+            this.m_value = value || "";
+            this.m_translations = translations || {};
+        }
+        // Copy construct a TranslatedString
+        else if (value instanceof TranslatedString) {
+            this.m_value = value.value;
+            this.m_translations = _.merge(translations, value.translations | {});
+        }
+        // Objects that contain {ts} as string are translatable strings
+        else if (typeof value === "object" && value.ts != null) {
+            this.m_value = value.ts;
+            this.m_translations = _.merge(translations, value.translations || {});
+        } else if (value.toString?.() != null) {
+            this.m_value = value || "";
+            this.m_translations = translations || {};
+        }
+
+        // Ensure the translations are an object
+        if (typeof this.m_translations !== "object") {
+            console.warn("Given translations are invalid. Object expected. Got:", translations);
+            this.m_translations = {};
+        }
+    }
+
+    /**
+     * Get the value of the string. This is the default, used if there is no translation.
+     *
+     * @returns {String} The untranslated string
+     */
+    get value() {
+        return this.m_value;
+    }
+
+    /**
+     * Set the untranslated string.
+     *
+     * @param {String} v - The new string
+     */
+    set value(v) {
+        if (typeof v !== "string" && !(v instanceof String) && v?.toString?.() == null) {
+            throw new Error("Values given to TranslatedString must be string or convertible to string.");
+        }
+
+        this.m_value = v;
+    }
+
+    /**
+     * Get the translatios of this string.
+     *
+     * @returns {Object} An object containing a key per locale.
+     */
+    get translations() {
+        return this.m_translations;
+    }
+
+    /**
+     * Translate the string to the given locale.
+     *
+     * @param {String} locale - The locale to define
+     * @param {String} localized - The translation
+     */
+    setTranslation(locale, localized) {
+        this.m_translations[locale] = localized;
+    }
+
+    /**
+     * Localize the string. This applies to given/current locale and returns the string in that locale.
+     *
+     * @param {Object} [locale] - The locale. If nullish, the current locale is used.
+     * @returns {String} The translated string
+     */
+    localized(locale = null) {
+        const loc = locale || localization.locale;
+        // TODO: this does not support regional or dialect fallback (i.e. de-DE will not fall back to de)
+        return this.translations?.[loc] || this.value;
+    }
+
+    /**
+     * Checks if this is empty. Its empty if no base value string is defined.
+     *
+     * @returns {Boolean} True if no string in "value"/"ts" is defined
+     */
+    isEmpty() {
+        return !this.value;
+    }
+
+    /**
+     * Get the storable JSON version
+     *
+     * @return {String} this TranslatedString as JSON
+     */
+    get json() {
+        return JSON.stringify(this.toJSON());
+    }
+
+    /**
+     * Get the storable JSON version
+     *
+     * @return {Object} this TranslatedString as JSON Object
+     */
+    toJSON() {
+        return { ts: this.value, translations: this.translations };
+    }
+}
+
+/**
  * Declares a class instance translatable. If the class can provide some translation id, thats enough.
  */
 export class Translatable {
     /**
      * Create the translatable by giving a key and some details
      *
-     * @param {String} key  - error code as string or anything else that can be converted to string.
+     * @param {String|TranslatedString} key - error code as string or anything else that can be converted to string.
+     * @param {Number} count - the pluralization count
      * @param {any} details - some details. If any of the details is an Translatable, it will be converted NOW.
      */
-    constructor(key, details = null) {
+    constructor(key, count, details = null) {
         this.m_key = key;
+        this.m_count = count == null ? 1 : count;
 
-        // Convert Translatable now as nested calls to vuei18n.t triggers an exception.
-        this.m_details = Iterate.mapInstancesOf(Translatable, details, (item) => {
-            return item.toString();
+        // Convert any provided detail to a translatable
+        this.m_details = Iterate.map(details, (item) => {
+            return Translatable.makeFrom(item);
         });
+    }
+
+    /**
+     * Resolves a message into key and arguments, creating a new Translatable.
+     *
+     * @param {String|Object|Translatable|TranslatedString} what - The translation key or an object {key, ...args} or a string.
+     * @param {Object} details - The message details. The keys in this overwrite any pre-existing key in a given
+     *  translatable.
+     * @param {Number} count - The number used for pluralization. If this is null/undefined, the singular case is used
+     * for what == non-translatable. For what==Translatable, its count is used. Set the value explicitly if you need to
+     * change the pluralization of a translatable,
+     *
+     * @return {Object} the resolved object as {key, ...}.
+     *
+     * @throws Error if the message is not a string and not an object with a key property.
+     */
+    static makeFrom(what, count = undefined, details = undefined) {
+        if (what instanceof Translatable) {
+            return new Translatable(what.key, count == null ? what.count : count, _.merge(what.details, details));
+        }
+
+        if (what == null || typeof what === "string" || what instanceof String || what instanceof TranslatedString) {
+            return new Translatable(what || "", count, details);
+        }
+
+        const asString = what?.toString();
+        if (!asString) {
+            throw new Error("Translation messages must be strings, translatable, {key,...} or convertible to string.");
+        }
+
+        return new Translatable(asString, count, details);
+    }
+
+    /**
+     * Generate a pluralized version of this translatable.
+     *
+     * @param {Number} [count] - The count. If 1, this makes the Translatable singular again.
+     * @returns {Translatable} The plural version of the translatable.
+     */
+    plural(count = 2) {
+        return Translatable.makeFrom(this, count);
     }
 
     /**
      * The translation id.
      *
-     * @return {String} id as string after being mapped by the sender's mapErrorCode
+     * @return {String|TranslatedString} id as string after being mapped by the sender's mapErrorCode
      */
     get key() {
         return this.m_key;
@@ -414,10 +572,45 @@ export class Translatable {
     }
 
     /**
+     * The pluralization count.
+     *
+     * @return {Number} Pluralization count
+     */
+    get count() {
+        return this.m_count;
+    }
+
+    /**
+     * Returns this translatable with fully unwrapped details. All previous Translatables in the details are now
+     * strings, recursively.
+     *
+     * @return {Translatable} This with unwrapped details.
+     */
+    get unfolded() {
+        const unfoldKey = (key) => {
+            if (key instanceof TranslatedString) {
+                return key.localized();
+            }
+            return key;
+        };
+
+        // Recurse all details. This is required as vuei18n expects strings or elemental types as details - it throws
+        // when passing in Translatable although it is toString()-able
+        return Translatable.makeFrom(
+            unfoldKey(this.key),
+            this.count,
+            Iterate.mapInstancesOf(Translatable, this.details, (item) => {
+                return item.toString();
+            }),
+        );
+    }
+
+    /**
      * Convert the translatable to an actually translated string
      */
     toString() {
-        return localization.tt(this);
+        // NOTE: this manages plurals too
+        return localization._tt(this.unfolded);
     }
 }
 
@@ -428,7 +621,7 @@ export let localization = null;
  * Factory to make a Translatable from a given key and details. The key might be a Translatable already and will be
  * extended with the given details.
  *
- * @param {String|Object|Translatable} key - The translation key as Translatable or String or string convertible.
+ * @param {String|Object|Translatable|TranslatedString} key - The translation key as Translatable or String or string convertible.
  * @param {Object} details - The message details. The keys in this overwrite any pre-existing key in a given translatable.
  *
  * @return {Object} the resolved object as new Translatable.
@@ -436,35 +629,7 @@ export let localization = null;
  * @throws Error if the message is not a string and not an object with a key property.
  */
 export function tt(key, details) {
-    return resolve(key, details);
-}
-
-/**
- * Resolves a message into key and arguments, creating a new Translatable.
- *
- * @param {String|Object|Translatable} what - The translation key or an object {key, ...args} or a string.
- * @param {Object} details - The message details. The keys in this overwrite any pre-existing key in a given
- *  translatable.
- *
- * @return {Object} the resolved object as {key, ...}.
- *
- * @throws Error if the message is not a string and not an object with a key property.
- */
-function resolve(msg, details = {}) {
-    if (msg instanceof Translatable) {
-        return new Translatable(msg.key, _.merge(msg.details, details));
-    }
-
-    if (msg == null || typeof msg === "string" || msg instanceof String) {
-        return new Translatable(msg || "", details);
-    }
-
-    const asString = msg?.toString();
-    if (!asString) {
-        throw new Error("Translation messages must be strings, translatable, {key,...} or convertible to string.");
-    }
-
-    return new Translatable(asString, details);
+    return Translatable.makeFrom(key, undefined, details);
 }
 
 /**

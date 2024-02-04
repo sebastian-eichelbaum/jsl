@@ -1,14 +1,12 @@
 <template>
     <Button @click="ask" v-bind="{ ...$props, ...$attrs }"> </Button>
 
-    <ConfirmDialog contained v-model="dialog" variant="evenly" @yes="logout" >
-        <slot>{{ $t("user.prompt.areYouSureToLogout") }}</slot>
-    </ConfirmDialog>
-
+    <ConfirmDialog contained v-model="dialog" variant="evenly" @yes="logout" :title="title" :subtitle="subtitle" />
 </template>
 
 <script setup>
 import { computed, ref } from "vue";
+import { tt, Translatable } from "@jsl/Localization";
 
 import Button from "@jsl/components/Button.vue";
 
@@ -23,6 +21,9 @@ const props = defineProps({
     color: { default: "error" },
 
     // + Props from jsl/components/Button.vue
+
+    title: { type: [String, Translatable], default: tt("common.prompt.areYouSure") },
+    subtitle: { type: [String, Translatable], default: tt("user.prompt.areYouSureToLogout") },
 });
 
 let dialog = ref(false);
@@ -34,5 +35,4 @@ const ask = () => {
 const logout = () => {
     backend.user?.logout();
 };
-
 </script>

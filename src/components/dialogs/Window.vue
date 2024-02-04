@@ -35,7 +35,7 @@ Use windows for more complex dialogs. The plain ModalDialog is good for question
                 <Button
                     :slim="false"
                     icon="mdi-hand-wave"
-                    :text="new Translatable('common.msg.greet', { user: 'User' })"
+                    :text="tt('common.msg.greet', { user: 'User' }).toString()"
                 />
             </v-card-actions>
         </slot>

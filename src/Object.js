@@ -1,5 +1,21 @@
+import _ from "lodash";
+
 /**
- * Base object in jsl. It provides a config.
+ * Base object in jsl. It provides a config and initializes it with the defaults from your class's "defaultConfig", if
+ * any.
+ *
+ * Example:
+ *
+ * export class Cheese {
+ *     static defaultConfig() {return {holes:42}}
+ *
+ *     constructor(config)
+ *     {
+ *         super(config);
+ *
+ *         // Use this.config. It is merged with your defaults.
+ *     }
+ * }
  */
 export class jslObject {
     /**
@@ -8,7 +24,8 @@ export class jslObject {
      * @param {Object} config - The config used by the derived object.
      */
     constructor(config = {}) {
-        this.m_config = config || {};
+        const defaultCfg = this?.constructor?.defaultConfig?.();
+        this.m_config = _.merge(defaultCfg, config || {});
     }
 
     /**
@@ -33,12 +50,62 @@ export class jslObjectAsyncInit extends jslObject {
      */
     constructor(config = {}) {
         super(config);
+        this.m_objectAsyncInitOK = false;
+        this.m_objectAsyncInitFailed = false;
+        this.m_objectAsyncInitFailCause = null;
     }
 
     /**
-     * Initialize the object instance asynchronously.
+     * Initialize the object instance asynchronously. Once the promise resolves, init is done
      *
      * @return {Promise} The config of this object
      */
     async init(...args) {}
+
+    /**
+     * Check if the initialization is done
+     *
+     * @returns {Boolean} True if init is ok and the object can be used.
+     */
+    isInitOK() {
+        return this.m_objectAsyncInitOK;
+    }
+
+    /**
+     * Check if the initialization is failed
+     *
+     * @returns {Boolean} True if init failed and the object is not valid.
+     */
+    isInitFailed() {
+        return this.m_objectAsyncInitFailed;
+    }
+
+    /**
+     * Get the cause of the init failure if any.
+     *
+     * @returns {any} Cause of failure or undefined/null if unknown or not failed
+     */
+    getInitFailCause() {
+        return this.m_objectAsyncInitFailCause;
+    }
+
+    /**
+     * Implementers can call this to mark init failure.
+     *
+     * @param {Object} e - A cause/exception
+     */
+    _initFailed(e) {
+        this.m_objectAsyncInitOK = false;
+        this.m_objectAsyncInitFailed = true;
+        this.m_objectAsyncInitFailCause = e;
+    }
+
+    /**
+     * Implementers can call this to mark init success.
+     */
+    _initOK() {
+        this.m_objectAsyncInitOK = true;
+        this.m_objectAsyncInitFailed = false;
+        this.m_objectAsyncInitFailCause = null;
+    }
 }

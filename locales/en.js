@@ -17,6 +17,14 @@ export const en = {
                 profile: "Profile",
                 options: "Options",
                 abort: "Abort",
+                start: "Start",
+                stop: "Stop",
+                play: "Play",
+                yourX: "Your {x}",
+                project: "Project | Projects",
+                app: "App | Apps",
+                game: "Game | Games",
+                hardware: "Hardware | Hardware",
             },
             prompt: {
                 areYouSure: "Are you sure?",
@@ -46,7 +54,7 @@ export const en = {
                 inputPasswordTooShort: "Password too short: min {min} characters",
                 inputPasswordsDoNotMatch: "Passwords do not match",
                 inputBlacklistedChar: "Character not allowed: {chars}", // "char" is the offending char
-                
+
                 inputNotValidated: "Correct the highlighted fields",
             },
             ui: {

@@ -24,6 +24,12 @@ A component that allows to define regular grids easily. This reflects some of th
 <script setup>
 import { tt } from "@jsl/Localization";
 
+defineOptions({
+    // Prevent the top-level div to inherit any props that have fallen through. Especially, avoids "title". This avoids
+    // tooltips on all grids just because some user of this grid has a title property in their props.
+    inheritAttrs: false,
+});
+
 const props = defineProps({
     // Width of a cell. Include units! You can use percent to grow cells to a certain size of the enclosing container
     cellWidth: { type: String, default: "350px" },
