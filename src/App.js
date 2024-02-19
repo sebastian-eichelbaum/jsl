@@ -78,7 +78,8 @@ export class App {
 
         try {
             this.m_isInit = true;
-            this.m_config = _.merge(App.defaultConfig(), this.m_configFactory(this));
+
+            this.m_config = _.merge(App.defaultConfig(), await this.m_configFactory(this));
 
             makeAppConfig(this.config.appConfig);
             makePlatform(this.config.platform);

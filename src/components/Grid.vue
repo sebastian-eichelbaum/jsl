@@ -12,7 +12,7 @@ A component that allows to define regular grids easily. This reflects some of th
         </div>
 
         <slot>
-            <v-card v-for="n in 5" :key="n">
+            <v-card v-if="!okEmptyDefault" v-for="n in 5" :key="n">
                 <v-card-title>
                     {{ tt("common.msg.todo", { what: "default slot!" }) }}
                 </v-card-title>
@@ -31,6 +31,9 @@ defineOptions({
 });
 
 const props = defineProps({
+    // Set this if an empty default slot is ok - hides the dummy entries.
+    okEmptyDefault: { type: Boolean, default: false },
+
     // Width of a cell. Include units! You can use percent to grow cells to a certain size of the enclosing container
     cellWidth: { type: String, default: "350px" },
     // Height of a cell. Include units! Use "auto" to make cells match the content height.

@@ -11,7 +11,7 @@ This can be seen as an inspiration and tutorial on how to setup an app.
         <v-main>
             <Multiplexer :selected="screen">
                 <template #auth>
-                    <AppCloseButton />
+                    <WindowButtons float />
                     <BigPanel :background="authBackground">
                         <Authentfication :service="backend.user" titleAlign="center" />
                     </BigPanel>
@@ -38,7 +38,7 @@ import InitOverlay from "@jsl/utils/InitOverlay.vue";
 import ScrollbarStyle from "@jsl/utils/ScrollbarStyle.vue";
 
 import BigPanel from "@jsl/screens/BigPanel.vue";
-import AppCloseButton from "@jsl/components/AppCloseButton.vue";
+import WindowButtons from "@jsl/components/WindowButtons.vue";
 import Multiplexer from "@jsl/components/Multiplexer.vue";
 
 import Authentfication from "@jsl/views/Authentication.vue";
@@ -49,7 +49,7 @@ const props = defineProps({
     // The user service to utilize
     userService: { type: UserService, default: null },
 
-    // Forward all those nested component props
+    // Forward some BigPanel/Background component props. (As Background Style props as in Style.js)
     ...fwdProps("authBackground"),
 });
 
@@ -61,6 +61,4 @@ const screen = computed(() => {
 
     return "main";
 });
-
-
 </script>

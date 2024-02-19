@@ -76,7 +76,7 @@ import { fwdProps, fwdBindProps } from "@jsl/utils/ForwardVueProps";
 const { xs, mdAndUp } = useDisplay();
 
 const props = defineProps({
-    // Forward some component props.
+    // Forward some component props. (As Background Style props as in Style.js)
     ...fwdProps("background"),
 
     // Hide the language switch?

@@ -419,11 +419,11 @@ export class FirebaseStorage extends StorageService {
     /**
      * Create a Firestore storage ref
      *
-     * @param {Arra} args - The args as given to @see StorageService.path
+     * @param {String} path - The args as given to @see StorageService.path
      * @returns {any} - The firestore file ref handle
      */
-    _makePath(...args) {
-        return ref(this.native, ...args);
+    _makePath(path) {
+        return ref(this.native, this.root + "/" + path);
     }
 
     /**

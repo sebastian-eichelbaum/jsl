@@ -38,6 +38,9 @@ A collection of UI components and backend wrappers. Its focus is on Vue, Vuetify
         },
     });
     ```
+    - If you use VITE in electron, add this to `vite.main.config.mjs`, `vite.preload.config.mjs` and
+      'vite.renderer.config.mjs` - for the jsl/platforms/electron, @jsl should be enough. in preload and main.
+
 1. Add a Backend. By default, jsl does not install a backend package in its `package.json`. You have to install it in your project:
     - Install according to the backend docs:
     ```sh

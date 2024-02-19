@@ -7,10 +7,11 @@ language switcher and the user button.
 extended.
 -->
 <template>
-    <v-app-bar :style="style" v-bind="{ ...$props, ...$attrs }">
-        <v-app-bar-title>
+    <v-app-bar :style="isFullscreen ? styleFullscreen : style" v-bind="{ ...$props, ...$attrs }">
+        <v-app-bar-title class="title">
             <AppLogo compact />
         </v-app-bar-title>
+        <div class="draggableRegion">&nbsp;</div>
 
         <template v-slot:append>
             <slot>
@@ -27,7 +28,7 @@ extended.
 
             <slot name="append" />
 
-            <AppCloseButton nofloat dividerL />
+            <WindowButtons dividerL @fullscreenChanged="onFullscreenChanged" />
         </template>
     </v-app-bar>
 </template>
@@ -46,10 +47,12 @@ import Link from "@jsl/components/Link.vue";
 import UserButton from "@jsl/components/user/UserButton.vue";
 import LanguageButton from "@jsl/components/i18n/LanguageButton.vue";
 import AppLogo from "@jsl/components/AppLogo.vue";
-import AppCloseButton from "@jsl/components/AppCloseButton.vue";
+import WindowButtons from "@jsl/components/WindowButtons.vue";
 import ShopButton from "@jsl/components/ShopButton.vue";
 
 import { computedBackgroundStyle, makeBackgroundStyleProps } from "@jsl/utils/Style";
+
+import { platform } from "@jsl/Platform";
 
 import { useDisplay } from "vuetify";
 
@@ -67,9 +70,36 @@ const props = defineProps({
     // Background style color, blur, alpha, brightness
     // This also creates the prop "color" that is also used by v-app-bar.
     ...makeBackgroundStyleProps("", { color: "surface", alpha: 1.0, brightness: 1.0, blur: 20 }),
+    // Background to use when the app goes fullscreen
+    ...makeBackgroundStyleProps("fullscreen", { color: "surface", alpha: 0.0, brightness: 1.0, blur: 20 }),
 });
 
 const { smAndDown } = useDisplay();
 
 const style = computedBackgroundStyle(props, "");
+const styleFullscreen = computedBackgroundStyle(props, "fullscreen");
+
+const isFullscreen = ref(false);
+
+function onFullscreenChanged(newState) {
+    isFullscreen.value = newState;
+}
 </script>
+
+<style scoped>
+.draggableRegion {
+    /* Makes the app bar the drag region in a deco-less window in electron */
+    -webkit-app-region: drag;
+    height: 100%;
+    width: 100%;
+    display: inline-block;
+}
+
+.title {
+    /* Prevents the Title to shrink below its content size due to a big draggable region */
+    min-width: fit-content;
+
+    /* Prevent selection of text */
+    user-select: none;
+}
+</style>

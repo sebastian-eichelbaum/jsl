@@ -113,10 +113,10 @@ const hoverState = defineModel();
 // As the overlay visibility depends on some props:
 const overlayOpen = computed(() => {
     if (props.overlayOnHover) {
-        return hoverState.value;
+        return props.showOverlay || hoverState.value;
     }
     if (props.overlayOnClick) {
-        return clickOverlayState.value;
+        return props.showOverlay || clickOverlayState.value;
     }
 
     return props.showOverlay;

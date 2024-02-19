@@ -53,7 +53,7 @@ Example:
                 <v-card-actions class="mr-4 ml-4 mb-4">
                     <slot name="footer" :isHovering="isHovering">
                         <v-row justify="space-between">
-                            <v-col align-self="center" cols="9">
+                            <v-col align-self="center" :cols="!!$slots.actions ? 9 : 11">
                                 <slot name="title" :isHovering="isHovering">
                                     <v-card-title class="pa-0 ma-0">
                                         {{ tt(title) }}

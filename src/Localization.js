@@ -311,7 +311,7 @@ export class Localization {
      * @param {} ...args - The arguments to pass to this.t
      */
     tt(what, ...args) {
-        return _tt(Translatable.makeFrom(what).unfolded);
+        return this._tt(Translatable.makeFrom(what).unfolded);
     }
 
     /**

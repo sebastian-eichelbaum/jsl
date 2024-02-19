@@ -17,8 +17,6 @@ import { ref, computed } from "vue";
 
 import { computedBackgroundStyle, makeBackgroundStyleProps } from "@jsl/utils/Style";
 
-import AppCloseButton from "@jsl/components/AppCloseButton.vue";
-
 const props = defineProps({
     image: { type: String, required: false, default: "none" },
 
