@@ -108,6 +108,7 @@ async function do(state)
                                     <v-col align="end">
                                         <slot name="footerEnd" :busy="noBusyOverlay && isBusy" :model="valuesModel">
                                             <SubmitButton
+                                                v-if="!noSubmit"
                                                 :loading="busy"
                                                 :text="submitText"
                                                 :color="submitColor"
@@ -128,23 +129,30 @@ async function do(state)
                             v-col! Users might want to split the footer, align it, ... They provide the v-col. -->
                             <FormError v-if="alertPosition == 'aboveFooter'" v-bind="alertProps" :message="_errorMsg" />
                             <slot name="footer" :busy="noBusyOverlay && isBusy" :model="valuesModel">
-                                <v-row style="align-content: center">
-                                    <v-col align="start">
-                                        <slot name="footerStart" :busy="noBusyOverlay && isBusy" :model="valuesModel">
-                                        </slot>
-                                    </v-col>
-                                    <v-spacer />
-                                    <v-col align="end">
-                                        <slot name="footerEnd" :busy="noBusyOverlay && isBusy" :model="valuesModel">
-                                            <SubmitButton
-                                                :loading="busy"
-                                                :text="submitText"
-                                                :color="submitColor"
-                                                :icon="submitIcon"
-                                            />
-                                        </slot>
-                                    </v-col>
-                                </v-row>
+                                <v-col cols="12">
+                                    <v-row style="align-content: center">
+                                        <v-col align="start">
+                                            <slot
+                                                name="footerStart"
+                                                :busy="noBusyOverlay && isBusy"
+                                                :model="valuesModel"
+                                            >
+                                            </slot>
+                                        </v-col>
+                                        <v-spacer />
+                                        <v-col align="end">
+                                            <slot name="footerEnd" :busy="noBusyOverlay && isBusy" :model="valuesModel">
+                                                <SubmitButton
+                                                    v-if="!noSubmit"
+                                                    :loading="busy"
+                                                    :text="submitText"
+                                                    :color="submitColor"
+                                                    :icon="submitIcon"
+                                                />
+                                            </slot>
+                                        </v-col>
+                                    </v-row>
+                                </v-col>
                             </slot>
                             <FormError v-if="alertPosition == 'belowFooter'" v-bind="alertProps" :message="_errorMsg" />
                         </v-row>
@@ -211,6 +219,11 @@ const props = defineProps({
     // If set, invalid forms get submitted. The submit-handler has to take care of it.
     submitInvalid: { type: Boolean, required: false, default: false },
 
+    // If set, the default submit button is disabled. Handy if submit should be handled somewhere else. NOTE: the
+    // default submit button is inside the #footerEnd slot. You can also just override this slot to disable the submit
+    // button
+    noSubmit: { type: Boolean, required: false, default: false },
+
     // v-alert props to use for error messages
     ...fwdProps("alert"),
 
@@ -236,11 +249,6 @@ const props = defineProps({
     ...fwdProps("grid"),
     // Forward all v-row props
     ...fwdProps("row"),
-
-    // If set, the form does not reset itself on success. This only affects the default case. If the form listener
-    // requests reset explicitly, it will be done, regardless of this value.
-    // Use this to retain the form state after submission (especially the values model)
-    noAutoReset: { type: Boolean, default: false },
 
     // Model for field values. Forwarded to the default slot. You can set this to capture or modify field values easily.
     // The object members are named as the fields "name" properties.
@@ -272,6 +280,14 @@ const emit = defineEmits([
     "failed",
 ]);
 
+const form = ref();
+
+// Expose some vars to the outside
+defineExpose({
+    form,
+    reset,
+});
+
 const valuesModel = computed({
     get: () => props.values,
     set: (value) => emit("update:values", value),
@@ -283,8 +299,6 @@ const alertProps = fwdBindProps("alert", props, {
     prominent: true,
     border: "start",
 });
-
-const form = ref();
 
 const _busy = ref(false);
 const isBusy = computed(() => {
@@ -352,7 +366,7 @@ async function submit(submitEvent) {
             .then((result) => {
                 setState(
                     _.merge(
-                        { reset: !props.noAutoReset, busy: false, busyDelay: 500, error: null },
+                        { reset: formState?.resetOnOK || true, busy: false, busyDelay: 500, error: null },
                         {
                             // TODO: find a way to inject this from the action handler
                         },
@@ -374,7 +388,7 @@ async function submit(submitEvent) {
                 }
 
                 setState({
-                    reset: false,
+                    reset: formState?.resetOnFailure || false,
                     busy: false,
                     busyDelay: formState.valid ? 500 : 0,
                     ...err,
@@ -393,6 +407,9 @@ async function submit(submitEvent) {
         // Call in your submit handler if something is wrong. Pass in an Exeption or Translatable or string - it will be
         // shown as error in the form
         formState["fail"] = (error) => reject(error);
+
+        formState["resetOnOK"] = true;
+        formState["resetOnFailure"] = false;
 
         emit("submit", formState);
 
@@ -454,6 +471,17 @@ function setState(newState) {
     if (newState?.busy != null) {
         setBusy(newState.busy, newState?.busyDelay || 0);
     }
+}
+
+/**
+ * Reset the form.
+ * From the outside, use:
+ * <Form .... ref="myForm">
+ * const myForm = ref();
+ * myForm.value.reset();
+ */
+function reset() {
+    form?.value?.reset?.();
 }
 
 /**

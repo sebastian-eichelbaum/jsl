@@ -40,11 +40,8 @@ export class Localization {
      */
     static defaultConfig() {
         return {
-            // The list of locales. This pre-populated with the jsl provided locales (en-US, de-DE). When adding more
-            // locales that do not provide all translations, the fallback mechanism tries to find the best match.
-            //
-            // Uniqueness is ensured for the iso code.
-            locales: [jslEN, jslDE],
+            // The list of locales. Uniqueness is ensured for the iso code.
+            locales: [],
 
             // Add overrides to the official locale list. This allows to change specific keys in a locale or extend the
             // set of translations.
@@ -86,7 +83,13 @@ export class Localization {
         this.m_vuei18n = null;
         this.m_locales = [];
 
-        this.m_config.locales.forEach((locale) => this._registerLocale(locale));
+        // Always given!
+        this._registerLocale(jslEN);
+        this._registerLocale(jslDE);
+
+        this.m_config.locales.forEach((locale) => {
+            this._registerLocale(locale, true);
+        });
 
         if (this._findLocaleInfo(this.m_config.fallback) == null) {
             throw new Error(
@@ -113,22 +116,29 @@ export class Localization {
      * Throws if the vue i18n instance was initialized already.
      * Throws if the locale iso is not unique
      *
+     * @param {Boolean} [merge] - If true, the given locale is merged into the existing one.
      * @param {Object} localeInfo - The locale info. See @see
      *     Localization.defaultConfig for details.
      */
-    _registerLocale(localeInfo) {
+    _registerLocale(localeInfo, merge = false) {
         if (this.m_vuei18n != null) {
             throw new Error("Cannot register locale after initialization.");
         }
 
-        if (this._findLocaleInfo(localeInfo.iso) != null) {
+        const loc = this._findLocaleInfo(localeInfo.iso);
+        if (merge !== true && loc != null) {
             throw new Error('Locale "' + localeInfo.iso + '" is not unique.');
         }
 
         if (this.config.blacklist.includes(localeInfo.iso)) {
             return;
         }
-        this.m_locales.push(_.merge(Localization.defaultLocaleConfig(), localeInfo || {}));
+
+        if (merge === true && loc != null) {
+            this._mergeOverride(localeInfo);
+        } else {
+            this.m_locales.push(_.merge(Localization.defaultLocaleConfig(), localeInfo || {}));
+        }
     }
 
     /**

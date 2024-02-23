@@ -86,7 +86,7 @@ export class Validations {
      */
     required(trim = true) {
         return (value) => {
-            // This ensures that non-strings also check, even if trim is not defined 
+            // This ensures that non-strings also check, even if trim is not defined
             const v = trim ? value?.trim?.() || value : value;
             if (!v) return this.m_handler("form.msg.inputRequired");
             return true;
@@ -219,6 +219,19 @@ export class Validations {
                 if (value.includes(c))
                     return this.m_handler("form.msg.inputBlacklistedChar", { char: c, chars: chars.toString() });
             }
+            return true;
+        };
+    }
+
+    /**
+     * Allows only numbers.
+     *
+     * @return {Function} that returns {Boolean|String}. True if valid or
+     *     - handler("form.msg.inputNumbersOnly")
+     */
+    numbersOnly() {
+        return (value) => {
+            if (!/^\d+$/.test(value)) return this.m_handler("form.msg.inputNumbersOnly");
             return true;
         };
     }

@@ -213,8 +213,8 @@ export function connectIPCMain(app) {
             // Do not run in a shell
             shell: false,
 
-            // Hide the shell window on windows
-            windowsHide: true,
+            // Hide the process window on windows?
+            windowsHide: false,
         });
 
         inst.status.running = true;

@@ -60,7 +60,8 @@ export class FilesystemStorage extends StorageService {
      * @return {Promise<String>} the URL
      */
     async _getUrlOfPath(path) {
-        return this.config.protocol + "://" + path.root + "/" + path.path;
+        return this.config.protocol + ":///" + path.root + "/" + path.path;
+        // HACK: the third slash is only needed for win
     }
 
     /**

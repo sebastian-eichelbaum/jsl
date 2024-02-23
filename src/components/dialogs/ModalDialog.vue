@@ -53,9 +53,11 @@ const props = defineProps({
 });
 
 // Set style to element directly as it is teleported to <body>
-const style = props.contained ? computedBackgroundStyle(props, "containedModal"): computedBackgroundStyle(props, "modal");
+const style = props.contained
+    ? computedBackgroundStyle(props, "containedModal")
+    : computedBackgroundStyle(props, "modal");
 
-const style2=computed(() => {
+const style2 = computed(() => {
     const style = props.contained
         ? makeBackgroundStyle(
               props.containedModalColor,
@@ -69,9 +71,12 @@ const style2=computed(() => {
     return style;
 });
 
-const emit = defineEmits(["close"]);
+const emit = defineEmits(["close", "open"]);
 
 watch(model, (newValue, oldValue) => {
+    if (newValue) {
+        emit("open");
+    }
     if (!newValue) {
         emit("close");
     }

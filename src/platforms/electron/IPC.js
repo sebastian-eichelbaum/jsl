@@ -14,10 +14,13 @@ export function connectIPCPreload() {
         readJSONFile: (...args) => ipcRenderer.invoke("readJSONFile", ...args),
 
         // Windowing
+        windowClose: (...args) => ipcRenderer.invoke("windowClose", ...args),
         windowMinimize: (...args) => ipcRenderer.invoke("windowMinimize", ...args),
         windowMaximize: (...args) => ipcRenderer.invoke("windowMaximize", ...args),
         windowFullscreen: (...args) => ipcRenderer.invoke("windowFullscreen", ...args),
         windowIsFullscreen: (...args) => ipcRenderer.invoke("windowIsFullscreen", ...args),
+        // Called once the user requests the main window to close. from main, listen in renderer
+        onClose: (callback) => ipcRenderer.on("onClose", (_event, value) => callback(value)),
     });
 }
 
@@ -91,4 +94,14 @@ export function connectIPCMain(app) {
         return app.focussedWindow.isFullScreen();
     };
     ipcMain.handle("windowIsFullscreen", windowIsFullscreen);
+
+    const windowClose = async (_ev, force) => {
+        if (force === true) {
+            // Skips the close, beforeunload, unload events and kills the window
+            app.focussedWindow.destroy();
+        } else {
+            app.focussedWindow.close();
+        }
+    };
+    ipcMain.handle("windowClose", windowClose);
 }

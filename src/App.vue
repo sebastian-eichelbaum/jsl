@@ -25,6 +25,8 @@ This can be seen as an inspiration and tutorial on how to setup an app.
 
     <InitOverlay delay="200" />
     <ScrollbarStyle />
+
+    <QuitDialog v-bind="fwdBindProps('quitDialogProps', $props)" handleWindowClose />
 </template>
 
 <script setup>
@@ -36,6 +38,8 @@ import { fwdProps, fwdBindProps } from "@jsl/utils/ForwardVueProps";
 
 import InitOverlay from "@jsl/utils/InitOverlay.vue";
 import ScrollbarStyle from "@jsl/utils/ScrollbarStyle.vue";
+
+import QuitDialog from "@jsl/components/dialogs/QuitDialog.vue";
 
 import BigPanel from "@jsl/screens/BigPanel.vue";
 import WindowButtons from "@jsl/components/WindowButtons.vue";
@@ -51,6 +55,8 @@ const props = defineProps({
 
     // Forward some BigPanel/Background component props. (As Background Style props as in Style.js)
     ...fwdProps("authBackground"),
+    // Quit dialog props, especially the title and subtitle props might be interesting
+    ...fwdProps("quitDialogProps"),
 });
 
 const userBackend = props.userService || backend?.user;

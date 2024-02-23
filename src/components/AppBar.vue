@@ -9,13 +9,13 @@ extended.
 <template>
     <v-app-bar :style="isFullscreen ? styleFullscreen : style" v-bind="{ ...$props, ...$attrs }">
         <v-app-bar-title class="title">
-            <AppLogo compact />
+            <AppLogo compact :nolink="unattendedMode" />
         </v-app-bar-title>
         <div class="draggableRegion">&nbsp;</div>
 
         <template v-slot:append>
             <slot>
-                <ShopButton v-if="!noShopButton" :hideText="smAndDown" class="mr-5" />
+                <ShopButton v-if="!unattendedMode && !noShopButton" :hideText="smAndDown" class="mr-5" />
                 <LanguageButton
                     v-if="!noLanguageButton"
                     :hideText="smAndDown"
@@ -23,12 +23,18 @@ extended.
                     rounded="xl"
                     class="mr-5"
                 />
-                <UserButton v-if="!noUserButton" :hideText="smAndDown" maxWidth="150px" rounded="xl" class="mr-5" />
+                <UserButton
+                    v-if="!unattendedMode && !noUserButton"
+                    :hideText="smAndDown"
+                    maxWidth="150px"
+                    rounded="xl"
+                    class="mr-5"
+                />
             </slot>
 
             <slot name="append" />
 
-            <WindowButtons dividerL @fullscreenChanged="onFullscreenChanged" />
+            <WindowButtons v-if="!unattendedMode" dividerL @fullscreenChanged="onFullscreenChanged" />
         </template>
     </v-app-bar>
 </template>
@@ -53,6 +59,8 @@ import ShopButton from "@jsl/components/ShopButton.vue";
 import { computedBackgroundStyle, makeBackgroundStyleProps } from "@jsl/utils/Style";
 
 import { platform } from "@jsl/Platform";
+
+import { app } from "@jsl/App";
 
 import { useDisplay } from "vuetify";
 
@@ -80,6 +88,8 @@ const style = computedBackgroundStyle(props, "");
 const styleFullscreen = computedBackgroundStyle(props, "fullscreen");
 
 const isFullscreen = ref(false);
+
+const unattendedMode = app.featureLocks.unattendedMode.locked;
 
 function onFullscreenChanged(newState) {
     isFullscreen.value = newState;

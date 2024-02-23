@@ -192,6 +192,15 @@ export class ElectronApp extends jslObjectAsyncInit {
             mainWindow.webContents.openDevTools();
         }
 
+        // Handle close internally - if the user closes the app using the OS tools, this will be triggered:
+        mainWindow.on("close", function (e) {
+            // Avoids a real close.
+            e.preventDefault();
+            // ... Ask the user instead
+            mainWindow.show();
+            mainWindow.webContents.send("onClose");
+        });
+
         this.m_mainWindow = mainWindow;
     }
 }

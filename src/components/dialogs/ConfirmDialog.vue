@@ -1,5 +1,5 @@
 <template>
-    <ModalDialog v-model="model" width="auto" v-bind="{ ...$props, ...$attrs }" @close="onNo">
+    <ModalDialog v-model="model" width="auto" max-width="640" v-bind="{ ...$props, ...$attrs }" @close="onNo">
         <v-card-title :style="titleStyle">
             <slot>{{ tt(title) }}</slot>
         </v-card-title>

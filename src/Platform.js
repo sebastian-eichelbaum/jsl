@@ -3,7 +3,7 @@ import _ from "lodash";
 import { jslObject } from "@jsl/Object";
 
 import isElectron from "@jsl/platforms/electron/isElectron";
-import {assert, Test} from "@jsl/Assert";
+import { assert, Test } from "@jsl/Assert";
 
 // Provides platform specific functionality.
 export class Platform extends jslObject {
@@ -38,6 +38,17 @@ export class Platform extends jslObject {
      */
     constructor(config = {}) {
         super(config);
+
+        this.m_closeHandler = null;
+
+        // OS asked to close
+        window?.jslPlatform?.onClose(() => {
+            // If no custom handler is provided, just close.
+            if (this.m_closeHandler == null) {
+                window.close();
+            }
+            this.m_closeHandler?.();
+        });
     }
 
     /**
@@ -76,7 +87,7 @@ export class Platform extends jslObject {
      * Returns true if this platforms allows to close the app. Browsers do not
      * support it.
      */
-    get canCloseApp() {
+    get canCloseWindow() {
         return this.config.windowManagement.allowClose && !this.isWeb;
     }
 
@@ -113,13 +124,28 @@ export class Platform extends jslObject {
         return this.config.windowManagement.allowDrag && !this.isWeb;
     }
 
-    // If this is a standalone app, close it. If not, nothing happens.
-    closeApp() {
-        if (!this.canCloseApp) {
+    /**
+     * Close the currently focussed window if supported.
+     *
+     * @param {Boolean} force - if true, the window is closed without asking.
+     * @async
+     * @returns {Promise<>} Async promise
+     */
+    async windowClose(force = false) {
+        if (!this.canCloseWindow) {
             console.warn("Close is not supported on this platform");
             return;
         }
-        window.close(); // What if multiple windows are open?
+        return window.jslPlatform?.windowClose?.(force);
+    }
+
+    /**
+     * Set the function that is triggered when a window close event comes in.
+     *
+     * @param {Function} handler - A function. If it is set (not nullish), it has to handle close!
+     */
+    set onClose(handler) {
+        this.m_closeHandler = handler;
     }
 
     /**

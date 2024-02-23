@@ -2,63 +2,61 @@
 Provides the common window buttons minimize, maximize, close and fullscreen. 
 
 Depending on the platform support and settings (see jsl/Platform.js), they are shown or not.
+
+NOTE: this does NOT provide a quit confirm dialog. It just triggers Platform.windowClose. jsl App.vue provides a handler
+for this. Either use this or provide your own.
 -->
 <template>
-    <v-divider
-        v-if="platform.canCloseApp && dividerL"
-        :thickness="1"
-        class="border-opacity-10 ml-1 mr-1"
-        color="#aaaaaa88"
-        vertical
-    ></v-divider>
-    <v-btn
-        @click="onMinimize"
-        :class="{ hoverbtn: float }"
-        v-bind="{ ...$props, ...$attrs }"
-        class="raise mr-0"
-        v-if="!noMinimize && platform.canMinimizeWindow"
-        :icon="iconMinimize"
-    />
-    <v-btn
-        @click="onMaximize"
-        :class="{ hoverbtn: float }"
-        v-bind="{ ...$props, ...$attrs }"
-        class="raise mr-0"
-        v-if="!noMaximize && platform.canMaximizeWindow"
-        :icon="iconMaximize"
-    />
-    <v-btn
-        @click="onFullscreen"
-        :class="{ hoverbtn: float }"
-        v-bind="{ ...$props, ...$attrs }"
-        class="raise mr-0"
-        v-if="!noFullscreen && platform.canFullscreenWindow"
-        :icon="iconFullscreen"
-    />
-    <v-btn
-        @click="onClose"
-        :class="{ hoverbtn: float }"
-        v-bind="{ ...$props, ...$attrs }"
-        class="raise mr-0"
-        v-if="!noClose && platform.canCloseApp"
-        :icon="iconClose"
-    />
-    <v-divider
-        v-if="platform.canCloseApp && dividerR"
-        :thickness="1"
-        class="border-opacity-10 ml-1 mr-1"
-        color="#aaaaaa88"
-        vertical
-    ></v-divider>
-    <QuitDialog v-model="dialog" @yes="close" />
+    <div class="raise" :class="{ hoverbtn: float, block: !float }">
+        <v-divider
+            v-if="platform.canCloseWindow && dividerL"
+            :thickness="1"
+            class="border-opacity-10 ml-1 mr-1"
+            color="#aaaaaa88"
+            vertical
+        ></v-divider>
+        <v-btn
+            @click="onMinimize"
+            v-bind="{ ...$props, ...$attrs }"
+            class="mr-0"
+            v-if="!noMinimize && platform.canMinimizeWindow"
+            :icon="iconMinimize"
+        />
+        <v-btn
+            @click="onMaximize"
+            v-bind="{ ...$props, ...$attrs }"
+            class="mr-0"
+            v-if="!noMaximize && platform.canMaximizeWindow"
+            :icon="iconMaximize"
+        />
+        <v-btn
+            @click="onFullscreen"
+            v-bind="{ ...$props, ...$attrs }"
+            class="mr-0"
+            v-if="!noFullscreen && platform.canFullscreenWindow"
+            :icon="iconFullscreen"
+        />
+        <v-btn
+            @click="onClose"
+            v-bind="{ ...$props, ...$attrs }"
+            class="mr-0"
+            v-if="!noClose && platform.canCloseWindow"
+            :icon="iconClose"
+        />
+        <v-divider
+            v-if="platform.canCloseWindow && dividerR"
+            :thickness="1"
+            class="border-opacity-10 ml-1 mr-1"
+            color="#aaaaaa88"
+            vertical
+        ></v-divider>
+    </div>
 </template>
 
 <script setup>
 import { ref } from "vue";
 
 import { platform } from "@jsl/Platform";
-
-import QuitDialog from "@jsl/components/dialogs/QuitDialog.vue";
 
 const props = defineProps({
     variant: { default: "text" },
@@ -90,10 +88,8 @@ const emit = defineEmits([
     "fullscreenChanged",
 ]);
 
-let dialog = ref(false);
-
 const onClose = () => {
-    dialog.value = true;
+    platform.windowClose();
 };
 
 const onMinimize = () => {
@@ -110,9 +106,7 @@ const onFullscreen = () => {
     });
 };
 
-const close = () => {
-    platform.closeApp();
-};
+const close = () => {};
 </script>
 
 <style scoped>
@@ -125,6 +119,10 @@ const close = () => {
     right: 0;
 
     float: right;
+}
+
+.block {
+    display: contents;
 }
 
 .raise {

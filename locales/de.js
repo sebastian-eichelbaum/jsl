@@ -25,11 +25,15 @@ export const de = {
                 app: "App | Apps",
                 game: "Spiel | Spiele",
                 hardware: "Hardware | Hardware",
+                lock: "Sperren",
+                unlock: "Entsperren",
             },
             prompt: {
                 areYouSure: "Bist du sicher?",
                 areYouSureToQuit: "Bist du sicher, dass du beenden willst?",
                 areYouSureToAbort: "Bist du sicher, dass du abbrechen willst?",
+                enterUnlockPin: "Sperr-PIN eingeben zum entsperren.",
+                enterLockPin: "Neue Sperr-PIN eingeben.",
             },
             msg: {
                 greet: "Hallo {user}",
@@ -41,6 +45,11 @@ export const de = {
                 settingsAndProfileExplanation: "Hier findest du deine Profiloptionen and Einstellungen.",
                 unsavedChangesWillBeLost: "Ungespeicherte Änderungen gehen verloren!",
                 noDataAvailable: "Keine Daten vorhanden.",
+                unattendedModeLock: "Unbeaufsichtigter Modus",
+                unattendedModeLockExplanation:
+                    "In diesem Modus werden alle administrativen Funktionen, wie das Benutzermenü, das Schließen der App oder das Hinzufügen/Entfernen von Content abgeschalten. Um die Anwendung zu entsperren muss die hier definierte PIN erneut eingegeben werden oder das System neu gestartet werden.",
+                unlockFailed: "Entsperren fehlgeschlagen.",
+                unlockFailedWrongPin: "@:common.msg.unlockFailed Falsche PIN.",
             },
         },
 
@@ -54,13 +63,15 @@ export const de = {
                     "Passwort zu schwach: Nutze Groß-/Kleinschreibung, Leerzeichen, Zahlen und Sonderzeichen",
                 inputPasswordTooShort: "Passwort zu kurz: Min. {min} Zeichen",
                 inputPasswordsDoNotMatch: "Passwort stimmt nicht überein",
-                inputBlacklistedChar: 'Zeichen nicht erlaubt: {chars}', // "char" is the offending char
-                
+                inputBlacklistedChar: "Zeichen nicht erlaubt: {chars}", // "char" is the offending char
+                inputNumbersOnly: "Nur Zahlen erlaubt",
+
                 inputNotValidated: "Korigiere die markierten Felder",
             },
             ui: {
                 email: "E-Mail",
                 password: "Passwort",
+                pin: "PIN",
                 confirmPassword: "Passwort bestätigen",
                 firstname: "Vorname",
                 lastname: "Nachame",
