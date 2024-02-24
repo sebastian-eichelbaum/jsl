@@ -5,6 +5,8 @@ import { shell } from "electron";
 import path from "path";
 
 import { jslObjectAsyncInit } from "@jsl/Object";
+import { Test } from "@jsl/Assert";
+
 import { setupMain } from "./IPC";
 
 // Register the "fs" protocol.
@@ -58,6 +60,16 @@ export class ElectronApp extends jslObjectAsyncInit {
 
                 // Window background color if no content is present
                 backgroundColor: "#191919",
+            },
+
+            security: {
+                // Allows to disable the web security settings in electron.
+                // If you get a lot of CORS issues with your backends, you might want to set this false. BUT do this
+                // only for testing. It is not a permanent solution as it introduces some security risks.
+                web: true,
+
+                // Apply cors fixes for these urls.
+                corsURLs: [], // ["https://cms.provider.com/*"],
             },
         };
     }
@@ -158,13 +170,7 @@ export class ElectronApp extends jslObjectAsyncInit {
             webPreferences: {
                 preload: path.join(__dirname, "preload.js"),
 
-                // Security note:
-                // The following features should stay disabled. They introduce a security risk, especially when the app
-                // loads remote content!
-                //
-                // Replace with IPC!
-                //nodeIntegration: true,
-                //contextIsolation: false,
+                webSecurity: this.config.security.web,
             },
         });
 
@@ -198,11 +204,54 @@ export class ElectronApp extends jslObjectAsyncInit {
         });
 
         this.m_mainWindow = mainWindow;
+
+        this._applyCorsFixes(this.m_mainWindow);
+    }
+
+    /**
+     * Applies some header manipulations to ensure proper CORS security for a given set of provider URLs
+     *
+     * NOTE: this is in testing and probably wont work. As a fallback, set web security false TEMPORARILY
+     *
+     * @param {BrowserWindow} win - The window to set the handlers for
+     */
+    _applyCorsFixes(win) {
+        
+        if (!Test.arrayOnlyContainsNonEmptyString(this.config.security.corsURLs)) {
+            return;
+        }
+
+        const corsHeaderFilter = {
+            urls: this.config.security.corsURLs,
+        };
+
+        // Prevent issues with cors.
+        win.webContents.session.webRequest.onBeforeSendHeaders(corsHeaderFilter, (details, callback) => {
+            // console.log(details);
+            callback({
+                requestHeaders: {
+                    ...details.requestHeaders,
+                    // Origin: "*",
+                    //"Access-Control-Allow-Credentials": true,
+                    //"Access-Control-Allow-Headers": "*",
+                },
+            });
+        });
+
+        // Prevent issues with cors.
+        win.webContents.session.webRequest.onHeadersReceived(corsHeaderFilter, (details, callback) => {
+            //console.log(details);
+            callback({
+                responseHeaders: {
+                    ...details.responseHeaders,
+                    //"Access-Control-Allow-Origin": ["http://localhost:5173"],
+                    //"Access-Control-Allow-Credentials": true,
+                    //"Access-Control-Allow-Headers": ["content-type", "authorization"],
+                },
+            });
+        });
     }
 }
-
-// app.commandLine.appendSwitch('high-dpi-support', 1)
-// app.commandLine.appendSwitch('force-device-scale-factor', 2)
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 //if (require("electron-squirrel-startup")) {
