@@ -4,10 +4,8 @@ import { shell } from "electron";
 
 import path from "path";
 
-import { jslObjectAsyncInit } from "../../Object";
-import { connectIPCMain } from "./IPC";
-import { connectIPCMain as childProcessConnectIPCMain } from "./ChildProcess";
-import { connectIPCMain as osConnectIPCMain } from "./OS";
+import { jslObjectAsyncInit } from "@jsl/Object";
+import { setupMain } from "./IPC";
 
 // Register the "fs" protocol.
 protocol.registerSchemesAsPrivileged([
@@ -96,9 +94,7 @@ export class ElectronApp extends jslObjectAsyncInit {
                 return net.fetch("file://" + request.url.slice("fs://".length));
             });
 
-            connectIPCMain(this);
-            childProcessConnectIPCMain(this);
-            osConnectIPCMain(this);
+            setupMain(this);
 
             this._createWindow();
             resolve(this);

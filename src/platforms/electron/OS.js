@@ -31,7 +31,6 @@ export function connectIPCMain(app) {
 
 /**
  * Use to fetch OS info.
- *
  */
 export async function getOSInfo() {
     return window?.jslOS?.os();
