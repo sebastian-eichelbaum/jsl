@@ -233,6 +233,21 @@ export class Platform extends jslObject {
         assert(Test.isNonEmptyString(filePath), "filePath must be a non-empty string.");
         return window.jslPlatform?.readJSONFile?.(filePath);
     }
+
+    /**
+     * Ask the user to open a directory.
+     *
+     * @async
+     * @param {String} [basePath] - Directory base. This is the dir to start in. If null, the OS deceides.
+     * @returns {Promise<String>} Directory path or nullish if aborted.
+     */
+    async openDir(basePath = null) {
+        if (basePath != null) {
+            assert(Test.isNonEmptyString(basePath), "basePath must be a non-empty string or null.");
+        }
+
+        return window.jslPlatform?.openDir?.(basePath);
+    }
 }
 
 // The platform instance

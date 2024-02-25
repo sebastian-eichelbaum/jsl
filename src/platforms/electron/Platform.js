@@ -35,8 +35,16 @@ export function connectIPCMain(app) {
     const fsp = require("fs").promises;
     const path = require("path");
 
-    const handleDirOpen = async () => {
+    const openDir = async (_ev, basePath) => {
+        let base = "";
+        try {
+            if (fs.lstatSync(basePath).isDirectory()) {
+                base = basePath;
+            }
+        } catch (e) {}
+
         const { canceled, filePaths } = await dialog.showOpenDialog({
+            defaultPath: base,
             properties: ["openDirectory"],
         });
 
@@ -45,7 +53,7 @@ export function connectIPCMain(app) {
         }
         return null;
     };
-    ipcMain.handle("openDir", handleDirOpen);
+    ipcMain.handle("openDir", openDir);
 
     const readTextFile = async (_ev, filePath) => {
         return fsp.readFile(filePath, "utf8");

@@ -177,7 +177,7 @@ async function do(state)
 </template>
 
 <script setup>
-import { ref, reactive, computed, markRaw } from "vue";
+import { ref, reactive, computed, markRaw, onMounted } from "vue";
 import _ from "lodash";
 
 import { Translatable, tt } from "@jsl/Localization";
@@ -268,6 +268,12 @@ const emit = defineEmits([
     // Triggered on valid submission. An object is passed that provides all values. This is called once all fields
     // comply to the given rules.
     "submit",
+
+    // When the form is reset. The form model is passed as argument. Fill the values as needed.
+    "reset",
+
+    // Called on mount. Use this to init default values externally.
+    "init",
 
     // Triggered on field value update
     "update:values",
@@ -458,7 +464,7 @@ function setState(newState) {
     }
 
     if (newState?.reset === true) {
-        form.value.reset();
+        reset();
     }
 
     // Try to translate this and provide additional details if given
@@ -482,6 +488,7 @@ function setState(newState) {
  */
 function reset() {
     form?.value?.reset?.();
+    emit("reset", valuesModel.value);
 }
 
 /**
@@ -495,6 +502,10 @@ function setBusy(value = true, delayMs = 0) {
         _busy.value = value;
     }, delayMs);
 }
+
+onMounted(() => {
+    emit("init", valuesModel.value);
+});
 </script>
 
 <style scoped>
