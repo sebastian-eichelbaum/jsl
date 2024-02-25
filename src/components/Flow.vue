@@ -6,7 +6,8 @@ and the like.
 
 Example:
 
-<Flow :steps="steps" @ok="onOK">
+<Flow :steps="steps" @ok="onOK" resultMapper="resultMapper">
+    // result is the return value of resultMapper
     <template #done="{ result }"> Done: {{ result }} </template>
 </Flow>
 
@@ -19,10 +20,37 @@ const steps = [
     ...
 ];
 
+// Transforms the single-step results in steps to some arbitrary result as needed.
+function resultMapper(stepResults, mapped)
+{
+    // take the values. "result" contains the value returned by the submit handler of the step's form
+    return {
+        name: stepResults[0].result.name,
+        path: stepResults[0].result.path,
+    };
+
+    // or use mapped: it maps the step.id to its value:
+    return {
+        name: mapped["CreateWorkingDir"].result.name,
+        path: mapped["CreateWorkingDir"].result.path,
+    };
+ 
+    // If no mapper is defined, the default mapped "mapped" will be used
+    // I.e.
+
+    // { 
+    //   "CreateWorkingDir": {
+    //     "path": "/home/seb/Daten/EffigosTest",
+    //     "name": "asd"
+    //   },
+    //   "SelectComponent": "hedA911",
+    //   "SelectContext": ["legM911"]
+    // }
+}
+
+// Called when OK, receives the mapped result from resultMapper
 function onOK(result)
 {
-    // Result is an array, one entry per step. Each step is enriched with a field "result" that contains the original
-    // result of the Form of that step
     console.log(result);
 }
 
@@ -36,7 +64,7 @@ function onOK(result)
 
         <template #___done>
             <!-- Show the steps and their results as JSON -->
-            <slot name="done" :result="_steps">
+            <slot name="done" :result="_mappedResult">
                 {{ _steps }}
             </slot>
         </template>
@@ -44,8 +72,13 @@ function onOK(result)
 </template>
 
 <script>
-class FlowStep {
-    constructor() {}
+// Simple mapper that maps each step.id to its step.result.
+function defaultMapper(state) {
+    const result = {};
+    for (const s of state) {
+        result[s.id] = s.result;
+    }
+    return result;
 }
 </script>
 
@@ -57,15 +90,34 @@ import Multiplexer from "@jsl/components/Multiplexer.vue";
 const props = defineProps({
     // Step definitions
     steps: { type: Array, required: true, default: [] },
+
+    // Maps the steps results to some custom result object of your liking.
+    // If not set, an object { ...step.id: step.result} is returned
+    // As second param, the default mapped results are passed on for convenience.
+    resultMapper: {
+        type: Function,
+        required: false,
+        default: (
+            // Raw step results
+            stepsResult,
+
+            // Also pass the default mapped stuff. Might be useful to the user
+            mapped,
+        ) => defaultMapper(stepsResult),
+    },
 });
 
 const emit = defineEmits([
-    // Triggered on valid, finished flow. An object is passed that provides all values.
+    // Triggered on valid, finished flow. First parameter is the result of props.resultMapper, second param is the
+    // original steps results, including step info, states, models, and all the internal details.
     "ok",
 ]);
 
 // Step index
 const _step = ref(0);
+
+// Flow result after all steps are done.
+let _mappedResult = {};
 
 // The steps as given via props but prepared an enhanced to be used her.
 const _steps = ref([]);
@@ -76,7 +128,9 @@ onMounted(() => {
         throw new Error("No steps defined.");
     }
 
-    let result = [];
+    let stepsResult = [];
+    _mappedResult = {};
+
     for (let step of props.steps) {
         if (!step.id) {
             throw new Error("Each step requires an ID.");
@@ -91,11 +145,17 @@ onMounted(() => {
         }
 
         step.ok = (state) => {
-            step.result = state;
+            // State is the object send along OK in jsl Form.vue
+            step.result = state.result;
+            step.state = state.state;
             _step.value++;
 
             if (isDone()) {
-                emit("ok", result);
+                _mappedResult = defaultMapper(stepsResult);
+                if (props.resultMapper != null) {
+                    _mappedResult = props?.resultMapper?.(stepsResult, _mappedResult);
+                }
+                emit("ok", _mappedResult, stepsResult);
             }
         };
 
@@ -107,11 +167,11 @@ onMounted(() => {
             step.props = {};
         }
 
-        result.push(step);
+        stepsResult.push(step);
     }
 
     // NOTE: markRaw avoids making all elements reactive proxy objects as this affects performance
-    _steps.value = markRaw(result);
+    _steps.value = markRaw(stepsResult);
 });
 
 // Currently active step id
