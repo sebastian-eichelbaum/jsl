@@ -177,7 +177,7 @@ async function do(state)
 </template>
 
 <script setup>
-import { ref, reactive, computed, markRaw, onMounted } from "vue";
+import { ref, reactive, computed, markRaw, onMounted, watch } from "vue";
 import _ from "lodash";
 
 import { Translatable, tt } from "@jsl/Localization";
@@ -275,7 +275,10 @@ const emit = defineEmits([
     // Called on mount. Use this to init default values externally.
     "init",
 
-    // Triggered on field value update
+    // Triggered on model update
+    "input",
+
+    // Triggered on field value update (technically the same as input, but managed by VUE's v-model mechanics)
     "update:values",
 
     // The submitted form worked as expected. An object {state, result} is provided. Values is the set of
@@ -480,6 +483,20 @@ function setState(newState) {
 }
 
 /**
+ * Report model changes.
+ */
+watch(props.values, (newValue, oldValue) => {
+    emit("input", valuesModel.value);
+});
+
+/**
+ * On mount is init - notify any listeners and let them init the model.
+ */
+onMounted(() => {
+    emit("init", valuesModel.value);
+});
+
+/**
  * Reset the form.
  * From the outside, use:
  * <Form .... ref="myForm">
@@ -502,10 +519,6 @@ function setBusy(value = true, delayMs = 0) {
         _busy.value = value;
     }, delayMs);
 }
-
-onMounted(() => {
-    emit("init", valuesModel.value);
-});
 </script>
 
 <style scoped>

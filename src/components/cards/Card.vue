@@ -94,6 +94,14 @@ const props = defineProps({
     ripple: {},
 });
 
+const emit = defineEmits([
+    // Once the overlay visibility changes. The given parameter is a bool that is true if the overlay is visible
+    "overlayChange",
+
+    // When clicked on the card
+    "click",
+]);
+
 const rounded = styleDefaultProp("card.rounded", props.rounded);
 const elevation = styleDefaultProp("card.elevation", props.elevation);
 
@@ -103,9 +111,6 @@ const overlayBgStyle = computedBackgroundStyle(props, "overlay");
 ///////////////////////////////////////////////////////////////////
 // Click handling
 //
-
-// Forwards to outside watchers
-const emit = defineEmits(["click"]);
 
 const clickOverlayState = ref(false);
 const hoverState = defineModel();
@@ -120,6 +125,10 @@ const overlayOpen = computed(() => {
     }
 
     return props.showOverlay;
+});
+
+watch(overlayOpen, (newValue, oldValue) => {
+    emit("overlayChange", newValue);
 });
 
 const onClick = () => {

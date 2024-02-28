@@ -285,3 +285,41 @@ export class ValidatorFactory {
 }
 
 export default ValidatorFactory.translated();
+
+import { makeDebouncedSingleRun, makeSingleRun } from "@jsl/utils/Await";
+
+/**
+ * Create a wrapper to have debounced async validations working easily. Just provide some async function.
+ *
+ * @warning It can happen that vuetify "misses" the latest result if triggered too often. (It s checked on submit
+ * anyways)
+ *
+ * @param {Function} validator - The validator. Recieves the value to check and returns either true or a string.
+ * @param {Number} [debounce] - Timeout beween checks in MS. Used to debounce.
+ * @returns {Function} A closure to handle the async valudation. CANNOT be used in :rules directly!
+ *
+ * Usage:
+ * const myTest = asyncValidate((value)=>{ ... my real test async stuff });
+ *
+ * In the template:
+ * :rules = [ ..., myTest, ... ]
+ */
+export function asyncDebouncedValidate(validator, debounce = 500) {
+    return makeDebouncedSingleRun(validator, debounce);
+}
+
+/**
+ * Create a wrapper to have async validations working easily. Just provide some async function.
+ *
+ * @param {Function} validator - The validator. Recieves the value to check and returns either true or a string.
+ * @returns {Function} A closure to handle the async valudation. CANNOT be used in :rules directly!
+ *
+ * Usage:
+ * const myTest = asyncValidate((value)=>{ ... my real test async stuff });
+ *
+ * In the template:
+ * :rules = [ ..., myTest, ... ]
+ */
+export function asyncValidate(validator) {
+    return makeSingleRun(validator);
+}

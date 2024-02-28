@@ -33,6 +33,7 @@ function resultMapper(stepResults, mapped)
     return {
         name: mapped["CreateWorkingDir"].result.name,
         path: mapped["CreateWorkingDir"].result.path,
+        fullModel: mapped["CreateWorkingDir"].rawValues,
     };
  
     // If no mapper is defined, the default mapped "mapped" will be used
@@ -48,8 +49,8 @@ function resultMapper(stepResults, mapped)
     // }
 }
 
-// Called when OK, receives the mapped result from resultMapper
-function onOK(result)
+// Called when OK, receives the mapped result from resultMapper and the original state (stepResults in resultMapper)
+function onOK(result, state)
 {
     console.log(result);
 }
@@ -76,7 +77,7 @@ function onOK(result)
 function defaultMapper(state) {
     const result = {};
     for (const s of state) {
-        result[s.id] = s.result;
+        result[s.id] = { result: s.result, rawValues: s.state.values };
     }
     return result;
 }

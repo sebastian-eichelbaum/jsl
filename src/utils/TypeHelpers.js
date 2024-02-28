@@ -113,4 +113,16 @@ export class TypeHelpers {
     static areObjectsDifferent(obj1, obj2) {
         return stringify(obj1) !== stringify(obj2);
     }
+
+    /**
+     * Takes ans object and generates an object with the same data members (no functions, prototypes, ...) - aka POD,
+     * Plain old Data like.
+     *
+     * @static
+     * @param {Object} obj - An object to clone as raw object
+     * @returns {Object} Object with the same fields that are not functions/prototypes/...
+     */
+    static asPOD(obj) {
+        return JSON.parse(JSON.stringify(obj));
+    }
 }

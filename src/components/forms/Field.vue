@@ -52,6 +52,15 @@ Example:
                     :disabled="busy"
                 />
                 <v-text-field v-else-if="fieldType === 'combo'" />
+                <v-textarea
+                    v-else-if="fieldType === 'textarea'"
+                    v-bind="{ ...$props, ...$attrs, ..._fieldProps }"
+                    v-model="model"
+                    :name="name"
+                    :rules="rules"
+                    :label="_fieldLabel"
+                    :disabled="busy"
+                />
                 <component
                     :is="fieldType"
                     v-else-if="typeof fieldType == 'object'"
@@ -62,8 +71,9 @@ Example:
                     :label="_fieldLabel"
                     :disabled="busy"
                 >
-
-        <template v-for="(_, slot) of $slots" v-slot:[slot]="scope"><slot :name="slot" v-bind="scope" /></template>
+                    <template v-for="(_, slot) of $slots" v-slot:[slot]="scope">
+                        <slot :name="slot" v-bind="scope" />
+                    </template>
                 </component>
                 <template v-else>
                     {{ tt("common.msg.todo", { what: "Undefined field type and empty slot!" }) }}
@@ -107,7 +117,7 @@ const props = defineProps({
 
     // If the anonymous slot is not explicitly set this component defines a field. These props allow to configure them:
 
-    // The type of field. Currently supported: "text"
+    // The type of field. Currently supported: "text, textarea" and an arbitrary component object
     fieldType: { type: [String, Object], default: "text" },
     // The label of the field. If unset, no label is used. If set to "$title", the title of this Field is used.
     label: { type: [String, Translatable], default: "$title" },

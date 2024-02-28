@@ -1,6 +1,7 @@
 import _ from "lodash";
 
 import { jslObject } from "@jsl/Object";
+import { TypeHelpers } from "@jsl/utils/TypeHelpers";
 
 import isElectron from "@jsl/platforms/electron/isElectron";
 import { assert, Test } from "@jsl/Assert";
@@ -78,6 +79,26 @@ export class Platform extends jslObject {
         } else {
             console.error("Open Link not implemented");
         }
+    }
+
+    /**
+     * Open the given path in the desktop system's manner. On platforms that support this, this opens the dir/fiel in
+     * some file explorer or an app that handles it.
+     *
+     * @param {Array<String>|String} path - The path to open. If this is an array, it will get merged.
+     * @returns {Promise<>} Throws on error like invalid paths. Resolves AFTER the opened file has been closed again.
+     */
+    async openFile(path) {
+        assert(
+            Test.isString(path) || Test.arrayOnlyContainsString(path),
+            "Path must be a string or an array of strings",
+        );
+
+        if (this.isWeb) {
+            return;
+        }
+
+        return window.jslPlatform?.openFile?.(path);
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -218,8 +239,30 @@ export class Platform extends jslObject {
      * @returns {Promise<String>} The file contents as UTF-8 string.
      */
     async readTextFile(filePath) {
-        assert(Test.isNonEmptyString(filePath), "filePath must be a non-empty string.");
+        assert(
+            Test.isString(filePath) || Test.arrayOnlyContainsString(filePath),
+            "Path must be a string or an array of strings",
+        );
+
         return window.jslPlatform?.readTextFile?.(filePath);
+    }
+
+    /**
+     * Write file from to path as text.
+     *
+     * @async
+     * @param {String} filePath - Path to the file. Absolute.
+     * @param {String} contents - File contents.
+     *
+     * @returns {Promise} Resolves on success.
+     */
+    async writeTextFile(filePath) {
+        assert(
+            Test.isString(filePath) || Test.arrayOnlyContainsString(filePath),
+            "Path must be a string or an array of strings",
+        );
+
+        return window.jslPlatform?.writeTextFile?.(filePath, contents);
     }
 
     /**
@@ -230,8 +273,41 @@ export class Platform extends jslObject {
      * @returns {Promise<Object>} The parsed object from JSON.
      */
     async readJSONFile(filePath) {
-        assert(Test.isNonEmptyString(filePath), "filePath must be a non-empty string.");
+        assert(
+            Test.isString(filePath) || Test.arrayOnlyContainsString(filePath),
+            "Path must be a string or an array of strings",
+        );
         return window.jslPlatform?.readJSONFile?.(filePath);
+    }
+
+    /**
+     * Write a file to path as JSON.
+     *
+     * @async
+     * @param {String} filePath - Path to the file. Absolute.
+     * @param {Object|Array} contents - File contents as object or array.
+     * @returns {Promise} Resolves on success.
+     */
+    async writeJSONFile(filePath, contents) {
+        assert(
+            Test.isString(filePath) || Test.arrayOnlyContainsString(filePath),
+            "Path must be a string or an array of strings",
+        );
+        return window.jslPlatform?.writeJSONFile?.(filePath, TypeHelpers.asPOD(contents));
+    }
+
+    /**
+     * Reads a JSON file, calls an updater that modifies the data and writes the results to the same file.
+     *
+     * @async
+     * @param {Array<String>|String} filePath - JSON file.
+     * @param {Function} updater - Function that takes an object and returns the new object
+     * @returns {Promise} Resolves on success
+     */
+    async updateJSONFile(filePath, updater) {
+        this.readJSONFile(filePath)
+            .then((data) => updater(data))
+            .then((updatedData) => this.writeJSONFile(filePath, updatedData));
     }
 
     /**
@@ -241,12 +317,78 @@ export class Platform extends jslObject {
      * @param {String} [basePath] - Directory base. This is the dir to start in. If null, the OS deceides.
      * @returns {Promise<String>} Directory path or nullish if aborted.
      */
-    async openDir(basePath = null) {
+    async selectDir(basePath = null) {
         if (basePath != null) {
             assert(Test.isNonEmptyString(basePath), "basePath must be a non-empty string or null.");
         }
 
-        return window.jslPlatform?.openDir?.(basePath);
+        return window.jslPlatform?.selectDir?.(basePath);
+    }
+
+    /**
+     * Renove a given file/dir.
+     *
+     * @async
+     * @param {String|Array<String>} path - A path to a dir or file
+     * @param {Object} [config] - Allows to define recursive and force. If force is true, exceptions are ignored.
+     * Recursion is enabled by default
+     * @returns {Promise<>} The async promise
+     */
+    async rm(path, config = { recursive: true, force: false }) {
+        assert(
+            Test.isString(path) || Test.arrayOnlyContainsString(path),
+            "Path must be a string or an array of strings",
+        );
+
+        return window.jslPlatform?.rm?.(path, config);
+    }
+
+    /**
+     * Make dir. Unix is like mkdir -p.
+     *
+     * @async
+     * @param {String|Array<String>} path - A path to a dir.
+     * @returns {Promise<String>} The created or existing path
+     */
+    async mkdir(path) {
+        assert(
+            Test.isString(path) || Test.arrayOnlyContainsString(path),
+            "Path must be a string or an array of strings",
+        );
+
+        return window.jslPlatform?.mkdir?.(path);
+    }
+
+    /**
+     * Test if the given dir is existing.
+     *
+     * @async
+     * @param {Array<String>|String} path - Path to dir.
+     * @returns {Promise<Boolean>} Resolves ti Boolean True if the dir is existing.
+     */
+    async isDirExisting(path) {
+        assert(
+            Test.isString(path) || Test.arrayOnlyContainsString(path),
+            "Path must be a string or an array of strings",
+        );
+
+        return window.jslPlatform?.isDirExisting?.(path);
+    }
+
+    /**
+     * Test if the given dir is empty.
+     *
+     * @async
+     * @param {Array<String>|String} path - Pathg to dir.
+     * @returns {Promise<Boolean>} Resolves ti Boolean True if the dir is existing but empty.
+     */
+    async isDirEmpty(path) {
+        assert(
+            Test.isString(path) || Test.arrayOnlyContainsString(path),
+            "Path must be a string or an array of strings",
+        );
+
+        return window.jslPlatform?.isDirEmpty?.(path);
     }
 }
 

@@ -44,7 +44,11 @@ Example:
             <v-img
                 :src="image"
                 class="align-end"
-                gradient="to bottom, rgba(0,0,0,.1), rgba(0,0,0,.3), rgba(0,0,0,.5), rgba(0,0,0,.80), rgba(0,0,0,.95), rgba(0,0,0,1)"
+                :gradient="
+                    image != null
+                        ? 'to bottom, rgba(0,0,0,.1), rgba(0,0,0,.3), rgba(0,0,0,.5), rgba(0,0,0,.80), rgba(0,0,0,.95), rgba(0,0,0,1)'
+                        : ''
+                "
                 height="100%"
                 cover
             >
@@ -53,7 +57,7 @@ Example:
                 <v-card-actions class="mr-4 ml-4 mb-4">
                     <slot name="footer" :isHovering="isHovering">
                         <v-row justify="space-between">
-                            <v-col align-self="center" :cols="!!$slots.actions ? 9 : 11">
+                            <v-col align-self="center" :cols="!!$slots.actions ? 9 : 12">
                                 <slot name="title" :isHovering="isHovering">
                                     <v-card-title class="pa-0 ma-0">
                                         {{ tt(title) }}
@@ -73,7 +77,7 @@ Example:
                                     -->
                                 </slot>
                             </v-col>
-                            <v-col align-self="end" cols="auto">
+                            <v-col align-self="end" cols="auto" v-if="!!$slots.actions">
                                 <slot name="actions" :isHovering="isHovering">
                                     <!--
                                     <Button color="primary" size="x-large" variant="flat" :slim="false" rounded="xl"/>

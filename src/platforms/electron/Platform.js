@@ -9,9 +9,17 @@ export function connectIPCPreload() {
     // Expoze the "platformAPI" to main
     contextBridge.exposeInMainWorld("jslPlatform", {
         // IO
-        openDir: (...args) => ipcRenderer.invoke("openDir", ...args),
+        selectDir: (...args) => ipcRenderer.invoke("selectDir", ...args),
+        openFile: (...args) => ipcRenderer.invoke("openFile", ...args),
+        ensureDir: (...args) => ipcRenderer.invoke("ensureDir", ...args),
+        rm: (...args) => ipcRenderer.invoke("rm", ...args),
+        mkdir: (...args) => ipcRenderer.invoke("mkdir", ...args),
+        isDirEmpty: (...args) => ipcRenderer.invoke("isDirEmpty", ...args),
+        isDirExisting: (...args) => ipcRenderer.invoke("isDirExisting", ...args),
         readTextFile: (...args) => ipcRenderer.invoke("readTextFile", ...args),
         readJSONFile: (...args) => ipcRenderer.invoke("readJSONFile", ...args),
+        writeTextFile: (...args) => ipcRenderer.invoke("writeTextFile", ...args),
+        writeJSONFile: (...args) => ipcRenderer.invoke("writeJSONFile", ...args),
 
         // Windowing
         windowClose: (...args) => ipcRenderer.invoke("windowClose", ...args),
@@ -34,8 +42,16 @@ export function connectIPCMain(app) {
     const fs = require("fs");
     const fsp = require("fs").promises;
     const path = require("path");
+    const { shell } = require("electron");
 
-    const openDir = async (_ev, basePath) => {
+    const makePath = (p) => {
+        if (Array.isArray(p)) {
+            return path.join(...p);
+        }
+        return p;
+    };
+
+    const selectDir = async (_ev, basePath) => {
         let base = "";
         try {
             if (fs.lstatSync(basePath).isDirectory()) {
@@ -53,19 +69,80 @@ export function connectIPCMain(app) {
         }
         return null;
     };
-    ipcMain.handle("openDir", openDir);
+    ipcMain.handle("selectDir", selectDir);
+
+    const openFile = async (_ev, p) => {
+        p = makePath(p);
+
+        const err = await shell.openPath(p);
+        if (err !== "") {
+            throw err;
+        }
+        return null;
+    };
+    ipcMain.handle("openFile", openFile);
+
+    const rm = async (_ev, p, opts) => {
+        p = makePath(p);
+        return fsp.rm(p, { recursive: opts?.recursive || false, force: opts?.force || false });
+    };
+    ipcMain.handle("rm", rm);
 
     const readTextFile = async (_ev, filePath) => {
-        return fsp.readFile(filePath, "utf8");
+        return fsp.readFile(makePath(filePath), "utf8");
     };
     ipcMain.handle("readTextFile", readTextFile);
 
     const readJSONFile = async (_ev, filePath) => {
-        return fsp.readFile(filePath, "utf8").then((data) => {
+        return readTextFile(null, makePath(filePath)).then((data) => {
             return JSON.parse(data);
         });
     };
     ipcMain.handle("readJSONFile", readJSONFile);
+
+    const writeTextFile = async (_ev, filePath, data) => {
+        return fsp.writeFile(makePath(filePath), data);
+    };
+    ipcMain.handle("writeTextFile", writeTextFile);
+
+    const writeJSONFile = async (_ev, filePath, data) => {
+        console.log(data);
+        return writeTextFile(null, filePath, JSON.stringify(data, null, "  "));
+    };
+    ipcMain.handle("writeJSONFile", writeJSONFile);
+
+    const mkdir = async (_ev, dir) => {
+        dir = makePath(dir);
+        if (!fs.existsSync(dir)) {
+            fs.mkdirSync(dir, { recursive: true });
+        }
+        return dir;
+    };
+    ipcMain.handle("mkdir", mkdir);
+
+    const isDirEmpty = async (_ev, dir) => {
+        dir = makePath(dir);
+
+        try {
+            const directory = await fsp.opendir(dir);
+            const entry = await directory.read();
+            await directory.close();
+            return entry === null;
+        } catch (error) {}
+        return false;
+    };
+    ipcMain.handle("isDirEmpty", isDirEmpty);
+
+    const isDirExisting = async (_ev, dir) => {
+        try {
+            if (fs.lstatSync(makePath(dir)).isDirectory()) {
+                return true;
+            }
+        } catch (e) {}
+
+        return false;
+    };
+    ipcMain.handle("isDirExisting", isDirExisting);
 
     const windowMinimize = async (_ev, state) => {
         if (state === true || (state == null && !app.focussedWindow.isMinimized())) {
