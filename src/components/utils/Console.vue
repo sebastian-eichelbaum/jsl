@@ -10,7 +10,7 @@
         </v-toolbar>
 
         <component is="pre" id="stdout" ref="stdoutPre" class="jslapp-custom-scrollbar-html">
-            {{ process?.state?.output }}
+            <pre v-html="fancyOutput" />
             <div style="color: rgba(255, 255, 255, 0.3)">
                 &gt;
                 <span v-if="process?.state?.completed && !process?.state?.failed" class="text-success font-weight-bold">
@@ -25,7 +25,7 @@
 </template>
 
 <script setup>
-import { ref, watch, nextTick, onMounted } from "vue";
+import { ref, watch, nextTick, onMounted, computed } from "vue";
 import { ChildProcess } from "@jsl/platforms/electron/ChildProcess";
 
 const props = defineProps({
@@ -63,10 +63,84 @@ function scrollToBottom() {
     });
 }
 
+const fancyOutput = computed(() => {
+    const src = props.process?.state?.output || "";
+    let result = "";
+    var arr = src.split("\n");
+    for (const line of arr) {
+        if (line.startsWith("DBG")) {
+            result += '<span class="jslConsoleDBGTag">DBG</span>' + line.slice(3) + "\n";
+            continue;
+        }
+
+        if (line.startsWith("INF")) {
+            result += '<span class="jslConsoleINFTag">INF</span>' + line.slice(3) + "\n";
+            continue;
+        }
+
+        if (line.startsWith("WRN")) {
+            result += '<span class="jslConsoleWRNTag">WRN</span>' + line.slice(3) + "\n";
+            continue;
+        }
+
+        if (line.startsWith("ERR")) {
+            result += '<span class="jslConsoleERRTag">ERR</span>' + line.slice(3) + "\n";
+            continue;
+        }
+
+        result += line + "\n";
+    }
+
+    return result;
+});
+
 onMounted(() => {
     scrollToBottom();
 });
 </script>
+
+<style>
+.jslConsoleDBGTag {
+    padding-left: 5px;
+    padding-right: 5px;
+    padding-top: 2px;
+    padding-bottom: 3px;
+
+    background: #1a1a1a;
+    color: #999;
+    font-weight: bold;
+}
+.jslConsoleINFTag {
+    padding-left: 5px;
+    padding-right: 5px;
+    padding-top: 2px;
+    padding-bottom: 3px;
+
+    background: #2a2a2a;
+    color: #ccc;
+    font-weight: bold;
+}
+.jslConsoleWRNTag {
+    padding-left: 5px;
+    padding-right: 5px;
+    padding-top: 2px;
+    padding-bottom: 3px;
+
+    background: #bc7931;
+    color: #ddd;
+    font-weight: bold;
+}
+.jslConsoleERRTag {
+    padding-left: 5px;
+    padding-right: 5px;
+    padding-top: 2px;
+    padding-bottom: 3px;
+
+    background: #bd3e3e;
+    color: #ddd;
+    font-weight: bold;
+}
+</style>
 
 <style scoped>
 #container {
@@ -82,8 +156,8 @@ onMounted(() => {
     display: block;
 
     padding: 1em;
-    white-space: pre-wrap;
-    word-wrap: break-word;
+    /*white-space: pre-wrap;
+    word-wrap: break-word;*/
     overflow: auto;
     font-size: smaller;
 }
