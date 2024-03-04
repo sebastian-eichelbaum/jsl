@@ -387,8 +387,8 @@ export function connectIPCMain(app) {
      */
     const fixExe = (exe) => {
         let fixedExe = makePath(exe);
-        if (os.platform() === "win32" && path.extname(exe) !== ".exe") {
-            fixedExe = exe + ".exe";
+        if (os.platform() === "win32" && path.extname(fixedExe) !== ".exe") {
+            fixedExe += ".exe";
         }
 
         return path.resolve(fixedExe);
