@@ -436,4 +436,21 @@ export class FirebaseStorage extends StorageService {
     async _getUrlOfPath(path) {
         return getDownloadURL(path);
     }
+
+    /**
+     * Fetch the file from firestore storage.
+     *
+     * @async
+     * @param {Object} path - The path handle as returned by _makePath
+     * @returns {Promise<Blob>} The blob
+     */
+    async _fetch(path) {
+        return this._getUrlOfPath(path)
+            .then((url) => {
+                return fetch(url);
+            })
+            .then((response) => {
+                return response.blob();
+            });
+    }
 }

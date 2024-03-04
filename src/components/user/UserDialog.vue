@@ -1,8 +1,8 @@
 <template>
     <Window v-bind="{ ...$props, ...$attrs }" :greetText="tt(greetText, { user: tt(userName()) })">
-        <v-card-item class="pt-5 pb-5">
+        <!--<v-card-item class="pt-5 pb-5">
             {{ tt("common.msg.sid") }}
-        </v-card-item>
+        </v-card-item>-->
         <v-card-actions>
             <v-spacer />
 

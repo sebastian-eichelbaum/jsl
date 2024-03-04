@@ -376,6 +376,22 @@ export class Platform extends jslObject {
     }
 
     /**
+     * Test if the given file is existing.
+     *
+     * @async
+     * @param {Array<String>|String} path - Path to file.
+     * @returns {Promise<Boolean>} Resolves to Boolean True if the file is existing.
+     */
+    async isFileExisting(path) {
+        assert(
+            Test.isString(path) || Test.arrayOnlyContainsString(path),
+            "Path must be a string or an array of strings",
+        );
+
+        return window.jslPlatform?.isFileExisting?.(path);
+    }
+
+    /**
      * Test if the given dir is empty.
      *
      * @async

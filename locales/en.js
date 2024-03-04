@@ -19,6 +19,8 @@ export const en = {
                 abort: "Abort",
                 start: "Start",
                 stop: "Stop",
+                delete: "Delete",
+                download: "Download",
                 play: "Play",
                 yourX: "Your {x}",
                 project: "Project | Projects",
@@ -27,6 +29,11 @@ export const en = {
                 hardware: "Hardware | Hardware",
                 lock: "Lock",
                 unlock: "Unlock",
+                validate: "Validate",
+                unpack: "Unpack",
+                controller: "Controller",
+                touch: "Touch",
+                object: "Object",
             },
             prompt: {
                 areYouSure: "Are you sure?",
@@ -45,6 +52,7 @@ export const en = {
                 settingsAndProfileExplanation: "Here, you will find your profile options and settings.",
                 unsavedChangesWillBeLost: "Unsaved changes will be lost!",
                 noDataAvailable: "No data available.",
+                notInstalled: "Not installed.",
                 unattendedModeLock: "Unattended Mode Lock",
                 unattendedModeLockExplanation:
                     "The lock makes the app suited for unattended use. Once activated, the lock will prevent the use of administrative functions, like the user profile, closing the app, adding/deleting content, and more. To unlock, the PIN defined here has to be entered again or the system has to be restarted.",

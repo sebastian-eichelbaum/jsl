@@ -19,6 +19,8 @@ export const de = {
                 abort: "Abbrechen",
                 start: "Starten",
                 stop: "Stoppen",
+                delete: "Löschen",
+                download: "Herunterladen",
                 play: "Spielen",
                 yourX: "Deine {x}",
                 project: "Projekt | Projekte",
@@ -27,6 +29,11 @@ export const de = {
                 hardware: "Hardware | Hardware",
                 lock: "Sperren",
                 unlock: "Entsperren",
+                validate: "Validieren",
+                unpack: "Entpacken",
+                controller: "Controller",
+                touch: "Touch",
+                object: "Objekt",
             },
             prompt: {
                 areYouSure: "Bist du sicher?",
@@ -45,6 +52,7 @@ export const de = {
                 settingsAndProfileExplanation: "Hier findest du deine Profiloptionen and Einstellungen.",
                 unsavedChangesWillBeLost: "Ungespeicherte Änderungen gehen verloren!",
                 noDataAvailable: "Keine Daten vorhanden.",
+                notInstalled: "Nicht installiert.",
                 unattendedModeLock: "Unbeaufsichtigter Modus",
                 unattendedModeLockExplanation:
                     "In diesem Modus werden alle administrativen Funktionen, wie das Benutzermenü, das Schließen der App oder das Hinzufügen/Entfernen von Content abgeschalten. Um die Anwendung zu entsperren muss die hier definierte PIN erneut eingegeben werden oder das System neu gestartet werden.",

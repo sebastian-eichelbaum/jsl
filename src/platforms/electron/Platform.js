@@ -16,6 +16,7 @@ export function connectIPCPreload() {
         mkdir: (...args) => ipcRenderer.invoke("mkdir", ...args),
         isDirEmpty: (...args) => ipcRenderer.invoke("isDirEmpty", ...args),
         isDirExisting: (...args) => ipcRenderer.invoke("isDirExisting", ...args),
+        isFileExisting: (...args) => ipcRenderer.invoke("isFileExisting", ...args),
         readTextFile: (...args) => ipcRenderer.invoke("readTextFile", ...args),
         readJSONFile: (...args) => ipcRenderer.invoke("readJSONFile", ...args),
         writeTextFile: (...args) => ipcRenderer.invoke("writeTextFile", ...args),
@@ -143,6 +144,17 @@ export function connectIPCMain(app) {
         return false;
     };
     ipcMain.handle("isDirExisting", isDirExisting);
+
+    const isFileExisting = async (_ev, dir) => {
+        try {
+            if (fs.lstatSync(makePath(dir)).isFile()) {
+                return true;
+            }
+        } catch (e) {}
+
+        return false;
+    };
+    ipcMain.handle("isFileExisting", isFileExisting);
 
     const windowMinimize = async (_ev, state) => {
         if (state === true || (state == null && !app.focussedWindow.isMinimized())) {

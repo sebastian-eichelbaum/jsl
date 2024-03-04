@@ -2,7 +2,7 @@
     <v-text-field
         v-model="model"
         :label="localization.tt(label)"
-        :rules="optional ? [] : [Validators.required()]"
+        :rules="optional ? [] : [Validators.required(), Validators.lengthMin(3)]"
         clearable
         :name="name"
     ></v-text-field>

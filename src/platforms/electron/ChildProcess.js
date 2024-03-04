@@ -43,6 +43,7 @@ export class ChildProcess extends jslObjectAsyncInit {
         };
     }
 
+    // The callbacks
     static defaultCallbacks() {
         return {
             /**
@@ -316,6 +317,15 @@ export class ChildProcess extends jslObjectAsyncInit {
     get returnCode() {
         return this.m_state.returnCode;
     }
+
+    /**
+     * The promise that resolves once the program finished or fails on error
+     *
+     * @returns {Promise} Fails on error and resolves on finished execution.
+     */
+    get runPromise() {
+        return this.m_promise;
+    }
 }
 
 /**
@@ -362,6 +372,13 @@ export function connectIPCMain(app) {
         app.mainWindow.webContents.send("onRemoved", { key: inst.key, status: inst.status });
     };
 
+    const makePath = (p) => {
+        if (Array.isArray(p)) {
+            return path.join(...p);
+        }
+        return p;
+    };
+
     /**
      * Add the "exe" extension on windows if not given
      *
@@ -369,7 +386,7 @@ export function connectIPCMain(app) {
      * @return {String} - the executable, added ".exe" on windows if not present
      */
     const fixExe = (exe) => {
-        let fixedExe = exe;
+        let fixedExe = makePath(exe);
         if (os.platform() === "win32" && path.extname(exe) !== ".exe") {
             fixedExe = exe + ".exe";
         }
@@ -402,9 +419,7 @@ export function connectIPCMain(app) {
         }
 
         // fix CWD if its an array
-        if (Array.isArray(inst.config.cwd)) {
-            inst.config.cwd = path.join(...inst.config.cwd);
-        }
+        inst.config.cwd = makePath(inst.config.cwd);
 
         // Create CWD if it does not exist and is given
         if (Test.isNonEmptyString(inst.config.cwd)) {

@@ -9,6 +9,8 @@ import { Test } from "@jsl/Assert";
 
 import { setupMain } from "./IPC";
 
+import _ from "lodash";
+
 // Register the "fs" protocol.
 protocol.registerSchemesAsPrivileged([
     {
@@ -75,12 +77,28 @@ export class ElectronApp extends jslObjectAsyncInit {
     }
 
     /**
+     * Default callbacks
+     */
+    static defaultCallbacks() {
+        return {
+            /**
+             * Called when the app gets ready, but before creating the window. Perect for IPC setup.
+             *
+             * @param {ElectronApp} app - The app
+             */
+            onReady: (app) => {},
+        };
+    }
+
+    /**
      * Construct the electron app skeleton. The actual app construction happens in init()
      *
      * @param {Object} config - The config as in @see defaultConfig
+     * @param {Object} callbacks - The callbacks as in @see defaultCallbacks
      */
-    constructor(config) {
+    constructor(config, callbacks) {
         super(config);
+        this.m_callbacks = _.merge(ElectronApp.defaultCallbacks(), callbacks || {});
     }
 
     /**
@@ -107,6 +125,8 @@ export class ElectronApp extends jslObjectAsyncInit {
             });
 
             setupMain(this);
+
+            this.m_callbacks?.onReady?.(this);
 
             this._createWindow();
             resolve(this);
@@ -216,7 +236,6 @@ export class ElectronApp extends jslObjectAsyncInit {
      * @param {BrowserWindow} win - The window to set the handlers for
      */
     _applyCorsFixes(win) {
-        
         if (!Test.arrayOnlyContainsNonEmptyString(this.config.security.corsURLs)) {
             return;
         }
@@ -263,10 +282,11 @@ export class ElectronApp extends jslObjectAsyncInit {
  *
  * @async
  * @param {Object} config - The config as @see ElectronApp.defaultConfig
+ * @param {Object} callbacks - The callbacks as @see ElectronApp.defaultCallbacks
  * @returns {Promise<ElectronApp>} The app after init.
  */
-export async function makeElectronApp(config) {
-    const app = new ElectronApp(config);
+export async function makeElectronApp(config, callbacks) {
+    const app = new ElectronApp(config, callbacks);
     await app.init();
     return app;
 }

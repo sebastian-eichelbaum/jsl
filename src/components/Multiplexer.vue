@@ -5,12 +5,12 @@ content.
 
 <template>
     <v-fade-transition mode="out-in" v-if="transition == 'v-fade-transition'">
-        <span v-for="item in slotSel" :key="item">
+        <span v-for="item in slotSel" :key="item" :style="innerStyle" :class="innerClass">
             <slot :name="item" />
         </span>
     </v-fade-transition>
     <component v-else :is="transition" leave-absolute>
-        <span v-for="item in slotSel" :key="item">
+        <span v-for="item in slotSel" :key="item" :style="innerStyle" :class="innerClass">
             <slot :name="item" />
         </span>
     </component>
@@ -23,6 +23,9 @@ const props = defineProps({
     selected: { type: String, required: false, default: null },
     // See https://vuetifyjs.com/en/styles/transitions/
     transition: { type: String, required: false, default: "v-fade-transition" },
+
+    innerStyle: { default: "" },
+    innerClass: { default: "" },
 });
 
 const slotSel = computed({

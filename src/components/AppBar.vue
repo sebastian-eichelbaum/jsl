@@ -26,7 +26,7 @@ extended.
                 <UserButton
                     v-if="!unattendedMode && !noUserButton"
                     :hideText="smAndDown"
-                    maxWidth="150px"
+                    maxWidth="200px"
                     rounded="xl"
                     class="mr-5"
                 />

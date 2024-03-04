@@ -32,6 +32,9 @@ import { computed } from "vue";
 import { tt } from "@jsl/Localization";
 
 const maxWidthStyle = computed(() => {
+    if (props.maxWidth != null && props.icon != null) {
+        return "max-width: calc(" + props.maxWidth + " - 50px);";
+    }
     return props.maxWidth ? "max-width: " + props.maxWidth : "";
 });
 

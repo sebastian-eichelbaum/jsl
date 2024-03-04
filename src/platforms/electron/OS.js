@@ -8,6 +8,8 @@ export function connectIPCPreload() {
 
     contextBridge.exposeInMainWorld("jslOS", {
         os: (...args) => ipcRenderer.invoke("jslOS:os", ...args),
+        homePath: (...args) => ipcRenderer.invoke("jslOS:homePath", ...args),
+        appPath: (...args) => ipcRenderer.invoke("jslOS:appPath", ...args),
     });
 }
 
@@ -19,6 +21,7 @@ export function connectIPCPreload() {
 export function connectIPCMain(app) {
     const { ipcMain, dialog } = require("electron/renderer");
     const os = require("os");
+    const electronApp = require("electron").app;
 
     ipcMain.handle("jslOS:os", async (_ev) => {
         return {
@@ -27,6 +30,26 @@ export function connectIPCMain(app) {
             isWindows: os.platform() === "win32",
         };
     });
+    ipcMain.handle("jslOS:homePath", async (_ev) => {
+        return electronApp.getPath("home");
+    });
+    ipcMain.handle("jslOS:appPath", async (_ev) => {
+        return electronApp.getPath("userData");
+    });
+}
+
+/**
+ * Use to fetch OS Home path.
+ */
+export async function getHomePath() {
+    return window?.jslOS?.homePath();
+}
+
+/**
+ * Use to fetch OS Home path.
+ */
+export async function getAppPath() {
+    return window?.jslOS?.appPath();
 }
 
 /**
