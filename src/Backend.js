@@ -8,7 +8,7 @@ import Await from "@jsl/utils/Await";
 
 import { jslObjectAsyncInit } from "./Object";
 import { Observable } from "./Observable";
-import { Test } from "./Assert";
+import { Test, assert } from "./Assert";
 
 /**
  * Service base. This provides the baseline for all Services.
@@ -496,6 +496,39 @@ export class UserService extends Service {
      */
     async logout() {
         return {};
+    }
+
+    /**
+     * Update the username.
+     *
+     * @async
+     * @param {String} name - A non empty user name
+     * @throws {ServiceError} - On failure or malformed parameters
+     * @returns {Promise} Is successfull or throws ServiceError.
+     */
+    async updateName(name) {
+        if (!name?.trim()) {
+            throw new ServiceError(this, "updateInvalidName", { name });
+        }
+
+        return { name: name.trim() };
+    }
+
+    /**
+     * Update the username.
+     *
+     * @async
+     * @param {String} oldPassword - The current password. Required for re-auth on some backends.
+     * @param {String} password - A password to set
+     * @throws {ServiceError} - On failure or malformed parameters
+     * @returns {Promise} Is successfull or throws ServiceError.
+     */
+    async updatePassword(oldPassword, password) {
+        if (!Test.isNonEmptyString(password) || !Test.isNonEmptyString(oldPassword)) {
+            throw new ServiceError(this, "updateInvalidPassword", { password });
+        }
+
+        return { oldPassword: oldPassword, password: password };
     }
 }
 

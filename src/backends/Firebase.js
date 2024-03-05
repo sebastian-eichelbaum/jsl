@@ -7,7 +7,10 @@ import {
     sendPasswordResetEmail,
     signInWithEmailAndPassword,
     updateProfile,
+    updatePassword,
     signOut,
+    reauthenticateWithCredential,
+    EmailAuthProvider,
 } from "firebase/auth";
 
 import {
@@ -121,24 +124,7 @@ export class FirebaseUserService extends UserService {
         });
 
         onAuthStateChanged(this.native, (fbUser) => {
-            // update the user state
-            if (fbUser == null) {
-                this._updateUser(UserService.defaultUser());
-            } else {
-                this._updateUser({
-                    isLoggedIn: true,
-                    uid: fbUser.uid,
-                    isAnonymous: fbUser.isAnonymous || false,
-
-                    email: fbUser.email,
-                    isEmailVerified: fbUser.emailVerified || false,
-
-                    name: fbUser.displayName,
-
-                    lastLoginTime: fbUser.metadata.lastLoginAt || Date.now(),
-                    signupTime: fbUser.metadata.createdAt,
-                });
-            }
+            this._handleUserUpdate(fbUser);
 
             // On first auth update, mark the service ready
             resolve();
@@ -148,6 +134,32 @@ export class FirebaseUserService extends UserService {
 
         // Do not mark the service ready. Its done during the first onAuthStateChanged
         return promise;
+    }
+
+    /**
+     * Updates the user state according to the firebase user info
+     *
+     * @param {Object} fbUser - Native firebase user
+     */
+    _handleUserUpdate(fbUser) {
+        // update the user state
+        if (fbUser == null) {
+            this._updateUser(UserService.defaultUser());
+        } else {
+            this._updateUser({
+                isLoggedIn: true,
+                uid: fbUser.uid,
+                isAnonymous: fbUser.isAnonymous || false,
+
+                email: fbUser.email,
+                isEmailVerified: fbUser.emailVerified || false,
+
+                name: fbUser.displayName,
+
+                lastLoginTime: fbUser.metadata.lastLoginAt || Date.now(),
+                signupTime: fbUser.metadata.createdAt,
+            });
+        }
     }
 
     /**
@@ -245,6 +257,51 @@ export class FirebaseUserService extends UserService {
             console.error(error);
             throw new ServiceError(this, "logoutUnknownError", data, error);
         });
+    }
+
+    /**
+     * Update the user name. @see UserService.updateName
+     */
+    async updateName(name) {
+        const data = await super.updateName(name);
+
+        await updateProfile(this.native.currentUser, {
+            displayName: data.name,
+        })
+            .then(() => {
+                this._handleUserUpdate(this.native.currentUser);
+            })
+            .catch((error) => {
+                console.error(error);
+                throw new ServiceError(this, "updateUnknownError", data, error);
+            });
+    }
+
+    /**
+     * Update the user name. @see UserService.updatePassword
+     */
+    async updatePassword(oldPassword, password) {
+        const data = await super.updatePassword(oldPassword, password);
+
+        const user = this.native.currentUser;
+        await reauthenticateWithCredential(user, EmailAuthProvider.credential(user.email, data.oldPassword))
+            .then(() => updatePassword(user, data.password))
+            .then(() => {
+                this._handleUserUpdate(this.native.currentUser);
+            })
+            .catch((error) => {
+                switch (error.code) {
+                    case "auth/invalid-email":
+                    case "auth/user-not-found":
+                    case "auth/user-disabled":
+                        throw new ServiceError(this, "updateUnknownUser", data, error);
+                    case "auth/invalid-credential":
+                        throw new ServiceError(this, "updateInvalidPassword", data, error);
+                    default:
+                        console.error(error);
+                        throw new ServiceError(this, "updateUnknownError", data, error);
+                }
+            });
     }
 
     /**

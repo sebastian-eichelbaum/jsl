@@ -5,6 +5,8 @@ An AppBar that provides some common functions
 language switcher and the user button.
 * Slot "append": allows to add content to the right of the anonymous slot. Use this if the default should be kept but
 extended.
+
+Both slots get "disabled" bound
 -->
 <template>
     <v-app-bar :style="isFullscreen ? styleFullscreen : style" v-bind="{ ...$props, ...$attrs }">
@@ -17,20 +19,33 @@ extended.
         <div class="draggableRegion">&nbsp;</div>
 
         <template v-slot:append>
-            <slot>
-                <ShopButton v-if="!unattendedMode && !noShopButton && !noButtons" class="mr-5" />
-                <LanguageButton v-if="!noLanguageButton && !noButtons" maxWidth="150px" rounded="xl" class="mr-5" />
+            <slot :disabled="disabled">
+                <ShopButton v-if="!unattendedMode && !noShopButton && !noButtons" class="mr-5" :disabled="disabled" />
+                <LanguageButton
+                    v-if="!noLanguageButton && !noButtons"
+                    maxWidth="150px"
+                    rounded="xl"
+                    class="mr-5"
+                    :disabled="disabled"
+                />
                 <UserButton
                     v-if="!unattendedMode && !noUserButton && !noButtons"
                     maxWidth="200px"
                     rounded="xl"
                     class="mr-5"
+                    :service="userService"
+                    :disabled="disabled"
                 />
             </slot>
 
-            <slot name="append" />
+            <slot name="append" :disabled="disabled" />
 
-            <WindowButtons v-if="!unattendedMode" dividerL @fullscreenChanged="onFullscreenChanged" />
+            <WindowButtons
+                v-if="!unattendedMode"
+                dividerL
+                @fullscreenChanged="onFullscreenChanged"
+                :disabled="disabled"
+            />
         </template>
     </v-app-bar>
 </template>
@@ -55,10 +70,14 @@ import ShopButton from "@jsl/components/ShopButton.vue";
 import { computedBackgroundStyle, makeBackgroundStyleProps } from "@jsl/utils/Style";
 
 import { platform } from "@jsl/Platform";
+import { UserService } from "@jsl/Backend";
 
 import { app } from "@jsl/App";
 
 const props = defineProps({
+    // Disables all buttons and the WindowButtons
+    disabled: { type: Boolean, required: false, default: false },
+
     // A nice version text to show, or null
     version: { type: String, default: null },
 
@@ -79,6 +98,9 @@ const props = defineProps({
     ...makeBackgroundStyleProps("", { color: "surface", alpha: 1.0, brightness: 1.0, blur: 20 }),
     // Background to use when the app goes fullscreen
     ...makeBackgroundStyleProps("fullscreen", { color: "surface", alpha: 0.0, brightness: 1.0, blur: 20 }),
+
+    // The user service to utilize for user management
+    userService: { type: UserService, required: true },
 });
 
 const style = computedBackgroundStyle(props, "");

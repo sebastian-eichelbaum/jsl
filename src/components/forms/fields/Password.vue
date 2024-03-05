@@ -1,6 +1,17 @@
 <template>
     <v-row no-gutters>
-        <v-col cols="12">
+        <v-col cols="12" v-if="requireOldPassword">
+            <v-text-field
+                :label="localization.tt(oldPasswordLabel)"
+                :rules="[Validators.required()]"
+                :append-inner-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+                :type="showPassword ? 'text' : 'password'"
+                @click:append-inner="showPassword = !showPassword"
+                class="jsl-extendedMessages-3"
+                name="passOld"
+            />
+        </v-col>
+         <v-col cols="12">
             <v-text-field
                 :label="localization.tt(label)"
                 :rules="
@@ -40,6 +51,8 @@ const props = defineProps({
     label: { type: String, required: false, default: "form.ui.password" },
     // The label of the password confirm field
     confirmLabel: { type: String, required: false, default: "form.ui.confirmPassword" },
+    // The old password field label
+    oldPasswordLabel: { type: String, required: false, default: "form.ui.passwordCurrent" },
 
     // The name to use to identify the value
     name: { type: String, required: false, default: "password" },
@@ -52,6 +65,9 @@ const props = defineProps({
     // If set, the password field also adds a confirmation field and applies the newPasswordScore score.
     // It validates if both fields match and are at least as safe as the score requires.
     requireNewPassword: { type: Boolean, required: false, default: false },
+
+    // If set, the old Pass is queried too.
+    requireOldPassword: { type: Boolean, required: false, default: false },
 });
 
 // Show/hide pass

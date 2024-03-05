@@ -7,6 +7,14 @@
         </template>
 
         <template #login>
+            <v-slide-x-transition>
+                <FormMsg
+                    :type="null"
+                    icon="mdi-email"
+                    :message="tt('user.msg.recoverMailSent')"
+                    v-if="showRecoverySent"
+                />
+            </v-slide-x-transition>
             <Login
                 v-model="model"
                 @submit="onSubmit"
@@ -46,6 +54,7 @@ import Multiplexer from "@jsl/components/Multiplexer.vue";
 import Login from "@jsl/components/user/forms/Login.vue";
 import Signup from "@jsl/components/user/forms/Signup.vue";
 import Recover from "@jsl/components/user/forms/ResetPassword.vue";
+import FormMsg from "@jsl/components/forms/Error.vue";
 
 const screen = ref("");
 
@@ -58,8 +67,10 @@ const props = defineProps({
 });
 
 const model = ref();
+const showRecoverySent = ref(false);
 
 async function onSubmit(state) {
+    showRecoverySent.value = false;
     await state.action(async (state) => {
         if (props.service == null) {
             throw new Error("Service is null");
@@ -76,7 +87,10 @@ async function onSubmit(state) {
                 });
                 break;
             case "recover":
-                await props.service.recover(state.values.email);
+                await props.service.recover(state.values.email).then(() => {
+                    showRecoverySent.value = true;
+                    screen.value = "login";
+                });
                 break;
             default:
                 throw new Error("Unknown auth type");
@@ -85,6 +99,7 @@ async function onSubmit(state) {
 }
 
 function onRequestLogin() {
+    showRecoverySent.value = false;
     screen.value = "login";
 }
 

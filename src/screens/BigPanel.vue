@@ -43,7 +43,7 @@ import myImage from "@assets/myImage.png";
 
                             <v-col cols="12" :align="footerAlign" align-self="end" class="mt-3">
                                 <slot name="footer">
-                                    <LanguageButton rounded class="ma-5 mb-10" v-if="!hideLanguage" />
+                                    <LanguageButton :hideText="false" rounded class="ma-5 mb-10" v-if="!hideLanguage" />
                                     <MadeByCompany v-if="!hideMadeBy" />
                                     <LegalLinks v-if="!hideLegal" />
                                 </slot>

@@ -17,6 +17,8 @@ export const de = {
                 profile: "Profil",
                 options: "Optionen",
                 abort: "Abbrechen",
+                back: "Zurück",
+                backToOverview: "Zurück zur Übersicht",
                 start: "Starten",
                 stop: "Stoppen",
                 delete: "Löschen",
@@ -91,6 +93,7 @@ export const de = {
                 password: "Passwort",
                 pin: "PIN",
                 confirmPassword: "Passwort bestätigen",
+                passwordCurrent: "Aktuelles Passwort",
                 firstname: "Vorname",
                 lastname: "Nachame",
                 name: "Name",
@@ -105,6 +108,7 @@ export const de = {
                 signupFailed: "Registrierung fehlgeschlagen.",
                 recoverFailed: "Rücksetzen fehlgeschlagen.",
                 logoutFailed: "Abmeldung fehlgeschlagen.",
+                updateFailed: "Änderung fehlgeschlagen.",
 
                 loginInvalidCredentials: "@:user.msg.loginFailed Ungültige E-Mail oder Passwort.",
                 loginUserDisabled: "@:user.msg.loginFailed User is disabled.",
@@ -118,7 +122,14 @@ export const de = {
                 recoverUnknownUser: "@:user.msg.recoverFailed Unbekannter Benutzer.",
                 recoverUnknownError: "@:user.msg.recoverFailed Unbekannter Fehler. Guru code: {error}.",
 
+                updateUnknownError: "@:user.msg.updateFailed Unbekannter Fehler. Guru code: {error}.",
+                updateInvalidName: "@:user.msg.updateFailed Ungültiger Name.",
+                updateInvalidPassword: "@:user.msg.updateFailed Ungültiges Passwort.",
+                updateUnknownUser: "@:user.msg.updateFailed Unbekannter Benutzer.",
+
                 logoutUnknownError: "@:user.msg.logoutFailed Unbekannter Fehler. Guru code: {error}.",
+
+                recoverMailSent: "Wir haben dir eine E-Mail zum zurücksetzen deines Passworts geschickt.",
             },
             ui: {
                 login: "Anmelden",
@@ -127,6 +138,10 @@ export const de = {
                 passwordReset: "Passwort zurücksetzen",
                 passwordResetLink: "Passwort vergessen?",
                 anonymous: "Anonym",
+
+                updatePassword: "Passwort ändern",
+                updateName: "Name ändern",
+                updateEMail: "E-Mail ändern",
             },
             prompt: {
                 login: "Melde dich mit deiner E-Mail Adresse und deinem Passwort an.",
@@ -134,6 +149,13 @@ export const de = {
                 passwordReset:
                     "Setze dein Passwort per E-Mail zurück. Folge dazu den Anweisungen in der gesendeten E-Mail.",
                 areYouSureToLogout: "Bist du sicher, dass du dich abmelden willst?",
+
+                updatePassword:
+                    "Hier kannst du dein Passwort ändern. Gib dein altes Passwort zur Bestätigung ein. Die Änderung wird sofort gültig.",
+                updateName:
+                    "Hier kannst du deinen Name ändern. Das ist der Name mit dem wir dich in E-Mails ansprechen werden.",
+                updateEMail:
+                    "Hier kannst du deine E-Mail Adresse ändern. Diese Adresse wird für den Login und für unsere Kommunikation mit dir verwendet.",
             },
         },
     },

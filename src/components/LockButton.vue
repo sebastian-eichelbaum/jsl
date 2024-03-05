@@ -39,6 +39,8 @@ const props = defineProps({
 
     variant: { default: "text" },
 
+    disabled: { type: Boolean, required: false, default: false },
+
     // Add a divider to the right?
     dividerR: { type: Boolean, required: false, default: false },
     // Add a divider to the left?
@@ -66,7 +68,9 @@ const dialog = ref(false);
 
 const isLocked = props?.featureLock?.locked || false;
 
-const isDisabled = computed(() => props.featureLock == null);
+const isDisabled = computed(() => {
+    return props.featureLock == null || props.disabled;
+});
 
 // Called by the JSL form in PinDialog.
 async function onSubmit(state) {
@@ -74,7 +78,7 @@ async function onSubmit(state) {
         if (props.featureLock == null) {
             throw new Error("FeatureLock is null");
         }
-        console.log(props.featureLock)
+        console.log(props.featureLock);
 
         return (
             props.featureLock.locked.value
@@ -85,7 +89,6 @@ async function onSubmit(state) {
         });
     });
 }
-
 </script>
 
 <style scoped></style>

@@ -10,11 +10,13 @@ A convenient wrapper around v-btn. It provides some more useful defaults like
 
 <template>
     <v-btn
+        id="jslBtn"
         v-bind="{ ...$props, ...$attrs }"
         :prepend-icon="icon"
         :icon="!withText"
         :style="{ 'justify-self': justifySelf, 'align-self': alignSelf }"
         :text="undefined"
+        :class="{ jslBtnDisabled: disabled }"
     >
         <v-icon v-if="!withText">{{ icon }}</v-icon>
 
@@ -48,6 +50,7 @@ const props = defineProps({
     icon: { default: undefined },
     text: { default: "" },
     hideText: { type: Boolean, default: false },
+    disabled: { type: Boolean, default: false },
 
     // Limit the width. Longer texts are shortened using a "..." ellipsis
     maxWidth: { default: null /* 100px */ },
@@ -58,3 +61,13 @@ const props = defineProps({
     alignSelf: { type: String, required: false, default: "unset" },
 });
 </script>
+
+<style scoped>
+#jslBtn{
+    transition: opacity 0.5s;
+}
+
+.jslBtnDisabled{
+    opacity: 0.2;
+}
+</style>

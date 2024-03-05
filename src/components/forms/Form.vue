@@ -82,7 +82,12 @@ async function do(state)
                 <v-col cols="12">
                     <FormError v-if="alertPosition == 'aboveForm'" v-bind="alertProps" :message="_errorMsg" />
 
-                    <v-form :disabled="noBusyOverlay && isBusy" validate-on="input" @submit.prevent="submit" ref="form">
+                    <v-form
+                        :disabled="(noBusyOverlay && isBusy) || disabled"
+                        validate-on="input"
+                        @submit.prevent="submit"
+                        ref="form"
+                    >
                         <!-- Define a full width default grid. To override, provide grid props as property "grid" -->
                         <Grid
                             v-if="asGrid"
@@ -148,6 +153,8 @@ async function do(state)
                                                     :text="submitText"
                                                     :color="submitColor"
                                                     :icon="submitIcon"
+                                                    :variant="submitVariant"
+                                                    :disabled="disabled"
                                                 />
                                             </slot>
                                         </v-col>
@@ -212,6 +219,8 @@ const props = defineProps({
 
     // Icon to use for the default submit button
     submitIcon: { type: String, required: false, default: "mdi-check" },
+    // Variant of the submit button
+    submitVariant: { type: String, required: false, default: "flat" },
     // Button color to use for the default submit button
     submitColor: { type: String, required: false, default: "primary" },
     // Button text for the default submit button.
@@ -223,6 +232,9 @@ const props = defineProps({
     // default submit button is inside the #footerEnd slot. You can also just override this slot to disable the submit
     // button
     noSubmit: { type: Boolean, required: false, default: false },
+
+    // Disable the whole form without marking it busy? Use this if you need to avoid any user input.
+    disabled: { type: Boolean, required: false, default: false },
 
     // v-alert props to use for error messages
     ...fwdProps("alert"),
@@ -287,6 +299,10 @@ const emit = defineEmits([
     // The submitted form failed. An object {state, error} is provided. Values is the set of
     // original form values, error is the caught exception.
     "failed",
+
+    // Informs about the busy state of the form. This emits on each update of props.busy or when the form is busy due to
+    // its submit handler. A boolean is passed - true if busy
+    "busy",
 ]);
 
 const form = ref();
@@ -312,6 +328,9 @@ const alertProps = fwdBindProps("alert", props, {
 const _busy = ref(false);
 const isBusy = computed(() => {
     return props.busy || _busy.value;
+});
+watch(isBusy, (newVal, oldVal) => {
+    emit("busy", newVal || false);
 });
 
 const _errorMsg = ref();

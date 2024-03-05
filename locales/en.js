@@ -17,6 +17,8 @@ export const en = {
                 profile: "Profile",
                 options: "Options",
                 abort: "Abort",
+                back: "Back",
+                backToOverview: "Back to the overview",
                 start: "Start",
                 stop: "Stop",
                 delete: "Delete",
@@ -75,7 +77,7 @@ export const en = {
         form: {
             msg: {
                 inputRequired: "Input required",
-                inputInvalidEmail: "Not a valid Email address",
+                inputInvalidEmail: "Not a valid e-mail address",
                 inputTooLong: "Input is too long: max {max} characters",
                 inputTooShort: "Input is too short: min {min} characters",
                 inputPasswordTooWeak: "Password too weak: use mixed case, spaces, numbers and special characters.",
@@ -87,10 +89,11 @@ export const en = {
                 inputNotValidated: "Correct the highlighted fields",
             },
             ui: {
-                email: "Email",
+                email: "E-mail",
                 password: "Password",
                 pin: "PIN",
                 confirmPassword: "Confirm password",
+                passwordCurrent: "Current password",
                 firstname: "First name",
                 lastname: "Last name",
                 name: "Name",
@@ -105,20 +108,28 @@ export const en = {
                 signupFailed: "Could not sign up.",
                 recoverFailed: "Could not recover.",
                 logoutFailed: "Could not logout.",
+                updateFailed: "Update failed.",
 
-                loginInvalidCredentials: "@:user.msg.loginFailed Invalid email or password.",
+                loginInvalidCredentials: "@:user.msg.loginFailed Invalid e-mail or password.",
                 loginUserDisabled: "@:user.msg.loginFailed User is disabled.",
                 loginUnknownError: "@:user.msg.loginFailed Unknown error. Guru code: {error}.",
 
-                signupInvalidCredentials: "@:user.msg.signupFailed Invalid email or password.",
-                signupEmailInUse: "@:user.msg.signupFailed Email address is already used.",
+                signupInvalidCredentials: "@:user.msg.signupFailed Invalid e-mail or password.",
+                signupEmailInUse: "@:user.msg.signupFailed E-mail address is already used.",
                 signupUnknownError: "@:user.msg.signupFailed Unknown error. Guru code: {error}.",
 
-                recoverInvalidCredentials: "@:user.msg.recoverFailed Invalid email.",
+                recoverInvalidCredentials: "@:user.msg.recoverFailed Invalid e-mail.",
                 recoverUnknownUser: "@:user.msg.recoverFailed Unknown user.",
                 recoverUnknownError: "@:user.msg.recoverFailed Unknown error. Guru code: {error}.",
 
+                updateUnknownError: "@:user.msg.updateFailed Unknown error. Guru code: {error}.",
+                updateInvalidName: "@:user.msg.updateFailed Invalid name.",
+                updateInvalidPassword: "@:user.msg.updateFailed Invalid password.",
+                updateUnknownUser: "@:user.msg.updateFailed Unknown user.",
+
                 logoutUnknownError: "@:user.msg.logoutFailed Unknown error. Guru code: {error}.",
+
+                recoverMailSent: "We have sent you an e-mail to reset your password.",
             },
             ui: {
                 login: "Login",
@@ -127,13 +138,23 @@ export const en = {
                 passwordReset: "Reset Password",
                 passwordResetLink: "Forgot Password?",
                 anonymous: "Anonymous",
+
+                updatePassword: "Change password",
+                updateName: "Change name",
+                updateEMail: "Change e-mail",
             },
             prompt: {
-                login: "Login using your Email address and your password.",
-                signup: "Sign-up using your Email address.",
-                passwordReset: "Reset your password via Email. Follow the instructions in the sent e-mail.",
+                login: "Login using your e-mail address and your password.",
+                signup: "Sign-up using your e-mail address.",
+                passwordReset: "Reset your password via e-mail. Follow the instructions in the sent e-mail.",
 
                 areYouSureToLogout: "Are you sure you want to logout?",
+
+                updatePassword:
+                    "Change your password here. Enter your current password for validation. The change will take effect immediately.",
+                updateName: "Change your profile-name here. This is the name we use to address you in e-mails.",
+                updateEMail:
+                    "Change your e-mail addess here. This address will be used for logging in and for communicating with you.",
             },
         },
     },

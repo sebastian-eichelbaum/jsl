@@ -15,7 +15,7 @@ import Button from "@jsl/components/Button.vue";
 import ConfirmDialog from "@jsl/components/dialogs/ConfirmDialog.vue";
 
 const props = defineProps({
-    text: { type: [String, Translatable], default: tt("common.ui.abort") },
+    text: { type: [String, Translatable], default: tt("common.ui.back") },
     dialogTitle: { type: [String, Translatable], default: tt("common.prompt.areYouSure") },
     dialogSubtitle: { type: [String, Translatable], default: tt("common.msg.unsavedChangesWillBeLost") },
 
@@ -23,7 +23,7 @@ const props = defineProps({
     variant: { default: "tonal" },
 
     // Icon used on the button. Can be null to disable
-    icon: { default: "mdi-cancel" },
+    icon: { default: "mdi-arrow-left" },
 
     // If set, the user will not be asked
     doNotAsk: { type: Boolean, default: false },

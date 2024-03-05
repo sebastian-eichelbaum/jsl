@@ -23,6 +23,7 @@ import Button from "@jsl/components/Button.vue";
 import LogoutButton from "@jsl/components/user/LogoutButton.vue";
 
 import { userName } from "@jsl/utils/Backend";
+import { UserService } from "@jsl/Backend";
 
 const props = defineProps({
     // Dialog max width.
@@ -41,6 +42,9 @@ const props = defineProps({
 
     // Button texts
     logoutText: { default: tt("user.ui.logout") },
+
+    // The user service to utilize
+    service: { type: UserService, required: true },
 
     // ... and the Window props.
 });
