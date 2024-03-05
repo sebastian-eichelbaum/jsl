@@ -41,12 +41,20 @@ export class Platform extends jslObject {
         super(config);
 
         this.m_closeHandler = null;
+        this.m_forceClose = false;
 
         // OS asked to close
         window?.jslPlatform?.onClose(() => {
+            // Allows to set a "force flag"
+            if (this.m_forceClose === true) {
+                window.close();
+                return;
+            }
+
             // If no custom handler is provided, just close.
             if (this.m_closeHandler == null) {
                 window.close();
+                return;
             }
             this.m_closeHandler?.();
         });
@@ -167,6 +175,24 @@ export class Platform extends jslObject {
      */
     set onClose(handler) {
         this.m_closeHandler = handler;
+    }
+
+    /**
+     * Sets the force-close flag. If true, the window will close without asking the user.
+     *
+     * @param {Boolean} value - True to close without asking.
+     */
+    set forceClose(value) {
+        this.m_forceClose = value || false;
+    }
+
+    /**
+     * Gets the force-close flag. If true, the window will close without asking the user.
+     *
+     * @return {Boolean} - True to close without asking.
+     */
+    get forceClose() {
+        return this.m_forceClose;
     }
 
     /**

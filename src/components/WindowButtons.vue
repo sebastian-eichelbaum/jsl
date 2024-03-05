@@ -89,6 +89,8 @@ const emit = defineEmits([
 ]);
 
 const onClose = () => {
+    // Be sure to ask
+    platform.forceClose = false;
     platform.windowClose();
 };
 

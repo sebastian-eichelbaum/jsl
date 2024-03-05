@@ -34,6 +34,13 @@ export const en = {
                 controller: "Controller",
                 touch: "Touch",
                 object: "Object",
+                update: "Update",
+                later: "Later",
+                restart: "Restart",
+                restartNow: "Restart now",
+                support: "Support",
+                help: "Help",
+                visit: "Visit {what}",
             },
             prompt: {
                 areYouSure: "Are you sure?",
@@ -41,6 +48,8 @@ export const en = {
                 areYouSureToAbort: "Are you sure you want to abort?",
                 enterUnlockPin: "Enter PIN to unlock.",
                 enterLockPin: "Enter new PIN to lock.",
+                updateReadyToInstall:
+                    "An update has been downloaded. The update will be installed automatically upon restart.",
             },
             msg: {
                 greet: "Hello {user}",
@@ -55,10 +64,11 @@ export const en = {
                 notInstalled: "Not installed.",
                 unattendedModeLock: "Unattended Mode Lock",
                 unattendedModeLockExplanation:
-                    "The lock makes the app suited for unattended use. Once activated, the lock will prevent the use of administrative functions, like the user profile, closing the app, adding/deleting content, and more. To unlock, the PIN defined here has to be entered again or the system has to be restarted.",
+                    "The lock makes the app suited for unattended use. Once activated, the lock will prevent the use of administrative functions, like the user profile, closing the app, adding/deleting content, and more. To unlock, the PIN has to be entered again or the system has to be restarted.",
 
                 unlockFailed: "Could not unlock.",
                 unlockFailedWrongPin: "@:common.msg.unlockFailed Wrong PIN.",
+                updateReadyToInstall: "Update available",
             },
         },
 

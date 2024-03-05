@@ -21,6 +21,7 @@ function onClick() {
 }
 
 const props = defineProps({
+    // Opens this on click
     href: { type: String, required: true },
 
     variant: { default: "flat" },

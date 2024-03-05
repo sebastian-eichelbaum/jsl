@@ -1,9 +1,13 @@
 <!--
 Show a user button with name and profile dialog if the backend supports users.
+
+The anonymous slot is the UserDialog slot
 -->
 <template>
-    <Button v-if="backend.user" v-bind="{ ...$props, ...$attrs }" :text="uname">
-        <UserDialog v-model="dialog" activator="parent" />
+    <Button v-if="backend.user" :hideText="smAndDown" v-bind="{ ...$props, ...$attrs }" :text="uname">
+        <UserDialog v-model="dialog" activator="parent">
+            <slot />
+        </UserDialog>
     </Button>
 </template>
 
@@ -16,6 +20,9 @@ import UserDialog from "@jsl/components/user/UserDialog.vue";
 
 import { userName } from "@jsl/utils/Backend";
 import { backend } from "@jsl/Backend";
+
+import { useDisplay } from "vuetify";
+const { smAndDown } = useDisplay();
 
 const dialog = ref(false);
 

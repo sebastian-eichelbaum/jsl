@@ -38,6 +38,18 @@ export class AppConfig {
                 },
             },
 
+            // Some common mail adresses
+            emails: {
+                // Info
+                info: "info@mycompany.de",
+
+                // Contact
+                contact: "contact@mycompany.de",
+
+                // Support
+                support: "support@mycompany.de",
+            },
+
             // Logo URLs
             logos: {
                 // A logo of the company
@@ -98,6 +110,11 @@ export class AppConfig {
     // The url info
     get urls() {
         return this.config.urls;
+    }
+
+    // The email info
+    get emails() {
+        return this.config.emails;
     }
 
     // Logos

@@ -6,7 +6,7 @@ A component that allows to define regular grids easily. This reflects some of th
 
 -->
 <template>
-    <div class="grid">
+    <div id="grid" v-bind="{ ...$props, ...$attrs }">
         <div class="gridHeaderRow">
             <slot name="header" />
         </div>
@@ -78,7 +78,7 @@ const props = defineProps({
 </script>
 
 <style scoped>
-.grid {
+#grid {
     display: grid;
 
     /* Not yet fully working in most browsers */

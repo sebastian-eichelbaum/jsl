@@ -2,22 +2,23 @@
 Provides a button that opens the shop iff appConfig.urls.shop is not nullish.
 -->
 <template>
-    <LinkButton v-if="appConfig.urls.shop" :href="appConfig.urls.shop" v-bind="{ ...$props, ...$attrs }">
+    <LinkButton
+        v-if="appConfig.urls.shop"
+        :href="appConfig.urls.shop"
+        :hideText="smAndDown"
+        v-bind="{ ...$props, ...$attrs }"
+    >
         <slot />
     </LinkButton>
 </template>
 
 <script setup>
+import { useDisplay } from "vuetify";
+
 import LinkButton from "@jsl/components/LinkButton.vue";
 
-import { platform } from "@jsl/Platform";
 import { tt } from "@jsl/Localization";
 import { appConfig } from "@jsl/AppConfig";
-
-// Handle Clicks
-function onClick() {
-    //Platform.openLink(AppConf.companyShop, true);
-}
 
 const props = defineProps({
     text: { default: tt("common.ui.shop") },
@@ -26,6 +27,8 @@ const props = defineProps({
     color: { default: "primary" },
     maxWidth: { default: null },
 });
+
+const { smAndDown } = useDisplay();
 </script>
 
 <style scoped></style>

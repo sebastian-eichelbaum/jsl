@@ -10,22 +10,18 @@ extended.
     <v-app-bar :style="isFullscreen ? styleFullscreen : style" v-bind="{ ...$props, ...$attrs }">
         <v-app-bar-title class="title">
             <AppLogo compact :nolink="unattendedMode" />
+            <span v-if="version" class="text-caption font-weight-light" style="color: rgba(255, 255, 255, 0.3)">{{
+                version
+            }}</span>
         </v-app-bar-title>
         <div class="draggableRegion">&nbsp;</div>
 
         <template v-slot:append>
             <slot>
-                <ShopButton v-if="!unattendedMode && !noShopButton" :hideText="smAndDown" class="mr-5" />
-                <LanguageButton
-                    v-if="!noLanguageButton"
-                    :hideText="smAndDown"
-                    maxWidth="150px"
-                    rounded="xl"
-                    class="mr-5"
-                />
+                <ShopButton v-if="!unattendedMode && !noShopButton && !noButtons" class="mr-5" />
+                <LanguageButton v-if="!noLanguageButton && !noButtons" maxWidth="150px" rounded="xl" class="mr-5" />
                 <UserButton
-                    v-if="!unattendedMode && !noUserButton"
-                    :hideText="smAndDown"
+                    v-if="!unattendedMode && !noUserButton && !noButtons"
                     maxWidth="200px"
                     rounded="xl"
                     class="mr-5"
@@ -62,9 +58,10 @@ import { platform } from "@jsl/Platform";
 
 import { app } from "@jsl/App";
 
-import { useDisplay } from "vuetify";
-
 const props = defineProps({
+    // A nice version text to show, or null
+    version: { type: String, default: null },
+
     // elevate when scrolling
     scrollBehavior: { default: "elevate" },
 
@@ -74,6 +71,8 @@ const props = defineProps({
     noLanguageButton: { type: Boolean, default: false },
     // Allows to explicitly disable the user button in the append area
     noUserButton: { type: Boolean, default: false },
+    // Or disable them all at once
+    noButtons: { type: Boolean, default: false },
 
     // Background style color, blur, alpha, brightness
     // This also creates the prop "color" that is also used by v-app-bar.
@@ -81,8 +80,6 @@ const props = defineProps({
     // Background to use when the app goes fullscreen
     ...makeBackgroundStyleProps("fullscreen", { color: "surface", alpha: 0.0, brightness: 1.0, blur: 20 }),
 });
-
-const { smAndDown } = useDisplay();
 
 const style = computedBackgroundStyle(props, "");
 const styleFullscreen = computedBackgroundStyle(props, "fullscreen");

@@ -1,6 +1,7 @@
 import * as platform from "./Platform";
 import * as os from "./OS";
 import * as childprocess from "./ChildProcess";
+import * as autoUpdater from "./AutoUpdater";
 
 /**
  * Connect the preload-side IPC
@@ -9,6 +10,7 @@ export function setupPreload() {
     platform.connectIPCPreload();
     os.connectIPCPreload();
     childprocess.connectIPCPreload();
+    autoUpdater.connectIPCPreload();
 }
 
 /**
@@ -20,4 +22,5 @@ export function setupMain(app) {
     platform.connectIPCMain(app);
     os.connectIPCMain(app);
     childprocess.connectIPCMain(app);
+    autoUpdater.connectIPCMain(app);
 }

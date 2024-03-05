@@ -5,7 +5,7 @@ Forwards all props to Card.vue
 Anonymous slot extends the icon, "isHovering" is passed
 -->
 <template>
-    <Card v-bind="{ ...$props, ...$attrs }" @click="onClick">
+    <Card v-bind="{ ...$props, ...$attrs }" :href="null" @click="onClick">
         <template v-slot:default="{ isHovering }">
             <div class="iconContainer">
                 <v-icon
@@ -28,6 +28,7 @@ Anonymous slot extends the icon, "isHovering" is passed
 <script setup>
 import { computed } from "vue";
 
+import { platform } from "@jsl/Platform";
 import { tt } from "@jsl/Localization";
 import { vuetify } from "@jsl/Vuetify";
 
@@ -42,6 +43,9 @@ const props = defineProps({
     iconColor: { default: "grey" },
     iconHoverColor: { default: "primary" },
 
+    // Opens this on click if not nullish/empty.
+    href: { type: String, default: null },
+
     // ... and the Card props.
 });
 
@@ -50,6 +54,11 @@ const emit = defineEmits(["click"]);
 const isHovvering = defineModel();
 
 const onClick = () => {
+
+    if (!(props.href == null || props.href == "")) {
+        platform.openLink(props.href, true);
+    }
+
     // Just forward?
     emit("click");
 };

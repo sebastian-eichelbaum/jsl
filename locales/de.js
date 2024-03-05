@@ -34,6 +34,13 @@ export const de = {
                 controller: "Controller",
                 touch: "Touch",
                 object: "Objekt",
+                update: "Update",
+                later: "Später",
+                restart: "Neu starten",
+                restartNow: "Jetzt neu starten",
+                support: "Support",
+                help: "Hilfe",
+                visit: "Besuche {what}",
             },
             prompt: {
                 areYouSure: "Bist du sicher?",
@@ -41,6 +48,8 @@ export const de = {
                 areYouSureToAbort: "Bist du sicher, dass du abbrechen willst?",
                 enterUnlockPin: "Sperr-PIN eingeben zum entsperren.",
                 enterLockPin: "Neue Sperr-PIN eingeben.",
+                updateReadyToInstall:
+                    "Ein Update wurde heruntergeladen. Das Update wird nach einem Neustart automatisch installiert.",
             },
             msg: {
                 greet: "Hallo {user}",
@@ -55,9 +64,10 @@ export const de = {
                 notInstalled: "Nicht installiert.",
                 unattendedModeLock: "Unbeaufsichtigter Modus",
                 unattendedModeLockExplanation:
-                    "In diesem Modus werden alle administrativen Funktionen, wie das Benutzermenü, das Schließen der App oder das Hinzufügen/Entfernen von Content abgeschalten. Um die Anwendung zu entsperren muss die hier definierte PIN erneut eingegeben werden oder das System neu gestartet werden.",
+                    "In diesem Modus werden alle administrativen Funktionen, wie das Benutzermenü, das Schließen der App oder das Hinzufügen/Entfernen von Content abgeschalten. Um die Anwendung zu entsperren, muss diese PIN erneut eingegeben werden oder das System neu gestartet werden.",
                 unlockFailed: "Entsperren fehlgeschlagen.",
                 unlockFailedWrongPin: "@:common.msg.unlockFailed Falsche PIN.",
+                updateReadyToInstall: "Update verfügbar",
             },
         },
 

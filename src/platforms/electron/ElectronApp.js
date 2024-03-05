@@ -8,6 +8,7 @@ import { jslObjectAsyncInit } from "@jsl/Object";
 import { Test } from "@jsl/Assert";
 
 import { setupMain } from "./IPC";
+import * as AutoUpdater from "./AutoUpdater";
 
 import _ from "lodash";
 
@@ -73,6 +74,9 @@ export class ElectronApp extends jslObjectAsyncInit {
                 // Apply cors fixes for these urls.
                 corsURLs: [], // ["https://cms.provider.com/*"],
             },
+
+            // Setup the updater service - @see @jsl/platforms/electron/AutoUpdater for details
+            autoUpdater: AutoUpdater.defaultConfig(),
         };
     }
 
@@ -129,6 +133,9 @@ export class ElectronApp extends jslObjectAsyncInit {
             this.m_callbacks?.onReady?.(this);
 
             this._createWindow();
+
+            AutoUpdater.setup(this, this.config.autoUpdater);
+
             resolve(this);
         });
 

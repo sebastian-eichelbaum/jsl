@@ -76,7 +76,7 @@ const props = defineProps({
 
 // TODO: add background style?
 const windowTitleBG = computed(() => {
-    return props.titleBackground || useTheme()?.jsl?.windowTitleBG || "black";
+    return props.titleBackground || useTheme()?.jsl?.windowTitleBG || "background";
 });
 
 function doClose() {
