@@ -11,7 +11,7 @@ Both slots get "disabled" bound
 <template>
     <v-app-bar :style="isFullscreen ? styleFullscreen : style" v-bind="{ ...$props, ...$attrs }">
         <v-app-bar-title class="title">
-            <AppLogo compact :nolink="unattendedMode" />
+            <AppLogo compact :disabled="unattendedMode" @click="onAppLogoClick" :clickOnly="appLogoGoHome" />
             <span v-if="version" class="text-caption font-weight-light" style="color: rgba(255, 255, 255, 0.3)">{{
                 version
             }}</span>
@@ -81,6 +81,9 @@ const props = defineProps({
     // A nice version text to show, or null
     version: { type: String, default: null },
 
+    // If true, the app logo does not call any website or href. Instead, "goHome" is emitted.
+    appLogoGoHome: { type: Boolean, default: false },
+
     // elevate when scrolling
     scrollBehavior: { default: "elevate" },
 
@@ -103,6 +106,11 @@ const props = defineProps({
     userService: { type: UserService, required: true },
 });
 
+const emit = defineEmits([
+    // if the user requested to go back home. This can happen via buttons or the app logo
+    "goHome",
+]);
+
 const style = computedBackgroundStyle(props, "");
 const styleFullscreen = computedBackgroundStyle(props, "fullscreen");
 
@@ -112,6 +120,12 @@ const unattendedMode = app.featureLocks.unattendedMode.locked;
 
 function onFullscreenChanged(newState) {
     isFullscreen.value = newState;
+}
+
+function onAppLogoClick() {
+    if (props.appLogoGoHome) {
+        emit("goHome");
+    }
 }
 </script>
 

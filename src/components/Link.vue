@@ -1,6 +1,6 @@
 <template>
     <a
-        v-if="!disabled && href"
+        v-if="!disabled"
         @click="onClick"
         id="link"
         class="ma-0 pa-0"
@@ -16,6 +16,7 @@
 
 <script setup>
 import { platform } from "@jsl/Platform";
+import { Test } from "@jsl/Assert";
 
 const props = defineProps({
     href: { type: String, required: true },
@@ -23,13 +24,24 @@ const props = defineProps({
     unstyled: { type: Boolean, required: false, default: false },
     // Opens the link externally. In Browsers, this is a new tab.
     tab: { type: Boolean, required: false, default: false },
-    // Makes the
+    // Disables the link. No href will be opened, no click will be emitted.
     disabled: { type: Boolean, required: false, default: false },
+
+    // If true, clicking the logo does not trigger the href link. Only click is emitted.
+    clickOnly: { type: Boolean, required: false, default: false },
 });
+
+const emit = defineEmits([
+    // Triggered on click, even if the href value is nullish
+    "click",
+]);
 
 // Handle Clicks
 function onClick() {
-    platform.openLink(props.href, props.tab);
+    if (!props.clickOnly) {
+        platform.openLink(props.href, props.tab);
+    }
+    emit("click");
 }
 </script>
 

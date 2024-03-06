@@ -6,7 +6,7 @@ Displays the app logo.
 -->
 
 <template>
-    <Link :href="_href" tab :disabled="nolink" unstyled>
+    <Link :href="_href" tab :disabled="disabled" unstyled @click="onClick" :clickOnly="clickOnly">
         <span v-if="asHTMLOverride">
             <span v-html="asHTMLOverride" :style="{ 'font-size': textSize + 'rem' }" />
         </span>
@@ -30,9 +30,12 @@ const props = defineProps({
     // Force the logo to be compact
     compact: { type: Boolean, required: false, default: false },
     // Disable the link around the logo
-    nolink: { type: Boolean, required: false, default: false },
+    disabled: { type: Boolean, required: false, default: false },
     // Allows to override the link referred to when clicking the logo. If unset, the AppConfig app url is used.
     href: { type: String, required: false, default: null },
+
+    // If true, clicking the logo does not trigger the href link. Only click is emitted.
+    clickOnly: { type: Boolean, required: false, default: false },
 });
 
 const _href = computed(() => {
@@ -47,4 +50,13 @@ const asHTMLOverride = computed(() => {
         return appConfig.logos.appHTML;
     }
 });
+
+const emit = defineEmits([
+    // Emitted when clicking on the logo. NOT Emitted if disabled is true
+    "click",
+]);
+
+function onClick() {
+    emit("click");
+}
 </script>

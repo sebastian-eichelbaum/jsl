@@ -81,6 +81,10 @@ export class Platform extends jslObject {
 
     // Open a link either directly or in a new tab/external browser
     openLink(href, external) {
+        if (!Test.isNonEmptyString(href)) {
+            return;
+        }
+
         // console.log("Open " + href);
         if (external) {
             window.open(href, "_blank");
