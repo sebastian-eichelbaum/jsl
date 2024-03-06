@@ -357,6 +357,12 @@ export class UserService extends Service {
             lastLoginTime: undefined,
             // Unix Timestamp of a user's signup.
             signupTime: undefined,
+
+            // An objects of named bools. I.e. admin, manager, ...
+            roles: {
+                // Admins have total control (and can destroy a lot)
+                admin: false,
+            },
         };
     }
 
@@ -425,6 +431,15 @@ export class UserService extends Service {
      */
     get user() {
         return this.m_user;
+    }
+
+    /**
+     * The user roles.  @see UserService.defaultUser.
+     *
+     * @returns {Object} User roles as objects with named bools
+     */
+    get roles() {
+        return this.m_user?.roles;
     }
 
     /**
@@ -529,6 +544,16 @@ export class UserService extends Service {
         }
 
         return { oldPassword: oldPassword, password: password };
+    }
+
+    /**
+     * Send the user verification mail
+     *
+     * @async
+     * @returns {Promise} Resolves on success or throws ServiceError
+     */
+    async sendVerificationMail() {
+        return {};
     }
 }
 

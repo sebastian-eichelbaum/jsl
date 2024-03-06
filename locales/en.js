@@ -94,6 +94,7 @@ export const en = {
                 pin: "PIN",
                 confirmPassword: "Confirm password",
                 passwordCurrent: "Current password",
+                passwordNew: "New password",
                 firstname: "First name",
                 lastname: "Last name",
                 name: "Name",
@@ -130,6 +131,7 @@ export const en = {
                 logoutUnknownError: "@:user.msg.logoutFailed Unknown error. Guru code: {error}.",
 
                 recoverMailSent: "We have sent you an e-mail to reset your password.",
+                emailNotVerified: "You have not yet verified your e-mail address. We have sent you an e-mail with a verification link recently.",
             },
             ui: {
                 login: "Login",
@@ -139,9 +141,11 @@ export const en = {
                 passwordResetLink: "Forgot Password?",
                 anonymous: "Anonymous",
 
-                updatePassword: "Change password",
-                updateName: "Change name",
-                updateEMail: "Change e-mail",
+                updatePassword: "Update password",
+                updateName: "Update name",
+                updateEMail: "Update e-mail",
+
+                resend: "Send again",
             },
             prompt: {
                 login: "Login using your e-mail address and your password.",

@@ -47,7 +47,7 @@ const props = defineProps({
     prompt: { type: String, required: false, default: "user.prompt.updatePassword" },
 
     // Label of the password field
-    passwordLabel: { type: String, required: false, default: "form.ui.password" },
+    passwordLabel: { type: String, required: false, default: "form.ui.passwordNew" },
     passwordOldLabel: { type: String, required: false, default: "form.ui.passwordCurrent" },
     // Label of the password confirm field
     passwordConfirmLabel: { type: String, required: false, default: "form.ui.confirmPassword" },

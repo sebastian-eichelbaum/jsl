@@ -94,6 +94,7 @@ export const de = {
                 pin: "PIN",
                 confirmPassword: "Passwort bestätigen",
                 passwordCurrent: "Aktuelles Passwort",
+                passwordNew: "Neues Passwort",
                 firstname: "Vorname",
                 lastname: "Nachame",
                 name: "Name",
@@ -130,6 +131,9 @@ export const de = {
                 logoutUnknownError: "@:user.msg.logoutFailed Unbekannter Fehler. Guru code: {error}.",
 
                 recoverMailSent: "Wir haben dir eine E-Mail zum zurücksetzen deines Passworts geschickt.",
+
+                emailNotVerified:
+                    "Du hast deine E-Mail Adresse noch nicht bestätigt. Wir haben dir vor kurzem eine E-Mail mit dem Bestätigungslink geschickt.",
             },
             ui: {
                 login: "Anmelden",
@@ -142,6 +146,8 @@ export const de = {
                 updatePassword: "Passwort ändern",
                 updateName: "Name ändern",
                 updateEMail: "E-Mail ändern",
+
+                resend: "Erneut senden",
             },
             prompt: {
                 login: "Melde dich mit deiner E-Mail Adresse und deinem Passwort an.",

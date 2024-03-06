@@ -79,6 +79,21 @@ export class FirebaseApp extends Service {
         super._init();
 
         this._native = initializeApp(this.config.api);
+        this.m_nativeDB = initializeFirestore(this.context.native, {
+            localCache: persistentLocalCache({
+                cacheSizeBytes: CACHE_SIZE_UNLIMITED,
+                tabManager: persistentMultipleTabManager(),
+            }),
+        });
+    }
+
+    /**
+     * The native DB service
+     *
+     * @returns {Object} Firebase Firestore instance
+     */
+    get db() {
+        return this.m_nativeDB;
     }
 }
 
@@ -115,6 +130,7 @@ export class FirebaseUserService extends UserService {
         super._init();
 
         this._native = getAuth(this.context.native);
+
         this._onLocaleUpdate();
 
         // Create a promise that can be resolved/rejected somewhere in a callback.
@@ -124,7 +140,16 @@ export class FirebaseUserService extends UserService {
         });
 
         onAuthStateChanged(this.native, (fbUser) => {
-            this._handleUserUpdate(fbUser);
+            this._handleUserUpdate(fbUser, {});
+
+            this._fetchUserDetails()
+                .then((details) => {
+                    this._handleUserUpdate(fbUser, details);
+                })
+                .catch((e) => {
+                    // Ensure that we remove any previus info on error.
+                    this._handleUserUpdate(fbUser, {});
+                });
 
             // On first auth update, mark the service ready
             resolve();
@@ -140,8 +165,9 @@ export class FirebaseUserService extends UserService {
      * Updates the user state according to the firebase user info
      *
      * @param {Object} fbUser - Native firebase user
+     * @param {Object} details - Additional user details, if any.
      */
-    _handleUserUpdate(fbUser) {
+    _handleUserUpdate(fbUser, details) {
         // update the user state
         if (fbUser == null) {
             this._updateUser(UserService.defaultUser());
@@ -158,6 +184,10 @@ export class FirebaseUserService extends UserService {
 
                 lastLoginTime: fbUser.metadata.lastLoginAt || Date.now(),
                 signupTime: fbUser.metadata.createdAt,
+
+                roles: {
+                    admin: details?.roles?.admin || false,
+                },
             });
         }
     }
@@ -179,6 +209,25 @@ export class FirebaseUserService extends UserService {
      */
     get isLoggedIn() {
         return this.native?.currentUser != null;
+    }
+
+    /**
+     * Fetch user details from the users collection for the current user.
+     *
+     * @async
+     * @returns {Promise} Resolves with the details, if any. Returns {} if no details are available
+     */
+    async _fetchUserDetails() {
+        const db = this.context.db;
+
+        return getDoc(doc(db, "users", this.uid))
+            .then((snap) => {
+                return snap.exists() ? snap.data() : {};
+            })
+            .catch((e) => {
+                // Ignore errors
+                return {};
+            });
     }
 
     /**
@@ -305,6 +354,19 @@ export class FirebaseUserService extends UserService {
     }
 
     /**
+     * Send the verification mail. @see UserService.updatePassword
+     */
+    async sendVerificationMail() {
+        const data = await super.sendVerificationMail();
+
+        const user = this.native.currentUser;
+        sendEmailVerification(user).catch((error) => {
+            console.error(error);
+            throw new ServiceError(this, "updateUnknownError", data, error);
+        });
+    }
+
+    /**
      * Use the locale as language code in firebase
      */
     _onLocaleUpdate() {
@@ -346,12 +408,7 @@ export class FirestoreService extends DatabaseService {
     async _init() {
         super._init();
 
-        this._native = initializeFirestore(this.context.native, {
-            localCache: persistentLocalCache({
-                cacheSizeBytes: CACHE_SIZE_UNLIMITED,
-                tabManager: persistentMultipleTabManager(),
-            }),
-        });
+        this._native = this.context.db; // Setup in the context service
     }
 
     /**

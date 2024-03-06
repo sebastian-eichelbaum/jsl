@@ -1,7 +1,7 @@
 <template>
     <Button @click="ask" v-bind="{ ...$props, ...$attrs }"> </Button>
 
-    <ConfirmDialog contained v-model="dialog" variant="evenly" @yes="logout" :title="title" :subtitle="subtitle" />
+    <ConfirmDialog :contained="contained" v-model="dialog" variant__="evenly" @yes="logout" :title="title" :subtitle="subtitle" />
 </template>
 
 <script setup>
@@ -19,6 +19,9 @@ import { backend } from "@jsl/Backend";
 const props = defineProps({
     icon: { type: String, required: false, default: "mdi-logout" },
     color: { default: "error" },
+
+    // Should the config dialog be contained in its parent?
+    contained: { type: Boolean, required: false, default: false },
 
     // + Props from jsl/components/Button.vue
 
