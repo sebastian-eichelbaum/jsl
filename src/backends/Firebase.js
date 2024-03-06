@@ -25,6 +25,7 @@ import {
     CACHE_SIZE_UNLIMITED,
     persistentMultipleTabManager,
     persistentLocalCache,
+    setDoc,
 } from "firebase/firestore";
 
 import { getDownloadURL, getStorage, ref } from "firebase/storage";
@@ -265,6 +266,15 @@ export class FirebaseUserService extends UserService {
         await createUserWithEmailAndPassword(this.native, data.email, data.password)
             .then((userCredential) => updateProfile(userCredential.user, { displayName: data.name }))
             .then(() => sendEmailVerification(this.native.currentUser))
+            .then(() => {
+                return setDoc(
+                    doc(this.context.db, "users", this.uid),
+                    { name: data.name, email: data.email, roles: { admin: false } },
+                    { merge: true },
+                ).catch((e) => {
+                    console.error("Cannot create user details", e);
+                });
+            })
             .catch((error) => {
                 switch (error.code) {
                     case "auth/email-already-in-use":
@@ -319,6 +329,13 @@ export class FirebaseUserService extends UserService {
         })
             .then(() => {
                 this._handleUserUpdate(this.native.currentUser);
+            })
+            .then(() => {
+                return setDoc(doc(this.context.db, "users", this.uid), { name: data.name }, { merge: true }).catch(
+                    (e) => {
+                        console.error("Cannot update user details", e);
+                    },
+                );
             })
             .catch((error) => {
                 console.error(error);
