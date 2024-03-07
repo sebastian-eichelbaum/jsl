@@ -2,7 +2,16 @@
 Provides a button that opens the shop iff appConfig.urls.shop is not nullish.
 -->
 <template>
-    <Button v-if="canUpdate" :hideText="smAndDown" v-bind="{ ...$props, ...$attrs }" @click="askUpdateNow">
+    <Button
+        v-if="canUpdate || updateAvailable"
+        :hideText="smAndDown"
+        v-bind="{ ...$props, ...$attrs }"
+        @click="askUpdateNow"
+        :loading="updateAvailable && !canUpdate"
+        improvedLoader
+        :variant="canUpdate ? 'flat' : 'tonal'"
+        :color="canUpdate ? 'primary' : 'grey-darken-1'"
+    >
         <ConfirmDialog
             v-model="dialog"
             :yes="restartText"
@@ -47,12 +56,19 @@ const props = defineProps({
 
 const { smAndDown } = useDisplay();
 const canUpdate = ref(false);
+const updateAvailable = ref(false);
 const dialog = ref(false);
 
 const autoUpdater = new AutoUpdater({
     onUpdateReady: () => {
+        console.log("AutoUpdate ready");
         canUpdate.value = true;
         dialog.value = true;
+    },
+
+    onUpdateAvailable: () => {
+        console.log("AutoUpdate available");
+        updateAvailable.value = true;
     },
 });
 

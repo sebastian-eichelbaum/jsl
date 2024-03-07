@@ -35,6 +35,9 @@ export class ChildProcess extends jslObjectAsyncInit {
                 reuse: false,
             },
 
+            // Show the exact execution params when spawning?
+            verbose: false,
+
             // A predcate that determines if an return code is OK or not.
             // Must return bool, takes an int return code
             okReturnCode: (returnCode) => returnCode === 0,
@@ -216,6 +219,9 @@ export class ChildProcess extends jslObjectAsyncInit {
         }
 
         this.m_state.output = "--- ChildProcess.spawn: " + JSON.stringify(this.config) + "\n";
+        if (this.config.verbose) {
+            console.log("Spawning:", this.config.execute);
+        }
         return window?.jslChildProcess?.spawn?.(this.m_key);
     }
 

@@ -25,6 +25,21 @@ A convenient wrapper around v-btn. It provides some more useful defaults like
         </span>
 
         <slot />
+
+        <template v-slot:loader v-if="improvedLoader && !hideText">
+            <v-progress-circular
+                class="ml-0 mr-2"
+                size="16"
+                width="2"
+                color="white"
+                :indeterminate="improvedLoaderValue < 0"
+                :model-value="improvedLoaderValue"
+            >
+            </v-progress-circular>
+            <span v-if="withText" :style="maxWidthStyle" class="text-truncate">
+                {{ tt(text) }}
+            </span>
+        </template>
     </v-btn>
 </template>
 
@@ -52,6 +67,9 @@ const props = defineProps({
     hideText: { type: Boolean, default: false },
     disabled: { type: Boolean, default: false },
 
+    improvedLoader: { type: Boolean, default: false },
+    improvedLoaderValue: { default: -1 },
+
     // Limit the width. Longer texts are shortened using a "..." ellipsis
     maxWidth: { default: null /* 100px */ },
 
@@ -63,11 +81,11 @@ const props = defineProps({
 </script>
 
 <style scoped>
-#jslBtn{
+#jslBtn {
     transition: opacity 0.5s;
 }
 
-.jslBtnDisabled{
+.jslBtnDisabled {
     opacity: 0.2;
 }
 </style>

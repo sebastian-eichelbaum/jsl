@@ -22,6 +22,7 @@ export function defaultConfig() {
 
 // Main process status flag
 let _main_updateReady = false;
+let _main_updateAvailable = false;
 
 /**
  * Setup the auto update mechanism.
@@ -127,7 +128,7 @@ export function connectIPCPreload() {
 
     contextBridge.exposeInMainWorld("jslAutoUpdater", {
         check: (...args) => ipcRenderer.invoke("jslAutoUpdater:check", ...args),
-        isUpdateReady: (...args) => ipcRenderer.invoke("jslAutoUpdater:isUpdateReady", ...args),
+        updateStatus: (...args) => ipcRenderer.invoke("jslAutoUpdater:updateStatus", ...args),
         installAndRestart: (...args) => ipcRenderer.invoke("jslAutoUpdater:installAndRestart", ...args),
 
         onUpdateReady: (callback) => ipcRenderer.on("onUpdateReady", (_event, value) => callback(value)),
@@ -158,8 +159,8 @@ export function connectIPCMain(app) {
         } catch (e) {}
         return 0;
     });
-    ipcMain.handle("jslAutoUpdater:isUpdateReady", async (_ev) => {
-        return _main_updateReady;
+    ipcMain.handle("jslAutoUpdater:updateStatus", async (_ev) => {
+        return { ready: _main_updateReady, available: _main_updateAvailable };
     });
 }
 
@@ -226,8 +227,12 @@ export class AutoUpdater {
         });
 
         // In case we missed it, re-inform about an ready update
-        window?.jslAutoUpdater?.isUpdateReady?.().then((isReady) => {
-            if (isReady) {
+        window?.jslAutoUpdater?.updateStatus?.().then((status) => {
+            if (status.available) {
+                this.m_callbacks?.onUpdateAvailable?.();
+            }
+
+            if (status.ready) {
                 this.m_callbacks?.onUpdateReady?.();
             }
         });
