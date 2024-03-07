@@ -78,7 +78,7 @@ async function onSubmit(state) {
         if (props.featureLock == null) {
             throw new Error("FeatureLock is null");
         }
-        console.log(props.featureLock);
+        // console.log(props.featureLock);
 
         return (
             props.featureLock.locked.value

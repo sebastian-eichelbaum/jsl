@@ -20,6 +20,9 @@ export function defaultConfig() {
     };
 }
 
+// Main process status flag
+let _main_updateReady = false;
+
 /**
  * Setup the auto update mechanism.
  *
@@ -75,6 +78,7 @@ export function setup(app, config) {
     };
 
     autoUpdater.on("update-downloaded", (event, releaseNotes, releaseName) => {
+        _main_updateReady = true;
         notifyUpdateIPC(releaseNotes, releaseName);
     });
 
@@ -123,6 +127,7 @@ export function connectIPCPreload() {
 
     contextBridge.exposeInMainWorld("jslAutoUpdater", {
         check: (...args) => ipcRenderer.invoke("jslAutoUpdater:check", ...args),
+        isUpdateReady: (...args) => ipcRenderer.invoke("jslAutoUpdater:isUpdateReady", ...args),
         installAndRestart: (...args) => ipcRenderer.invoke("jslAutoUpdater:installAndRestart", ...args),
 
         onUpdateReady: (callback) => ipcRenderer.on("onUpdateReady", (_event, value) => callback(value)),
@@ -152,6 +157,9 @@ export function connectIPCMain(app) {
             autoUpdater.quitAndInstall();
         } catch (e) {}
         return 0;
+    });
+    ipcMain.handle("jslAutoUpdater:isUpdateReady", async (_ev) => {
+        return _main_updateReady;
     });
 }
 
@@ -216,6 +224,13 @@ export class AutoUpdater {
         window?.jslAutoUpdater?.onUpdateUnavailable?.(() => {
             this.m_callbacks?.onUpdateUnavailable?.();
         });
+
+        // In case we missed it, re-inform about an ready update
+        window?.jslAutoUpdater?.isUpdateReady?.().then((isReady) => {
+            if (isReady) {
+                this.m_callbacks?.onUpdateReady?.();
+            }
+        });
     }
 
     /**
@@ -241,3 +256,5 @@ export class AutoUpdater {
 export function check() {
     return window.jslAutoUpdater?.check?.();
 }
+
+export const autoUpdater = null;

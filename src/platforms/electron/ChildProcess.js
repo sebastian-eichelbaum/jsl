@@ -26,6 +26,7 @@ export class ChildProcess extends jslObjectAsyncInit {
                 // THIS main process is used.
                 // If an array of strings is provided, the paths are joined
                 cwd: null,
+
                 // Arguments to pass. Must be strings or an empty array
                 args: [],
 
@@ -95,7 +96,7 @@ export class ChildProcess extends jslObjectAsyncInit {
      *
      * @static
      * @async
-     * @param {Object} config - The config as in @see defaultConfig
+    Boolean* @param {Object} config - The config as in @see defaultConfig
      * @returns {Promise<Object>} The promise that resolves once the process is done, or fails on error. The process
      * status is returned. @see ChildProcess.run.
      */
@@ -430,6 +431,8 @@ export function connectIPCMain(app) {
         }
 
         inst.config.executable = fixExe(inst.config.executable);
+        console.log(inst.config);
+        console.log(config);
 
         return inst.key;
     });

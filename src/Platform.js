@@ -422,6 +422,22 @@ export class Platform extends jslObject {
     }
 
     /**
+     * Test if the given file is existing and executable. On windows, "exe" extension is added if not present.
+     *
+     * @async
+     * @param {Array<String>|String} path - Path to file.
+     * @returns {Promise<Boolean>} Resolves to Boolean True if the file is existing.
+     */
+    async isExecutable(path) {
+        assert(
+            Test.isString(path) || Test.arrayOnlyContainsString(path),
+            "Path must be a string or an array of strings",
+        );
+
+        return window.jslPlatform?.isExecutable?.(path);
+    }
+
+    /**
      * Test if the given dir is empty.
      *
      * @async

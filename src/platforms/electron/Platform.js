@@ -17,6 +17,7 @@ export function connectIPCPreload() {
         isDirEmpty: (...args) => ipcRenderer.invoke("isDirEmpty", ...args),
         isDirExisting: (...args) => ipcRenderer.invoke("isDirExisting", ...args),
         isFileExisting: (...args) => ipcRenderer.invoke("isFileExisting", ...args),
+        isExecutable: (...args) => ipcRenderer.invoke("isExecutable", ...args),
         readTextFile: (...args) => ipcRenderer.invoke("readTextFile", ...args),
         readJSONFile: (...args) => ipcRenderer.invoke("readJSONFile", ...args),
         writeTextFile: (...args) => ipcRenderer.invoke("writeTextFile", ...args),
@@ -43,13 +44,14 @@ export function connectIPCMain(app) {
     const fs = require("fs");
     const fsp = require("fs").promises;
     const path = require("path");
+    const os = require("os");
     const { shell } = require("electron");
 
     const makePath = (p) => {
         if (Array.isArray(p)) {
-            return path.join(...p);
+            return path.normalize(path.join(...p));
         }
-        return p;
+        return path.normalize(p);
     };
 
     const selectDir = async (_ev, basePath) => {
@@ -155,6 +157,21 @@ export function connectIPCMain(app) {
         return false;
     };
     ipcMain.handle("isFileExisting", isFileExisting);
+
+    ipcMain.handle("isExecutable", async (_ev, exe) => {
+        try {
+            let fixedExe = makePath(exe);
+            if (os.platform() === "win32" && path.extname(fixedExe) !== ".exe") {
+                fixedExe += ".exe";
+            }
+
+            if (fs.lstatSync(fixedExe).isFile()) {
+                return true;
+            }
+        } catch (e) {}
+
+        return false;
+    });
 
     const windowMinimize = async (_ev, state) => {
         if (state === true || (state == null && !app.focussedWindow.isMinimized())) {

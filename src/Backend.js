@@ -580,7 +580,7 @@ export class ExampleService extends Service {
      *     Merged with the default.
      */
     constructor(config = {}) {
-        super(_.merge(ExampleService.defaultConfig(), config || {}));
+        super(config);
         // The service config allows you to define requirements that are tested during init.
         // You should add them here instead of in the defaultConfig as it could be overridden by a user:
         this._requiredServices = [
