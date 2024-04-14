@@ -335,7 +335,7 @@ export class Platform extends jslObject {
      * @returns {Promise} Resolves on success
      */
     async updateJSONFile(filePath, updater) {
-        this.readJSONFile(filePath)
+        return this.readJSONFile(filePath)
             .then((data) => updater(data))
             .then((updatedData) => this.writeJSONFile(filePath, updatedData));
     }
