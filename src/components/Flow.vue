@@ -15,7 +15,11 @@ const steps = [
     {
         id: "CreateWorkingDir",
         component: CreateWorkingDir,
-        props:{ ... }, // pass these props to the component
+        props: { ... }, // pass these props to the component
+        // Called before starting the step. Get the currently tracked results, keyed by step-id. Return an object whose
+        // values are attached to the step props.
+        // Ideal to set a prop based on a previous result
+        propsSet: (results)=>{return { cheese: results.cheeseSelected };},
     },
     ...
 ];
@@ -131,6 +135,7 @@ onMounted(() => {
 
     let stepsResult = [];
     _mappedResult = {};
+    let _trackedResults = {};
 
     for (let step of props.steps) {
         if (!step.id) {
@@ -149,7 +154,18 @@ onMounted(() => {
             // State is the object send along OK in jsl Form.vue
             step.result = state.result;
             step.state = state.state;
+
+            _trackedResults[step.id] = step.result;
+
             _step.value++;
+
+            // Set the props of the next step if propsSet is defined
+            if (!isDone()) {
+                props.steps[_step.value].props = {
+                    ...props.steps[_step.value].props,
+                    ...props.steps[_step.value]?.propsSet?.(_trackedResults),
+                };
+            }
 
             if (isDone()) {
                 _mappedResult = defaultMapper(stepsResult);

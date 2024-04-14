@@ -21,7 +21,7 @@ Emits:
 
 Example:
 
-<Form ... @submit="do">
+<Form ... @submit="do" :initHandler="doInit">
     // It is important that all fields use the model provided by the form.
     // This ensures that the form can get and forward all values properly.
     <template v-slot="{ busy, model }">
@@ -65,6 +65,20 @@ async function do(state)
                      // specific errors to some Translatable or string.
     });
 }
+
+async function doInit(model) {
+    
+    const allComponents = await api.fetchStuff();
+
+    // The given modes is an object where each key is the name of one of the fields v-model key.
+    model.components = allComponents;
+    model.someName = true; 
+
+    // If you throw, the form shows an error. If not, you can define a state. NOTE: form always sets busy false after
+    // init.
+    return { busy: false };
+}
+
 -->
 
 <template>
@@ -274,6 +288,10 @@ const props = defineProps({
     //
     // Signature: (formState)=>{ return someThing }
     submitAction: { type: Function, default: null },
+
+    // This function will be called upon mount/init. It gets the model passed and can throw or return a NewState
+    // instance (see setState). If set, the form is marked as busy before calling it.
+    initHandler: { type: Function, default: null },
 });
 
 const emit = defineEmits([
@@ -284,7 +302,9 @@ const emit = defineEmits([
     // When the form is reset. The form model is passed as argument. Fill the values as needed.
     "reset",
 
-    // Called on mount. Use this to init default values externally.
+    // Called on mount. Use this to init default values externally. The model is passed as first parameter. Be aware
+    // that multiple subscribers might modify the model. Use this only if you have a fast and synchronous init function.
+    // If more complex, async init is needed, use the initHandler property.
     "init",
 
     // Triggered on model update
@@ -461,6 +481,32 @@ async function submit(submitEvent) {
     }
 }
 
+// Handle the initialization of the form. If the handler throws, this reports the error but does NOT report failure
+async function init() {
+    if (typeof props.initHandler != "function") {
+        setState({ busy: false });
+        emit("init", valuesModel.value);
+        return;
+    }
+
+    try {
+        setState({ busy: true });
+        setState(await props.initHandler(valuesModel.value));
+        setState({ busy: false });
+    } catch (e) {
+        // This will catch any issues with the form-value magic. The promise that is passed using the emits already
+        // catches
+        setState({
+            busy: false,
+            busyDelay: 100,
+            error: "common.msg.unknownError",
+            errorDetail: { error: e },
+        });
+
+        emit("failed", { state: null, error: e });
+    }
+}
+
 /**
  * Reset the whole form to a new state.
  *
@@ -512,7 +558,7 @@ watch(props.values, (newValue, oldValue) => {
  * On mount is init - notify any listeners and let them init the model.
  */
 onMounted(() => {
-    emit("init", valuesModel.value);
+    init();
 });
 
 /**

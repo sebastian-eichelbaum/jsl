@@ -42,8 +42,17 @@ Example:
         </v-col>
         <v-col cols="12">
             <slot :busy="busy" :model="model" :fieldProps="_fieldProps">
+                <v-checkbox
+                    v-if="fieldType === 'checkbox'"
+                    v-bind="{ ...$props, ...$attrs, ..._fieldProps }"
+                    v-model="model"
+                    :name="name"
+                    :rules="rules"
+                    :label="_fieldLabel"
+                    :disabled="busy"
+                />
                 <v-text-field
-                    v-if="fieldType === 'text'"
+                    v-else-if="fieldType === 'text'"
                     v-bind="{ ...$props, ...$attrs, ..._fieldProps }"
                     v-model="model"
                     :name="name"
@@ -117,7 +126,7 @@ const props = defineProps({
 
     // If the anonymous slot is not explicitly set this component defines a field. These props allow to configure them:
 
-    // The type of field. Currently supported: "text, textarea" and an arbitrary component object
+    // The type of field. Currently supported: "checkbox, text, textarea" and an arbitrary component object
     fieldType: { type: [String, Object], default: "text" },
     // The label of the field. If unset, no label is used. If set to "$title", the title of this Field is used.
     label: { type: [String, Translatable], default: "$title" },

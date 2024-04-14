@@ -121,7 +121,7 @@ function aaa() {}
 </style>
 
 <script setup>
-import { ref, reactive, markRaw } from "vue";
+import { ref, reactive, markRaw, watch } from "vue";
 
 import _ from "lodash";
 
@@ -136,6 +136,9 @@ import { makeDebouncedSingleRun } from "@jsl/utils/Await";
 import Field from "@jsl/components/forms/Field.vue";
 
 const model = defineModel();
+watch(model, (newVal, oldVal) => {
+    mapData(newVal);
+});
 
 const props = defineProps({
     // By default, selects should clear the search once an item is selected.
@@ -162,6 +165,10 @@ const props = defineProps({
     // The fields to search
     fields: { type: Array, required: true },
 
+    // A filter function to apply after fetching the results. For each entry in the result list, this is called. If it
+    // returns true, the data is kept.
+    filter: { type: Function, required: false, default: null },
+
     // A function that maps the data that is returned by your query to a usable ID, name, description and color, ...
     //
     // Name: Be aware that, once clicked on the field again, this name is also used as search term. You might want to
@@ -178,7 +185,8 @@ const props = defineProps({
                 // A unique ID that identifies this. This is used to identify items. Due to how vuetify handles
                 // v-autocomplete, this is also the initial search when re-selecting a field with a value. So, you should
                 // make sure that this value is a valid search term that yields the same item again.
-                // NOTE: this is mandatory. 
+                // NOTE: this is mandatory.
+                // THIS IS NOT the model value or v-autocomplete! Use
                 id: data?.id || data?.uid || data?.key,
 
                 // The title to show in the chip and as text value inside the input.
@@ -206,6 +214,11 @@ const props = defineProps({
             };
         },
     },
+
+    // The data field to use as value for the model (and the v-autocomplete value to show). If null, the data has to
+    // a field "title". Else, has to be a function (data)=>{return data.something;}.
+    // NOTE: this modifies the "title" value in the original data. The original title is stored in "__title"
+    modelValueMap: { default: null },
 
     // Properties that are passed to the generated chip for a data element
     ...fwdProps("chipProps"),
@@ -278,17 +291,22 @@ async function fetchData(newVal) {
             return;
         }
 
+        // If there is a filter function, the amount of data to load is "all". Then apply the filter, then limit.
+        const loadLimit = typeof props.filter == "function" ? 999999 : props.limit;
+
         await props.service
             .search(props.collection, props.fields, words, {
-                limit: props.limit,
+                limit: loadLimit > 0 ? loadLimit : 999999,
             })
             .then((data) => {
-                items.results = Array.from(data, (dat) => {
-                    dat["_selectAsync_mapped"] = props.mapData(dat);
-                    dat["toString"] = () => dat._selectAsync_mapped.id;
-                    return markRaw(dat);
-                });
+                return (
+                    data
+                        .filter(typeof props.filter == "function" ? props.filter : (e) => true)
+                        // Keep the requested amount
+                        .slice(0, props.limit > 0 ? props.limit : -1)
+                );
             })
+            .then(mapData)
             .catch((e) => {
                 console.error("Database backend error");
                 throw e;
@@ -299,6 +317,26 @@ async function fetchData(newVal) {
     }
 
     isLoading.value = false;
+}
+
+function mapData(data) {
+    if (!Array.isArray(data)) {
+        // console.log("");
+        // This only works for array data after fetching it. Non "multiple=true" selects do not store the source data as
+        // array in their model, only the "title" of the data.
+        // TODO: is there a way to make this work for single-selects?
+        return;
+    }
+
+    items.results = Array.from(data, (dat) => {
+        dat["_selectAsync_mapped"] = props.mapData(dat);
+        dat["toString"] = () => dat._selectAsync_mapped.id;
+        if (typeof props.modelValueMap == "function") {
+            dat["__title"] = dat["title"];
+            dat["title"] = props.modelValueMap(dat);
+        }
+        return markRaw(dat);
+    });
 }
 
 // Clear the result list
