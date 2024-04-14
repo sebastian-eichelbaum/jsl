@@ -186,6 +186,15 @@ export class ElectronApp extends jslObjectAsyncInit {
     }
 
     /**
+     * Check if the app is packaged/in production mode
+     *
+     * @returns {Boolean} True if this is an packaged/production app
+     */
+    get isPackaged() {
+        return this.app.isPackaged;
+    }
+
+    /**
      * Create the actual main window
      */
     _createWindow() {

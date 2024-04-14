@@ -18,10 +18,11 @@ export class ChildProcess extends jslObjectAsyncInit {
         return {
             // Describes to actual command to run
             execute: {
-                // The absolute path to the executable to run.
+                // The absolute path to the executable to run or an array path.
                 // On Windows, this automatically adds ".exe" if no file extension is
                 // given
-                executable: "", // "/home/seb/test.sh",
+                executable: "", // "/home/seb/test.sh", ["home", "seb", "trst.sh"]
+
                 // The working dir of the process. If nullish or empty, the currend CWD of
                 // THIS main process is used.
                 // If an array of strings is provided, the paths are joined
@@ -33,6 +34,11 @@ export class ChildProcess extends jslObjectAsyncInit {
                 // If boolean true, the child process couples to the previous child of the
                 // same executable
                 reuse: false,
+
+                // If boolean true and if the app is in prodction mode, the executable is searched in the application
+                // resource path. This is the place where additional resources are placed if configured in 
+                // forge.config.js in packagerConfig.extraResource:[...]
+                isInResourcePath: false,
             },
 
             // Show the exact execution params when spawning?
@@ -390,10 +396,11 @@ export function connectIPCMain(app) {
      * Add the "exe" extension on windows if not given
      *
      * @param {String} exe - the executable
+     * @param {Boolean} isInResourcePath - if true, the resource path is preprended to the path itself.
      * @return {String} - the executable, added ".exe" on windows if not present
      */
-    const fixExe = (exe) => {
-        let fixedExe = makePath(exe);
+    const fixExe = (exe, isInResourcePath) => {
+        let fixedExe = app.isPackaged && isInResourcePath ? makePath([process.resourcesPath, exe]) : makePath(exe);
         if (os.platform() === "win32" && path.extname(fixedExe) !== ".exe") {
             fixedExe += ".exe";
         }
@@ -406,7 +413,9 @@ export function connectIPCMain(app) {
     ipcMain.handle("jslChildProcess:make", async (_ev, config) => {
         let inst = null;
         if (config.reuse === true) {
-            inst = instances.find((e) => e.config?.executable == fixExe(config.executable));
+            inst = instances.find(
+                (e) => e.config?.executable == fixExe(config.executable, inst.config.isInResourcePath),
+            );
         }
 
         if (inst == null) {
@@ -436,7 +445,7 @@ export function connectIPCMain(app) {
             }
         }
 
-        inst.config.executable = fixExe(inst.config.executable);
+        inst.config.executable = fixExe(inst.config.executable, inst.config.isInResourcePath);
         console.log(inst.config);
         console.log(config);
 
