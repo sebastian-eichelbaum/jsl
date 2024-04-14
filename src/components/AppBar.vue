@@ -12,9 +12,12 @@ Both slots get "disabled" bound
     <v-app-bar :style="isFullscreen ? styleFullscreen : style" v-bind="{ ...$props, ...$attrs }">
         <v-app-bar-title class="title">
             <AppLogo compact :disabled="unattendedMode" @click="onAppLogoClick" :clickOnly="appLogoGoHome" />
-            <span v-if="version" class="text-caption font-weight-light" style="color: rgba(255, 255, 255, 0.3)">{{
-                version
-            }}</span>
+            <span
+                v-if="version && !noVersion"
+                class="text-caption font-weight-light"
+                style="color: rgba(255, 255, 255, 0.3)"
+                >{{ version }}</span
+            >
         </v-app-bar-title>
         <div class="draggableRegion">&nbsp;</div>
 
@@ -79,7 +82,7 @@ const props = defineProps({
     disabled: { type: Boolean, required: false, default: false },
 
     // A nice version text to show, or null
-    version: { type: String, default: null },
+    version: { type: String, default: __APP_VERSION__ },
 
     // If true, the app logo does not call any website or href. Instead, "goHome" is emitted.
     appLogoGoHome: { type: Boolean, default: false },
@@ -95,6 +98,8 @@ const props = defineProps({
     noUserButton: { type: Boolean, default: false },
     // Or disable them all at once
     noButtons: { type: Boolean, default: false },
+    // Disable version display
+    noVersion: { type: Boolean, default: false },
 
     // Background style color, blur, alpha, brightness
     // This also creates the prop "color" that is also used by v-app-bar.
@@ -103,7 +108,7 @@ const props = defineProps({
     ...makeBackgroundStyleProps("fullscreen", { color: "surface", alpha: 0.0, brightness: 1.0, blur: 20 }),
 
     // The user service to utilize for user management
-    userService: { type: UserService, required: true },
+    userService: { type: UserService, required: false, default: null },
 });
 
 const emit = defineEmits([
