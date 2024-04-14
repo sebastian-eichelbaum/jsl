@@ -48,6 +48,7 @@ Both slots get "disabled" bound
                 dividerL
                 @fullscreenChanged="onFullscreenChanged"
                 :disabled="disabled"
+                v-bind="fwdBindProps('windowButtonsProps', $props)"
             />
         </template>
     </v-app-bar>
@@ -60,6 +61,8 @@ import { vuetify } from "@jsl/Vuetify";
 
 import App from "@jsl/App.vue";
 import Main from "@jsl/screens/Main.vue";
+
+import { fwdProps, fwdBindProps } from "@jsl/utils/ForwardVueProps";
 
 import authBackgroundImage from "@assets/auth_background.png";
 import Link from "@jsl/components/Link.vue";
@@ -109,6 +112,9 @@ const props = defineProps({
 
     // The user service to utilize for user management
     userService: { type: UserService, required: false, default: null },
+
+    // Properties to pass to the window buttons
+    ...fwdProps("windowButtonsProps"),
 });
 
 const emit = defineEmits([
