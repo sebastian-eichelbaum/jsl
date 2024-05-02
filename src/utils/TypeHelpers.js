@@ -76,6 +76,20 @@ export class TypeHelpers {
     }
 
     /**
+     * Makes sure the given value is an array. If not, it is made an array containing the given value.
+     *
+     * @static
+     * @param {Array|any} x - If array, returned as is. If not not, returned as array containing it.
+     * @returns {Array} x or x as array
+     */
+    static ensureArray(x) {
+        if (!Array.isArray(x)) {
+            return [x];
+        }
+        return x;
+    }
+
+    /**
      * Collect all the different keys in two objects
      *
      * @static

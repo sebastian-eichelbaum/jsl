@@ -184,6 +184,13 @@ onMounted(() => {
             step.props = {};
         }
 
+        // ensure propSet is called for the first step too. The propSet call in step.ok will only be called for step 1
+        // and above, never step 0
+        props.steps[0].props = {
+            ...props.steps[0].props,
+            ...props.steps[0]?.propsSet?.(_trackedResults),
+        };
+
         stepsResult.push(step);
     }
 
