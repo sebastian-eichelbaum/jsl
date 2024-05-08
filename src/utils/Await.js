@@ -101,3 +101,15 @@ export function makeSingleRun(func) {
 export function makeDebouncedSingleRun(func, wait, options = {}) {
     return _.debounce(makeSingleRun(func), wait, options);
 }
+
+/**
+ * Wait for the given amount of time in millisec
+ *
+ * @param {Number} milliseconds - The time to sleep in milliseconds
+ * @returns {Promise} promise
+ */
+export function wait(milliseconds) {
+    return new Promise((resolve) => {
+        setTimeout(resolve, milliseconds);
+    });
+}

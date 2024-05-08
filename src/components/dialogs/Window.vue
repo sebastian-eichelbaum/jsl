@@ -21,7 +21,7 @@ Use windows for more complex dialogs. The plain ModalDialog is good for question
             <v-card-title>
                 {{ tt(greetText) }}
             </v-card-title>
-            <v-card-subtitle class="mt-3 text-wrap text-subtitle-2" style="white-space: break-spaces !important;">{{
+            <v-card-subtitle class="mt-3 text-wrap text-body-2" style="white-space: break-spaces !important;">{{
                 tt(greetSubtext)
             }}</v-card-subtitle>
         </v-card-item>

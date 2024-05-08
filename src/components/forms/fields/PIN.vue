@@ -126,7 +126,7 @@ function onPinClick(num) {
 <style scoped>
 .pinBtn {
     padding: 10px;
-    height: 4rem;
+    height: 3.5rem;
     width: 100%;
 
     display: flex;
