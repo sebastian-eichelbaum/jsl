@@ -26,7 +26,18 @@ const props = defineProps({
 
 const bgUrl = computed({
     get() {
+        if (props.image == null || props.image == "none") {
+            return "unset";
+        }
         return "url(" + props.image + ")";
+    },
+});
+const bgColor = computed({
+    get() {
+        if (props.image == null || props.image == "none") {
+            return props.color;
+        }
+        return "transparent";
     },
 });
 const style = computedBackgroundStyle(props);
@@ -48,7 +59,7 @@ const style = computedBackgroundStyle(props);
     height: 100vh;
 
     background-image: v-bind("bgUrl");
-    background-color: transparent;
+    background-color: v-bind("bgColor");
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
