@@ -8,7 +8,7 @@ It provides a named slots:
 * unnamed slot: the center area -
 
 Example:
-import myImage from "@assets/myImage.png";
+import myImage from "assets/myImage.png";
 ...
 <BigPanel :background="{image: myImage, blur: '5px', ... // all props from Background.vue}">
     <template v-slot:header>

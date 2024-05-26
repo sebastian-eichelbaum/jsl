@@ -52,7 +52,7 @@ export class ElectronApp extends jslObjectAsyncInit {
                 //  https://www.electronjs.org/docs/latest/tutorial/window-customization
                 titleBarStyle: "hidden",
                 titleBarOverlay: false,
-                /* OR: 
+                /* OR:
                     // Custom style?
                     {
                         color: "#191919",
