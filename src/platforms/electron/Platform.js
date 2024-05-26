@@ -6,7 +6,7 @@
 export function connectIPCPreload() {
     const { contextBridge, ipcRenderer } = require("electron/renderer");
 
-    // Expoze the "platformAPI" to main
+    // Expose the "platformAPI" to main
     contextBridge.exposeInMainWorld("jslPlatform", {
         // IO
         selectDir: (...args) => ipcRenderer.invoke("selectDir", ...args),
