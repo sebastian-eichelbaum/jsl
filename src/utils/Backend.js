@@ -1,4 +1,4 @@
-import { backend } from "@jsl/Backend";
+import { backend } from "jsl/Backend";
 
 /**
  * Get the username of the current user or the given default.

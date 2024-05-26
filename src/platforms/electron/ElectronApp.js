@@ -4,8 +4,8 @@ import { shell } from "electron";
 
 import path from "path";
 
-import { jslObjectAsyncInit } from "@jsl/Object";
-import { Test } from "@jsl/Assert";
+import { jslObjectAsyncInit } from "jsl/Object";
+import { Test } from "jsl/Assert";
 
 import { setupMain } from "./IPC";
 import * as AutoUpdater from "./AutoUpdater";
@@ -75,7 +75,7 @@ export class ElectronApp extends jslObjectAsyncInit {
                 corsURLs: [], // ["https://cms.provider.com/*"],
             },
 
-            // Setup the updater service - @see @jsl/platforms/electron/AutoUpdater for details
+            // Setup the updater service - @see jsl/platforms/electron/AutoUpdater for details
             autoUpdater: AutoUpdater.defaultConfig(),
         };
     }

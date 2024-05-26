@@ -201,15 +201,15 @@ async function doInit(model) {
 import { ref, reactive, computed, markRaw, onMounted, watch } from "vue";
 import _ from "lodash";
 
-import { Translatable, tt } from "@jsl/Localization";
-import { fwdProps, fwdBindProps } from "@jsl/utils/ForwardVueProps";
+import { Translatable, tt } from "jsl/Localization";
+import { fwdProps, fwdBindProps } from "jsl/utils/ForwardVueProps";
 
-import BusyOverlay from "@jsl/components/BusyOverlay.vue";
-import Grid from "@jsl/components/Grid.vue";
+import BusyOverlay from "jsl/components/BusyOverlay.vue";
+import Grid from "jsl/components/Grid.vue";
 
-import SubmitButton from "@jsl/components/forms/SubmitButton.vue";
+import SubmitButton from "jsl/components/forms/SubmitButton.vue";
 
-import FormError from "@jsl/components/forms/Error.vue";
+import FormError from "jsl/components/forms/Error.vue";
 
 const props = defineProps({
     // Title text. Hides the column if empty

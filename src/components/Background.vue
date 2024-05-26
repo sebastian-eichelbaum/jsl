@@ -15,7 +15,7 @@ Generates a background as large as the parent. The slot will be drawn on top.
 <script setup>
 import { ref, computed } from "vue";
 
-import { computedBackgroundStyle, makeBackgroundStyleProps } from "@jsl/utils/Style";
+import { computedBackgroundStyle, makeBackgroundStyleProps } from "jsl/utils/Style";
 
 const props = defineProps({
     image: { type: String, required: false, default: "none" },

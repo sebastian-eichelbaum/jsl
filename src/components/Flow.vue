@@ -90,7 +90,7 @@ function defaultMapper(state) {
 <script setup>
 import { ref, reactive, computed, onMounted, markRaw } from "vue";
 
-import Multiplexer from "@jsl/components/Multiplexer.vue";
+import Multiplexer from "jsl/components/Multiplexer.vue";
 
 const props = defineProps({
     // Step definitions

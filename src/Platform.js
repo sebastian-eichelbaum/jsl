@@ -1,10 +1,10 @@
 import _ from "lodash";
 
-import { jslObject } from "@jsl/Object";
-import { TypeHelpers } from "@jsl/utils/TypeHelpers";
+import { jslObject } from "jsl/Object";
+import { TypeHelpers } from "jsl/utils/TypeHelpers";
 
-import isElectron from "@jsl/platforms/electron/isElectron";
-import { assert, Test } from "@jsl/Assert";
+import isElectron from "jsl/platforms/electron/isElectron";
+import { assert, Test } from "jsl/Assert";
 
 // Provides platform specific functionality.
 export class Platform extends jslObject {

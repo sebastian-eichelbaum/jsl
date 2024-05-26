@@ -62,11 +62,11 @@ A common base card that defines background, shapes, sizes and can detect hover. 
 <script setup>
 import { computed, ref, watch } from "vue";
 
-import { tt } from "@jsl/Localization";
+import { tt } from "jsl/Localization";
 
-import { computedBackgroundStyle, makeBackgroundStyleProps, styleDefaultProp } from "@jsl/utils/Style";
+import { computedBackgroundStyle, makeBackgroundStyleProps, styleDefaultProp } from "jsl/utils/Style";
 
-import Button from "@jsl/components/Button.vue";
+import Button from "jsl/components/Button.vue";
 
 const props = defineProps({
     // Background style color, blur, alpha, brightness

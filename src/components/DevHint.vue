@@ -8,7 +8,7 @@ A simple hint you can use to convey developer notes to users.
 </template>
 
 <script setup>
-import { tt, Translatable } from "@jsl/Localization";
+import { tt, Translatable } from "jsl/Localization";
 
 const props = defineProps({
     title: { type: [String, Translatable], default: tt("common.msg.devhint") },

@@ -28,14 +28,14 @@ Provides a button that opens the shop iff appConfig.urls.shop is not nullish.
 import { useDisplay } from "vuetify";
 import { ref } from "vue";
 
-import Button from "@jsl/components/Button.vue";
-import ConfirmDialog from "@jsl/components/dialogs/ConfirmDialog.vue";
+import Button from "jsl/components/Button.vue";
+import ConfirmDialog from "jsl/components/dialogs/ConfirmDialog.vue";
 
-import { platform } from "@jsl/Platform";
-import { tt, Translatable } from "@jsl/Localization";
-import { appConfig } from "@jsl/AppConfig";
+import { platform } from "jsl/Platform";
+import { tt, Translatable } from "jsl/Localization";
+import { appConfig } from "jsl/AppConfig";
 
-import { AutoUpdater } from "@jsl/platforms/electron/AutoUpdater";
+import { AutoUpdater } from "jsl/platforms/electron/AutoUpdater";
 
 const props = defineProps({
     text: { default: tt("common.ui.update") },

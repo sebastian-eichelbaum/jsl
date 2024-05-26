@@ -15,8 +15,8 @@
 </template>
 
 <script setup>
-import { platform } from "@jsl/Platform";
-import { Test } from "@jsl/Assert";
+import { platform } from "jsl/Platform";
+import { Test } from "jsl/Assert";
 
 const props = defineProps({
     href: { type: String, required: true },

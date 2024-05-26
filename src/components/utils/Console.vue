@@ -26,7 +26,7 @@
 
 <script setup>
 import { ref, watch, nextTick, onMounted, computed } from "vue";
-import { ChildProcess } from "@jsl/platforms/electron/ChildProcess";
+import { ChildProcess } from "jsl/platforms/electron/ChildProcess";
 
 const props = defineProps({
     // Title to show

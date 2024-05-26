@@ -32,22 +32,22 @@ This can be seen as an inspiration and tutorial on how to setup an app.
 <script setup>
 import { ref, computed } from "vue";
 
-import { vuetify } from "@jsl/Vuetify";
+import { vuetify } from "jsl/Vuetify";
 
-import { fwdProps, fwdBindProps } from "@jsl/utils/ForwardVueProps";
+import { fwdProps, fwdBindProps } from "jsl/utils/ForwardVueProps";
 
-import InitOverlay from "@jsl/utils/InitOverlay.vue";
-import ScrollbarStyle from "@jsl/utils/ScrollbarStyle.vue";
+import InitOverlay from "jsl/utils/InitOverlay.vue";
+import ScrollbarStyle from "jsl/utils/ScrollbarStyle.vue";
 
-import QuitDialog from "@jsl/components/dialogs/QuitDialog.vue";
+import QuitDialog from "jsl/components/dialogs/QuitDialog.vue";
 
-import BigPanel from "@jsl/screens/BigPanel.vue";
-import WindowButtons from "@jsl/components/WindowButtons.vue";
-import Multiplexer from "@jsl/components/Multiplexer.vue";
+import BigPanel from "jsl/screens/BigPanel.vue";
+import WindowButtons from "jsl/components/WindowButtons.vue";
+import Multiplexer from "jsl/components/Multiplexer.vue";
 
-import Authentfication from "@jsl/views/Authentication.vue";
+import Authentfication from "jsl/views/Authentication.vue";
 
-import { UserService, backend } from "@jsl/Backend";
+import { UserService, backend } from "jsl/Backend";
 
 const props = defineProps({
     // The user service to utilize

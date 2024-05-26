@@ -22,9 +22,9 @@
 <script setup>
 import { computed } from "vue";
 
-import Link from "@jsl/components/Link.vue";
+import Link from "jsl/components/Link.vue";
 
-import { appConfig } from "@jsl/AppConfig";
+import { appConfig } from "jsl/AppConfig";
 
 // Text color as prop?
 const props = defineProps({

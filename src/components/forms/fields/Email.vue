@@ -11,8 +11,8 @@
 <script setup>
 import { ref } from "vue";
 
-import Validators from "@jsl/utils/Validators";
-import { localization } from "@jsl/Localization";
+import Validators from "jsl/utils/Validators";
+import { localization } from "jsl/Localization";
 
 const props = defineProps({
     // The label of the field

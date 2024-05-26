@@ -1,6 +1,6 @@
 import _ from "lodash";
 
-import DefaultLogo from "@jslassets/DefaultLogo.png";
+import DefaultLogo from "jsl/assets/DefaultLogo.png";
 
 // Provides application customization points.
 export class AppConfig {

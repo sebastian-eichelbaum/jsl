@@ -20,8 +20,8 @@ Displays the app logo.
 <script setup>
 import { computed } from "vue";
 
-import { appConfig } from "@jsl/AppConfig";
-import Link from "@jsl/components/Link.vue";
+import { appConfig } from "jsl/AppConfig";
+import Link from "jsl/components/Link.vue";
 
 const props = defineProps({
     imgMaxWidth: { type: String, required: false, default: "200px" },

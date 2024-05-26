@@ -11,9 +11,9 @@
 
 <script setup>
 import { computed } from "vue";
-import { platform } from "@jsl/Platform";
+import { platform } from "jsl/Platform";
 
-import Button from "@jsl/components/Button.vue";
+import Button from "jsl/components/Button.vue";
 
 // Handle Clicks
 function onClick() {

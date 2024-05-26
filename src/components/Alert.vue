@@ -13,7 +13,7 @@ Provides a simple alert message box.
 </template>
 
 <script setup>
-import { localization, Translatable, tt } from "@jsl/Localization";
+import { localization, Translatable, tt } from "jsl/Localization";
 
 const props = defineProps({
     // v-alert variant for the error msg

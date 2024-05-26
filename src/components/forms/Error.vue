@@ -7,9 +7,9 @@ Provides a simple error message box to be used in forms
 </template>
 
 <script setup>
-import { localization, Translatable, tt } from "@jsl/Localization";
+import { localization, Translatable, tt } from "jsl/Localization";
 
-import Alert from "@jsl/components/Alert.vue";
+import Alert from "jsl/components/Alert.vue";
 
 const props = defineProps({
    // v-alert type: error, info, success, warning, or null (plain)

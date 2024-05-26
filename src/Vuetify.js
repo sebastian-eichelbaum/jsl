@@ -6,7 +6,7 @@ import * as directives from "vuetify/directives";
 import "@mdi/font/css/materialdesignicons.css";
 
 // Ensure the main styles are available
-import "@jsl/styles/main.scss";
+import "jsl/styles/main.scss";
 // import "vuetify/styles";
 
 import _ from "lodash";

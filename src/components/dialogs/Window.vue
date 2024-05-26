@@ -47,11 +47,11 @@ Use windows for more complex dialogs. The plain ModalDialog is good for question
 <script setup>
 import { computed } from "vue";
 
-import { tt } from "@jsl/Localization";
-import { useTheme } from "@jsl/Vuetify";
+import { tt } from "jsl/Localization";
+import { useTheme } from "jsl/Vuetify";
 
-import ModalDialog from "@jsl/components/dialogs/ModalDialog.vue";
-import Button from "@jsl/components/Button.vue";
+import ModalDialog from "jsl/components/dialogs/ModalDialog.vue";
+import Button from "jsl/components/Button.vue";
 
 const model = defineModel();
 

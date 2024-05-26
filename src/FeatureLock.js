@@ -1,5 +1,5 @@
-import { jslObject } from "@jsl/Object";
-import { tt } from "@jsl/Localization";
+import { jslObject } from "jsl/Object";
+import { tt } from "jsl/Localization";
 
 import { computed, reactive } from "vue";
 

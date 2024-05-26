@@ -6,15 +6,15 @@
 
 <script setup>
 import { computed, ref } from "vue";
-import { tt, Translatable } from "@jsl/Localization";
+import { tt, Translatable } from "jsl/Localization";
 
-import Button from "@jsl/components/Button.vue";
+import Button from "jsl/components/Button.vue";
 
-import ConfirmDialog from "@jsl/components/dialogs/ConfirmDialog.vue";
+import ConfirmDialog from "jsl/components/dialogs/ConfirmDialog.vue";
 
-import { userName } from "@jsl/utils/Backend";
+import { userName } from "jsl/utils/Backend";
 
-import { backend } from "@jsl/Backend";
+import { backend } from "jsl/Backend";
 
 const props = defineProps({
     icon: { type: String, required: false, default: "mdi-logout" },

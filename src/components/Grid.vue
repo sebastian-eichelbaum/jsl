@@ -22,7 +22,7 @@ A component that allows to define regular grids easily. This reflects some of th
 </template>
 
 <script setup>
-import { tt } from "@jsl/Localization";
+import { tt } from "jsl/Localization";
 
 defineOptions({
     // Prevent the top-level div to inherit any props that have fallen through. Especially, avoids "title". This avoids

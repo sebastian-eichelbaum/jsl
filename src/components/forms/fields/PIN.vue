@@ -44,9 +44,9 @@
 <script setup>
 import { computed, ref } from "vue";
 
-import { localization } from "@jsl/Localization";
+import { localization } from "jsl/Localization";
 
-import Validators from "@jsl/utils/Validators";
+import Validators from "jsl/utils/Validators";
 
 const props = defineProps({
     // The label of the field

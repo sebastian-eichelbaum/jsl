@@ -1,4 +1,4 @@
-import { assert, Test } from "@jsl/Assert";
+import { assert, Test } from "jsl/Assert";
 
 /**
  * Encode an object as JSON in base 64. Ensures unicode is handled properly.

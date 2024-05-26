@@ -8,9 +8,9 @@ A card that shows a big shopping icon and opens the shop URL on click
 <script setup>
 import { computed } from "vue";
 
-import ActionCard from "@jsl/components/cards/ActionCard.vue";
+import ActionCard from "jsl/components/cards/ActionCard.vue";
 
-import { appConfig } from "@jsl/AppConfig";
+import { appConfig } from "jsl/AppConfig";
 
 const props = defineProps({
     // The icon to show

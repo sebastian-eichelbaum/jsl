@@ -1,5 +1,5 @@
-import { Test } from "@jsl/Assert";
-import { jslObjectAsyncInit } from "@jsl/Object";
+import { Test } from "jsl/Assert";
+import { jslObjectAsyncInit } from "jsl/Object";
 
 import { reactive } from "vue";
 

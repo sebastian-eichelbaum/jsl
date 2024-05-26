@@ -254,8 +254,8 @@ export class Validations {
     }
 }
 
-import BindMembers from "@jsl/utils/BindMembers";
-import { localization } from "@jsl/Localization";
+import BindMembers from "jsl/utils/BindMembers";
+import { localization } from "jsl/Localization";
 
 export class ValidatorFactory {
     /**
@@ -286,7 +286,7 @@ export class ValidatorFactory {
 
 export default ValidatorFactory.translated();
 
-import { makeDebouncedSingleRun, makeSingleRun } from "@jsl/utils/Await";
+import { makeDebouncedSingleRun, makeSingleRun } from "jsl/utils/Await";
 
 /**
  * Create a wrapper to have debounced async validations working easily. Just provide some async function.

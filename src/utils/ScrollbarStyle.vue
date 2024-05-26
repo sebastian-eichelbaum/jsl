@@ -9,8 +9,8 @@ generate a styled scrollbar for the HTML element.
 import { onMounted } from "vue";
 import { computed } from "vue";
 
-import { resolveColor } from "@jsl/utils/Style";
-import { useTheme } from "@jsl/Vuetify";
+import { resolveColor } from "jsl/utils/Style";
+import { useTheme } from "jsl/Vuetify";
 
 const props = defineProps({
     // Thumber color. If unset, jsl.scrollbarFG or vuetify "surface" is used.
@@ -46,7 +46,7 @@ onMounted(() => {
 </script>
 
 <style lang="scss">
-@import "@jsl/styles/scrollbars.scss";
+@import "jsl/styles/scrollbars.scss";
 
 .jslapp-custom-scrollbar-html-autohide {
     overflow: auto !important;

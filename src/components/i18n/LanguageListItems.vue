@@ -5,5 +5,5 @@
 </template>
 
 <script setup>
-import { localization } from "@jsl/Localization";
+import { localization } from "jsl/Localization";
 </script>

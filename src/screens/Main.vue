@@ -18,11 +18,11 @@ A flexible main screen default.
 <script setup>
 import { ref, reactive } from "vue";
 
-import { fwdProps, fwdBindProps } from "@jsl/utils/ForwardVueProps";
+import { fwdProps, fwdBindProps } from "jsl/utils/ForwardVueProps";
 
-import { tt } from "@jsl/Localization";
+import { tt } from "jsl/Localization";
 
-import Background from "@jsl/components/Background.vue";
+import Background from "jsl/components/Background.vue";
 
 const props = defineProps({
     // Forward all those nested component props

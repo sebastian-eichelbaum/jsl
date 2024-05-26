@@ -56,7 +56,7 @@ for this. Either use this or provide your own.
 <script setup>
 import { ref } from "vue";
 
-import { platform } from "@jsl/Platform";
+import { platform } from "jsl/Platform";
 
 const props = defineProps({
     variant: { default: "text" },

@@ -31,9 +31,9 @@ import { computed } from "vue";
 import { useDisplay } from "vuetify";
 const { xs } = useDisplay();
 
-import { tt } from "@jsl/Localization";
+import { tt } from "jsl/Localization";
 
-import Grid from "@jsl/components/Grid.vue";
+import Grid from "jsl/components/Grid.vue";
 
 const props = defineProps({
     // Some common card size presets: x-small, small, medium, large, x-large, xx-large, xxx-large.

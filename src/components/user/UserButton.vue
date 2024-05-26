@@ -15,12 +15,12 @@ The anonymous slot is the UserDialog slot
 <script setup>
 import { computed, ref } from "vue";
 
-import Button from "@jsl/components/Button.vue";
+import Button from "jsl/components/Button.vue";
 
-import UserDialog from "@jsl/components/user/UserDialog.vue";
+import UserDialog from "jsl/components/user/UserDialog.vue";
 
-import { userName, userNameShort } from "@jsl/utils/Backend";
-import { UserService, backend } from "@jsl/Backend";
+import { userName, userNameShort } from "jsl/utils/Backend";
+import { UserService, backend } from "jsl/Backend";
 
 import { useDisplay } from "vuetify";
 const { smAndDown } = useDisplay();
