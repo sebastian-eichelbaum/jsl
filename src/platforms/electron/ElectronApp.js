@@ -32,6 +32,10 @@ export class ElectronApp extends jslObjectAsyncInit {
         return {
             // The window configs.
             window: {
+                // An title for the window. If null, the name value from the top-level package.json is used. (default
+                // behavior of electron)
+                title: null,
+
                 // Default window width/height.
                 width: 1280,
 
@@ -240,6 +244,10 @@ export class ElectronApp extends jslObjectAsyncInit {
         });
 
         this.m_mainWindow = mainWindow;
+
+        if (this.config.window.title != null && this.config.window.title != "") {
+            this.m_mainWindow.setTitle(this.config.window.title);
+        }
 
         this._applyCorsFixes(this.m_mainWindow);
     }
