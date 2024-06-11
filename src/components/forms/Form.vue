@@ -121,6 +121,16 @@ async function doInit(model) {
                                 <v-row style="align-content: center">
                                     <v-col align="start">
                                         <slot name="footerStart" :busy="noBusyOverlay && isBusy" :model="valuesModel">
+                                            <BackButton
+                                                v-if="enableBack"
+                                                :loading="busy"
+                                                :text="backText"
+                                                :color="backColor"
+                                                :icon="backIcon"
+                                                :variant="backVariant"
+                                                :disabled="disabled"
+                                                @click="onBack"
+                                            />
                                         </slot>
                                     </v-col>
                                     <v-spacer />
@@ -156,6 +166,18 @@ async function doInit(model) {
                                                 :busy="noBusyOverlay && isBusy"
                                                 :model="valuesModel"
                                             >
+                                                <BackButton
+                                                    v-if="enableBack"
+                                                    :loading="busy"
+                                                    :text="backText"
+                                                    :color="backColor"
+                                                    :icon="backIcon"
+                                                    :variant="backVariant"
+                                                    rounded="xl"
+                                                    size="large"
+                                                    :disabled="disabled"
+                                                    @click="onBack"
+                                                />
                                             </slot>
                                         </v-col>
                                         <v-spacer />
@@ -208,6 +230,7 @@ import BusyOverlay from "@jsl/components/BusyOverlay.vue";
 import Grid from "@jsl/components/Grid.vue";
 
 import SubmitButton from "@jsl/components/forms/SubmitButton.vue";
+import BackButton from "@jsl/components/forms/BackButton.vue";
 
 import FormError from "@jsl/components/forms/Error.vue";
 
@@ -242,6 +265,15 @@ const props = defineProps({
     // If set, invalid forms get submitted. The submit-handler has to take care of it.
     submitInvalid: { type: Boolean, required: false, default: false },
 
+    // Icon to use for the default back button
+    backIcon: { type: String, required: false, default: "mdi-arrow-left-thin" },
+    // Variant of the back button
+    backVariant: { type: String, required: false, default: "flat" },
+    // Button color to use for the default back button
+    backColor: { type: String, required: false, default: "surface" },
+    // Button text for the default back button.
+    backText: { type: [String, Translatable], required: false, default: "common.ui.back" },
+
     // If set, the default submit button is disabled. Handy if submit should be handled somewhere else. NOTE: the
     // default submit button is inside the #footerEnd slot. You can also just override this slot to disable the submit
     // button
@@ -270,6 +302,10 @@ const props = defineProps({
 
     // Max width of this form
     maxWidth: { type: String, default: "unset" },
+
+    // If set, a back button is added to footerStart by default. It emits the "back" signal. This is false by default
+    // as it only makes sense for sequences of forms. Flow can handle this for example.
+    enableBack: { type: Boolean, default: false },
 
     // Forward all grid props
     ...fwdProps("grid"),
@@ -319,6 +355,10 @@ const emit = defineEmits([
     // The submitted form failed. An object {state, error} is provided. Values is the set of
     // original form values, error is the caught exception.
     "failed",
+
+    // The user requested to go back one step. Only emitted if enableBack is true and the default footerStart is not
+    // overwritten.
+    "back",
 
     // Informs about the busy state of the form. This emits on each update of props.busy or when the form is busy due to
     // its submit handler. A boolean is passed - true if busy
@@ -584,6 +624,15 @@ function setBusy(value = true, delayMs = 0) {
         _busy.value = value;
     }, delayMs);
 }
+
+/**
+ * Handle back events.
+ */
+function onBack()
+{
+    emit("back");
+}
+
 </script>
 
 <style scoped>
