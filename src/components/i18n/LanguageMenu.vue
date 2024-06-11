@@ -7,9 +7,9 @@
 </template>
 
 <script setup>
-import { localization } from "@jsl/Localization";
+import { localization } from "jsl/Localization";
 
-import LanguageListItems from "@jsl/components/i18n/LanguageListItems.vue";
+import LanguageListItems from "jsl/components/i18n/LanguageListItems.vue";
 
 import { computed } from "vue";
 

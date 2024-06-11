@@ -28,11 +28,11 @@ Anonymous slot extends the icon, "isHovering" is passed
 <script setup>
 import { computed } from "vue";
 
-import { platform } from "@jsl/Platform";
-import { tt } from "@jsl/Localization";
-import { vuetify } from "@jsl/Vuetify";
+import { platform } from "jsl/Platform";
+import { tt } from "jsl/Localization";
+import { vuetify } from "jsl/Vuetify";
 
-import Card from "@jsl/components/cards/Card.vue";
+import Card from "jsl/components/cards/Card.vue";
 
 const props = defineProps({
     // The icon to show

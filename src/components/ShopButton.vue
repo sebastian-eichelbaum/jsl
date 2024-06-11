@@ -15,10 +15,10 @@ Provides a button that opens the shop iff appConfig.urls.shop is not nullish.
 <script setup>
 import { useDisplay } from "vuetify";
 
-import LinkButton from "@jsl/components/LinkButton.vue";
+import LinkButton from "jsl/components/LinkButton.vue";
 
-import { tt } from "@jsl/Localization";
-import { appConfig } from "@jsl/AppConfig";
+import { tt } from "jsl/Localization";
+import { appConfig } from "jsl/AppConfig";
 
 const props = defineProps({
     text: { default: tt("common.ui.shop") },

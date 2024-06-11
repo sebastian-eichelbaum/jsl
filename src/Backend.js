@@ -2,9 +2,9 @@ import _ from "lodash";
 
 import { reactive } from "vue";
 
-import { Translatable } from "@jsl/Localization";
-import Iterate from "@jsl/utils/Iterate";
-import Await from "@jsl/utils/Await";
+import { Translatable } from "jsl/Localization";
+import Iterate from "jsl/utils/Iterate";
+import Await from "jsl/utils/Await";
 
 import { jslObjectAsyncInit } from "./Object";
 import { Observable } from "./Observable";

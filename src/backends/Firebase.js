@@ -30,9 +30,12 @@ import {
 
 import { getDownloadURL, getStorage, ref } from "firebase/storage";
 
+import { disableNetwork } from "firebase/firestore";
+
 import _ from "lodash";
 
 import { Service, ServiceError, UserService, DatabaseService, StorageService } from "../Backend";
+import { wait } from "../utils/Await";
 
 /**
  * Firebase backend implementation for a firebase App. Create a firebase
@@ -83,7 +86,6 @@ export class FirebaseApp extends Service {
         this.m_nativeDB = initializeFirestore(this.context.native, {
             localCache: persistentLocalCache({
                 cacheSizeBytes: CACHE_SIZE_UNLIMITED,
-                tabManager: persistentMultipleTabManager(),
             }),
         });
     }
@@ -140,10 +142,10 @@ export class FirebaseUserService extends UserService {
             resolve = res;
         });
 
-        onAuthStateChanged(this.native, (fbUser) => {
+        onAuthStateChanged(this.native, async (fbUser) => {
             this._handleUserUpdate(fbUser, {});
 
-            this._fetchUserDetails()
+            await this._fetchUserDetails()
                 .then((details) => {
                     this._handleUserUpdate(fbUser, details);
                 })
@@ -151,6 +153,9 @@ export class FirebaseUserService extends UserService {
                     // Ensure that we remove any previus info on error.
                     this._handleUserUpdate(fbUser, {});
                 });
+
+            // A bit hacky but helps to let the UI update before hiding the init overlay.
+            await wait(500);
 
             // On first auth update, mark the service ready
             resolve();

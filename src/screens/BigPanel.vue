@@ -1,14 +1,14 @@
-<!-- 
+<!--
 A modern screen with panel and background. It provides a logo, a center UI slot, all the legal stuff and a language selection.
 Ideal for welcome/auth screens
 
 It provides a named slots:
 * header: the top area - filled with AppLogo by default
 * footer: the top area - filled with the Legal, MadeBy and LanguageSwitch
-* unnamed slot: the center area - 
+* unnamed slot: the center area -
 
 Example:
-import myImage from "@assets/myImage.png";
+import myImage from "assets/myImage.png";
 ...
 <BigPanel :background="{image: myImage, blur: '5px', ... // all props from Background.vue}">
     <template v-slot:header>
@@ -60,18 +60,18 @@ import myImage from "@assets/myImage.png";
 import { ref, computed } from "vue";
 import { useDisplay } from "vuetify";
 
-import { appConfig } from "@jsl/AppConfig";
+import { appConfig } from "jsl/AppConfig";
 
-import DefaultBackground from "@jslassets/DefaultBackground.webp";
-import Background from "@jsl/components/Background.vue";
+import DefaultBackground from "jsl/assets/DefaultBackground.webp";
+import Background from "jsl/components/Background.vue";
 
-import AppLogo from "@jsl/components/AppLogo.vue";
+import AppLogo from "jsl/components/AppLogo.vue";
 
-import LanguageButton from "@jsl/components/i18n/LanguageButton.vue";
-import MadeByCompany from "@jsl/components/MadeByCompany.vue";
-import LegalLinks from "@jsl/components/LegalLinks.vue";
+import LanguageButton from "jsl/components/i18n/LanguageButton.vue";
+import MadeByCompany from "jsl/components/MadeByCompany.vue";
+import LegalLinks from "jsl/components/LegalLinks.vue";
 
-import { fwdProps, fwdBindProps } from "@jsl/utils/ForwardVueProps";
+import { fwdProps, fwdBindProps } from "jsl/utils/ForwardVueProps";
 
 const { xs, mdAndUp } = useDisplay();
 

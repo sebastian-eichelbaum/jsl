@@ -26,14 +26,14 @@
 <script setup>
 import { ref, reactive, computed } from "vue";
 
-import Validators from "@jsl/utils/Validators";
-import { tt, Translatable } from "@jsl/Localization";
+import Validators from "jsl/utils/Validators";
+import { tt, Translatable } from "jsl/Localization";
 
-import { UserService } from "@jsl/Backend";
+import { UserService } from "jsl/Backend";
 
-import Button from "@jsl/components/Button.vue";
+import Button from "jsl/components/Button.vue";
 
-import Alert from "@jsl/components/Alert.vue";
+import Alert from "jsl/components/Alert.vue";
 
 const props = defineProps({
     // The message to show

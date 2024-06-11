@@ -57,28 +57,27 @@ Both slots get "disabled" bound
 <script setup>
 import { ref, computed } from "vue";
 
-import { vuetify } from "@jsl/Vuetify";
+import { vuetify } from "jsl/Vuetify";
 
-import App from "@jsl/App.vue";
-import Main from "@jsl/screens/Main.vue";
+import App from "jsl/App.vue";
+import Main from "jsl/screens/Main.vue";
 
-import { fwdProps, fwdBindProps } from "@jsl/utils/ForwardVueProps";
+import { fwdProps, fwdBindProps } from "jsl/utils/ForwardVueProps";
 
-import authBackgroundImage from "@assets/auth_background.png";
-import Link from "@jsl/components/Link.vue";
+import Link from "jsl/components/Link.vue";
 
-import UserButton from "@jsl/components/user/UserButton.vue";
-import LanguageButton from "@jsl/components/i18n/LanguageButton.vue";
-import AppLogo from "@jsl/components/AppLogo.vue";
-import WindowButtons from "@jsl/components/WindowButtons.vue";
-import ShopButton from "@jsl/components/ShopButton.vue";
+import UserButton from "jsl/components/user/UserButton.vue";
+import LanguageButton from "jsl/components/i18n/LanguageButton.vue";
+import AppLogo from "jsl/components/AppLogo.vue";
+import WindowButtons from "jsl/components/WindowButtons.vue";
+import ShopButton from "jsl/components/ShopButton.vue";
 
-import { computedBackgroundStyle, makeBackgroundStyleProps } from "@jsl/utils/Style";
+import { computedBackgroundStyle, makeBackgroundStyleProps } from "jsl/utils/Style";
 
-import { platform } from "@jsl/Platform";
-import { UserService } from "@jsl/Backend";
+import { platform } from "jsl/Platform";
+import { UserService } from "jsl/Backend";
 
-import { app } from "@jsl/App";
+import { app } from "jsl/App";
 
 const props = defineProps({
     // Disables all buttons and the WindowButtons

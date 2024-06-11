@@ -28,17 +28,17 @@
 <script setup>
 import { ref } from "vue";
 
-import Validators from "@jsl/utils/Validators";
-import { localization } from "@jsl/Localization";
-import { UserService } from "@jsl/Backend";
+import Validators from "jsl/utils/Validators";
+import { localization } from "jsl/Localization";
+import { UserService } from "jsl/Backend";
 
-import Form from "@jsl/components/forms/Form.vue";
-import SubmitButton from "@jsl/components/forms/SubmitButton.vue";
+import Form from "jsl/components/forms/Form.vue";
+import SubmitButton from "jsl/components/forms/SubmitButton.vue";
 
-import Email from "@jsl/components/forms/fields/Email.vue";
-import Name from "@jsl/components/forms/fields/Name.vue";
-import Company from "@jsl/components/forms/fields/Company.vue";
-import Password from "@jsl/components/forms/fields/Password.vue";
+import Email from "jsl/components/forms/fields/Email.vue";
+import Name from "jsl/components/forms/fields/Name.vue";
+import Company from "jsl/components/forms/fields/Company.vue";
+import Password from "jsl/components/forms/fields/Password.vue";
 
 const props = defineProps({
     // Title text. Hides the column if empty
@@ -68,7 +68,7 @@ const props = defineProps({
     // The user service to utilize
     service: { type: UserService, required: true },
 
-    // ALSO: props by @jsl/components/forms/Form.vue
+    // ALSO: props by jsl/components/forms/Form.vue
 });
 
 const model = ref();

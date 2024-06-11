@@ -79,16 +79,16 @@ The unnamed slot can be used to customize the submit button.
 <script setup>
 import { ref } from "vue";
 
-import Validators from "@jsl/utils/Validators";
-import { localization } from "@jsl/Localization";
+import Validators from "jsl/utils/Validators";
+import { localization } from "jsl/Localization";
 
-import Form from "@jsl/components/forms/Form.vue";
-import SubmitButton from "@jsl/components/forms/SubmitButton.vue";
+import Form from "jsl/components/forms/Form.vue";
+import SubmitButton from "jsl/components/forms/SubmitButton.vue";
 
-import Email from "@jsl/components/forms/fields/Email.vue";
-import Name from "@jsl/components/forms/fields/Name.vue";
-import Company from "@jsl/components/forms/fields/Company.vue";
-import Password from "@jsl/components/forms/fields/Password.vue";
+import Email from "jsl/components/forms/fields/Email.vue";
+import Name from "jsl/components/forms/fields/Name.vue";
+import Company from "jsl/components/forms/fields/Company.vue";
+import Password from "jsl/components/forms/fields/Password.vue";
 
 const props = defineProps({
     // Title text. Hides the column if empty
@@ -148,7 +148,7 @@ const props = defineProps({
     // Password.vue: Minimum length to accept for new passwords. 0 is ignored.
     newPasswordLength: { required: false, default: 8 },
 
-    // ALSO: props by @jsl/components/forms/Form.vue
+    // ALSO: props by jsl/components/forms/Form.vue
 });
 
 const emit = defineEmits([
@@ -159,7 +159,7 @@ const emit = defineEmits([
     // Once the user wants to login instead
     "requestLogin",
 
-    // ALSO: emits by @jsl/components/forms/Form.vue
+    // ALSO: emits by jsl/components/forms/Form.vue
 ]);
 
 function onRecoverRequest() {

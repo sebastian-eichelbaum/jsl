@@ -34,7 +34,7 @@ A nice busy overlay that wraps the whole slot content and shades it a bit.
 
 <script setup>
 import { ref, computed } from "vue";
-import { localization } from "@jsl/Localization";
+import { localization } from "jsl/Localization";
 
 const props = defineProps({
     // If true, the form is assumed to be busy

@@ -1,5 +1,5 @@
 <!--
-Represents a typical media card that shows an image, title and a play button. 
+Represents a typical media card that shows an image, title and a play button.
 
 Slots:
 
@@ -19,7 +19,7 @@ Example:
     :image="card.thumbnailURL"
     overlayOnHover
 >
-    
+
     <p>Arbitrary content</p>
 
     <template #chips="{ isHovering }">
@@ -100,12 +100,12 @@ Example:
 <script setup>
 import { computed } from "vue";
 
-import { tt } from "@jsl/Localization";
-import { vuetify } from "@jsl/Vuetify";
+import { tt } from "jsl/Localization";
+import { vuetify } from "jsl/Vuetify";
 
-import Card from "@jsl/components/cards/Card.vue";
-import Button from "@jsl/components/Button.vue";
-import Placeholder_Media from "@jslassets/Placeholder_Media.svg";
+import Card from "jsl/components/cards/Card.vue";
+import Button from "jsl/components/Button.vue";
+import Placeholder_Media from "jsl/assets/Placeholder_Media.svg";
 
 const props = defineProps({
     // Media cover image

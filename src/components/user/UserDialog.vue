@@ -16,14 +16,14 @@
 <script setup>
 import { computed } from "vue";
 
-import { tt } from "@jsl/Localization";
+import { tt } from "jsl/Localization";
 
-import Window from "@jsl/components/dialogs/Window.vue";
-import Button from "@jsl/components/Button.vue";
-import LogoutButton from "@jsl/components/user/LogoutButton.vue";
+import Window from "jsl/components/dialogs/Window.vue";
+import Button from "jsl/components/Button.vue";
+import LogoutButton from "jsl/components/user/LogoutButton.vue";
 
-import { userName } from "@jsl/utils/Backend";
-import { UserService } from "@jsl/Backend";
+import { userName } from "jsl/utils/Backend";
+import { UserService } from "jsl/Backend";
 
 const props = defineProps({
     // Dialog max width.

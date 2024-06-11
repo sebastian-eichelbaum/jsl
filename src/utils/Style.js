@@ -1,5 +1,5 @@
-import { vuetify } from "@jsl/Vuetify";
-import { useJslStyle } from "@jsl/Vuetify";
+import { vuetify } from "jsl/Vuetify";
+import { useJslStyle } from "jsl/Vuetify";
 
 import _ from "lodash";
 import { computed } from "vue";

@@ -4,8 +4,8 @@ import { shell } from "electron";
 
 import path from "path";
 
-import { jslObjectAsyncInit } from "@jsl/Object";
-import { Test } from "@jsl/Assert";
+import { jslObjectAsyncInit } from "jsl/Object";
+import { Test } from "jsl/Assert";
 
 import { setupMain } from "./IPC";
 import * as AutoUpdater from "./AutoUpdater";
@@ -32,6 +32,10 @@ export class ElectronApp extends jslObjectAsyncInit {
         return {
             // The window configs.
             window: {
+                // An title for the window. If null, the name value from the top-level package.json is used. (default
+                // behavior of electron)
+                title: null,
+
                 // Default window width/height.
                 width: 1280,
 
@@ -52,7 +56,7 @@ export class ElectronApp extends jslObjectAsyncInit {
                 //  https://www.electronjs.org/docs/latest/tutorial/window-customization
                 titleBarStyle: "hidden",
                 titleBarOverlay: false,
-                /* OR: 
+                /* OR:
                     // Custom style?
                     {
                         color: "#191919",
@@ -75,7 +79,7 @@ export class ElectronApp extends jslObjectAsyncInit {
                 corsURLs: [], // ["https://cms.provider.com/*"],
             },
 
-            // Setup the updater service - @see @jsl/platforms/electron/AutoUpdater for details
+            // Setup the updater service - @see jsl/platforms/electron/AutoUpdater for details
             autoUpdater: AutoUpdater.defaultConfig(),
         };
     }
@@ -240,6 +244,10 @@ export class ElectronApp extends jslObjectAsyncInit {
         });
 
         this.m_mainWindow = mainWindow;
+
+        if (this.config.window.title != null && this.config.window.title != "") {
+            this.m_mainWindow.setTitle(this.config.window.title);
+        }
 
         this._applyCorsFixes(this.m_mainWindow);
     }

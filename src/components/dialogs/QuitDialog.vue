@@ -7,10 +7,10 @@
 <script setup>
 import { onMounted } from "vue";
 
-import ConfirmDialog from "@jsl/components/dialogs/ConfirmDialog.vue";
+import ConfirmDialog from "jsl/components/dialogs/ConfirmDialog.vue";
 
-import { tt, Translatable } from "@jsl/Localization";
-import { platform } from "@jsl/Platform";
+import { tt, Translatable } from "jsl/Localization";
+import { platform } from "jsl/Platform";
 
 const props = defineProps({
     title: { type: [String, Translatable], default: tt("common.prompt.areYouSure") },

@@ -95,11 +95,11 @@ Example:
 <script setup>
 import { ref, computed } from "vue";
 
-import Validators from "@jsl/utils/Validators";
+import Validators from "jsl/utils/Validators";
 
-import { tt, Translatable } from "@jsl/Localization";
+import { tt, Translatable } from "jsl/Localization";
 
-import { fwdProps, fwdBindProps } from "@jsl/utils/ForwardVueProps";
+import { fwdProps, fwdBindProps } from "jsl/utils/ForwardVueProps";
 
 const model = defineModel();
 

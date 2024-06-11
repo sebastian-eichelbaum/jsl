@@ -8,7 +8,7 @@ the app gets mounted.
 <script setup>
 import { onMounted } from "vue";
 
-import InitOverlay from "@jsl/InitOverlay";
+import InitOverlay from "jsl/InitOverlay";
 
 onMounted(() => {
     InitOverlay.delayedHide(props.delay);

@@ -125,15 +125,15 @@ import { ref, reactive, markRaw, watch } from "vue";
 
 import _ from "lodash";
 
-import { tt, Translatable } from "@jsl/Localization";
+import { tt, Translatable } from "jsl/Localization";
 
-import { fwdProps, fwdBindProps } from "@jsl/utils/ForwardVueProps";
+import { fwdProps, fwdBindProps } from "jsl/utils/ForwardVueProps";
 
-import { DatabaseService } from "@jsl/Backend";
-import Validators from "@jsl/utils/Validators";
-import { makeDebouncedSingleRun } from "@jsl/utils/Await";
+import { DatabaseService } from "jsl/Backend";
+import Validators from "jsl/utils/Validators";
+import { makeDebouncedSingleRun } from "jsl/utils/Await";
 
-import Field from "@jsl/components/forms/Field.vue";
+import Field from "jsl/components/forms/Field.vue";
 
 const model = defineModel();
 watch(model, (newVal, oldVal) => {

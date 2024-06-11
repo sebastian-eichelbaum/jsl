@@ -47,14 +47,14 @@
 <script setup>
 import { ref, computed } from "vue";
 
-import { UserService } from "@jsl/Backend";
-import { tt, Translatable } from "@jsl/Localization";
+import { UserService } from "jsl/Backend";
+import { tt, Translatable } from "jsl/Localization";
 
-import Multiplexer from "@jsl/components/Multiplexer.vue";
-import Login from "@jsl/components/user/forms/Login.vue";
-import Signup from "@jsl/components/user/forms/Signup.vue";
-import Recover from "@jsl/components/user/forms/ResetPassword.vue";
-import FormMsg from "@jsl/components/forms/Error.vue";
+import Multiplexer from "jsl/components/Multiplexer.vue";
+import Login from "jsl/components/user/forms/Login.vue";
+import Signup from "jsl/components/user/forms/Signup.vue";
+import Recover from "jsl/components/user/forms/ResetPassword.vue";
+import FormMsg from "jsl/components/forms/Error.vue";
 
 const screen = ref("");
 

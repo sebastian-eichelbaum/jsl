@@ -1,9 +1,9 @@
-import { appConfig as appConfigSingleton, make as makeAppConfig } from "@jsl/AppConfig";
-import { backend as backendSingleton, make as makeBackend } from "@jsl/Backend";
-import { featureLocks as featureLockSingleton, make as makeFeatureLocks } from "@jsl/FeatureLock";
-import { localization as localizationSingleton, make as makeLocalization } from "@jsl/Localization";
-import { make as makePlatform, platform as platformSingleton } from "@jsl/Platform";
-import { make as makeVuetify, vuetify as vuetifySingleton } from "@jsl/Vuetify";
+import { appConfig as appConfigSingleton, make as makeAppConfig } from "jsl/AppConfig";
+import { backend as backendSingleton, make as makeBackend } from "jsl/Backend";
+import { featureLocks as featureLockSingleton, make as makeFeatureLocks } from "jsl/FeatureLock";
+import { localization as localizationSingleton, make as makeLocalization } from "jsl/Localization";
+import { make as makePlatform, platform as platformSingleton } from "jsl/Platform";
+import { make as makeVuetify, vuetify as vuetifySingleton } from "jsl/Vuetify";
 
 import _ from "lodash";
 
@@ -127,7 +127,7 @@ export class App {
     /**
      * Get the singleton instance as created during construction/init.
      *
-     * @return {import("@jsl/Platform").Platform} - the singleton jsl/Platform
+     * @return {import("jsl/Platform").Platform} - the singleton jsl/Platform
      *     instance
      */
     get platform() {
@@ -137,7 +137,7 @@ export class App {
     /**
      * Get the singleton instance as created during construction/init.
      *
-     * @return {import("@jsl/AppConfig").AppConfig} - the singleton jsl/AppConfig
+     * @return {import("jsl/AppConfig").AppConfig} - the singleton jsl/AppConfig
      *     instance
      */
     get appConfig() {
@@ -147,7 +147,7 @@ export class App {
     /**
      * Get the singleton instance as created during construction/init.
      *
-     * @return {import("@jsl/Vuetify").Vuetify} - the singleton jsl/Vuetify
+     * @return {import("jsl/Vuetify").Vuetify} - the singleton jsl/Vuetify
      *     instance
      */
     get vuetify() {
@@ -157,7 +157,7 @@ export class App {
     /**
      * Get the singleton instance as created during construction/init.
      *
-     * @return {import("@jsl/Backend").Backend} - the singleton jsl/Backend
+     * @return {import("jsl/Backend").Backend} - the singleton jsl/Backend
      *     instance
      */
     get backend() {
@@ -167,7 +167,7 @@ export class App {
     /**
      * Get the feature lock singleton
      *
-     * @return {import("@jsl/FeatureLock").FeatureLocks} - the singleton jsl/FeatureLock
+     * @return {import("jsl/FeatureLock").FeatureLocks} - the singleton jsl/FeatureLock
      */
     get featureLocks() {
         return featureLockSingleton;
@@ -176,7 +176,7 @@ export class App {
     /**
      * Get the singleton instance as created during construction/init.
      *
-     * @return {import("@jsl/Localization").Localization} - the singleton
+     * @return {import("jsl/Localization").Localization} - the singleton
      *     jsl/Localization instance
      */
     get localization() {

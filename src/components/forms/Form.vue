@@ -1,5 +1,5 @@
 <!--
-A form template that provides quite some customization points as well as the base form and value validation logic. 
+A form template that provides quite some customization points as well as the base form and value validation logic.
 
 Forms are used to collect data, not to perform operations. Always create a second component that does the actual stuff.
 
@@ -26,7 +26,7 @@ Example:
     // This ensures that the form can get and forward all values properly.
     <template v-slot="{ busy, model }">
         // use jsl Field. It is rather generic and provides some common title+prompt UI and gutter
-        <Field 
+        <Field
             // Use the model and store the values in some property of the model
             v-model="model.someName"
             // The name (passed down to HTML) has to match the v-model property used
@@ -48,13 +48,13 @@ async function do(state)
     // state.values contains the model values of all fields that used the model
     // Make sure that all fields use the form-provided model!
     console.log(state.values);
-    
+
     // DO NOT handle the form directly. There is a safely wrapped callback that, if you throw, shows a nice error and
     // puts the form in a defined error state.
-    state.action( 
+    state.action(
         // Custom  handler, OR: provide this handler via the submitAction property of the form
         async (state) => {
-        
+
         if(state.damn)
         {
             // Throw errors, BUT: for known errors, provide a Translatable! It will be shown in the form.
@@ -67,12 +67,12 @@ async function do(state)
 }
 
 async function doInit(model) {
-    
+
     const allComponents = await api.fetchStuff();
 
     // The given modes is an object where each key is the name of one of the fields v-model key.
     model.components = allComponents;
-    model.someName = true; 
+    model.someName = true;
 
     // If you throw, the form shows an error. If not, you can define a state. NOTE: form always sets busy false after
     // init.
@@ -223,16 +223,16 @@ async function doInit(model) {
 import { ref, reactive, computed, markRaw, onMounted, watch } from "vue";
 import _ from "lodash";
 
-import { Translatable, tt } from "@jsl/Localization";
-import { fwdProps, fwdBindProps } from "@jsl/utils/ForwardVueProps";
+import { Translatable, tt } from "jsl/Localization";
+import { fwdProps, fwdBindProps } from "jsl/utils/ForwardVueProps";
 
-import BusyOverlay from "@jsl/components/BusyOverlay.vue";
-import Grid from "@jsl/components/Grid.vue";
+import BusyOverlay from "jsl/components/BusyOverlay.vue";
+import Grid from "jsl/components/Grid.vue";
 
-import SubmitButton from "@jsl/components/forms/SubmitButton.vue";
-import BackButton from "@jsl/components/forms/BackButton.vue";
+import SubmitButton from "jsl/components/forms/SubmitButton.vue";
+import BackButton from "jsl/components/forms/BackButton.vue";
 
-import FormError from "@jsl/components/forms/Error.vue";
+import FormError from "jsl/components/forms/Error.vue";
 
 const props = defineProps({
     // Title text. Hides the column if empty

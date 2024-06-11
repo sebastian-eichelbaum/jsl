@@ -25,7 +25,7 @@ It is a v-dialog and a nested v-card with some configuration options.
 <script setup>
 import { ref, computed, watch } from "vue";
 
-import { makeBackgroundStyle, computedBackgroundStyle, makeBackgroundStyleProps } from "@jsl/utils/Style";
+import { makeBackgroundStyle, computedBackgroundStyle, makeBackgroundStyleProps } from "jsl/utils/Style";
 
 const model = defineModel();
 

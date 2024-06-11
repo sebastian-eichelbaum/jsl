@@ -22,13 +22,13 @@
 <script setup>
 import { ref, computed } from "vue";
 
-import Button from "@jsl/components/Button.vue";
-import PinDialog from "@jsl/components/dialogs/PinDialog.vue";
+import Button from "jsl/components/Button.vue";
+import PinDialog from "jsl/components/dialogs/PinDialog.vue";
 
-import { FeatureLock } from "@jsl/FeatureLock";
-import { tt } from "@jsl/Localization";
+import { FeatureLock } from "jsl/FeatureLock";
+import { tt } from "jsl/Localization";
 
-import { fwdProps, fwdBindProps } from "@jsl/utils/ForwardVueProps";
+import { fwdProps, fwdBindProps } from "jsl/utils/ForwardVueProps";
 
 const props = defineProps({
     // The feature lock to control.

@@ -12,9 +12,9 @@
 </template>
 
 <script setup>
-import Link from "@jsl/components/Link.vue";
+import Link from "jsl/components/Link.vue";
 
-import { appConfig } from "@jsl/AppConfig";
+import { appConfig } from "jsl/AppConfig";
 
 const props = defineProps({
     size: { type: Number, required: false, default: 1 },

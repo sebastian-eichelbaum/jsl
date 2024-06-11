@@ -19,11 +19,11 @@
 <script setup>
 import { computed } from "vue";
 
-import { tt, Translatable } from "@jsl/Localization";
+import { tt, Translatable } from "jsl/Localization";
 
-import { makeBackgroundStyle, computedBackgroundStyle, makeBackgroundStyleProps } from "@jsl/utils/Style";
+import { makeBackgroundStyle, computedBackgroundStyle, makeBackgroundStyleProps } from "jsl/utils/Style";
 
-import ModalDialog from "@jsl/components/dialogs/ModalDialog.vue";
+import ModalDialog from "jsl/components/dialogs/ModalDialog.vue";
 
 const model = defineModel();
 

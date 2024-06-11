@@ -22,25 +22,6 @@ A collection of UI components and backend wrappers. Its focus is on Vue, Vuetify
     # This installs the lib as local dependency. npm link might also be used.
     npm install ./jsl
     ```
-
-1. Setup the required import alias: `@jsl`, `@jslassets`, `@jsllocales`. This depends on the packager you use.
-    - In Vite, extend your `vite.config.json`:
-    ```js
-    export default defineConfig({
-        // ...
-        resolve: {
-            alias: {
-                "@jsl": path.resolve(__dirname, "./jsl/src"),
-                "@jslassets": path.resolve(__dirname, "./jsl/assets"),
-                "@jsllocales": path.resolve(__dirname, "./jsl/locales"),
-                // ...
-            },
-        },
-    });
-    ```
-    - If you use VITE in electron, add this to `vite.main.config.mjs`, `vite.preload.config.mjs` and
-      'vite.renderer.config.mjs` - for the jsl/platforms/electron, @jsl should be enough. in preload and main.
-
 1. Add a Backend. By default, jsl does not install a backend package in its `package.json`. You have to install it in your project:
     - Install according to the backend docs:
     ```sh
@@ -48,7 +29,7 @@ A collection of UI components and backend wrappers. Its focus is on Vue, Vuetify
     # Configure according to google. Create an app and copy the firebase project config.
     # ...
     ```
-    - Now you can use `@jsl/backends/Firebase`
+    - Now you can use `jsl/backends/Firebase`
 
 ## Usage
 

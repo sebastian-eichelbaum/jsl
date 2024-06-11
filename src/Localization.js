@@ -3,10 +3,10 @@ import { createI18n } from "vue-i18n";
 
 import _ from "lodash";
 
-import Iterate from "@jsl/utils/Iterate";
+import Iterate from "jsl/utils/Iterate";
 
-import { de as jslDE } from "@jsllocales/de";
-import { en as jslEN } from "@jsllocales/en";
+import { de as jslDE } from "jsl/locales/de";
+import { en as jslEN } from "jsl/locales/en";
 
 // Utilities to manage languages in your app. This is the wrapper around the
 // currently used i18n implementation (i.e. vuei18n). This automatically

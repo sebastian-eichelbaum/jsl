@@ -8,11 +8,11 @@
 <script setup>
 import { ref } from "vue";
 
-import { tt, Translatable } from "@jsl/Localization";
+import { tt, Translatable } from "jsl/Localization";
 
-import Button from "@jsl/components/Button.vue";
+import Button from "jsl/components/Button.vue";
 
-import ConfirmDialog from "@jsl/components/dialogs/ConfirmDialog.vue";
+import ConfirmDialog from "jsl/components/dialogs/ConfirmDialog.vue";
 
 const props = defineProps({
     text: { type: [String, Translatable], default: tt("common.ui.abort") },

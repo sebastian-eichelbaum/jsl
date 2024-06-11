@@ -46,7 +46,7 @@ A convenient wrapper around v-btn. It provides some more useful defaults like
 <script setup>
 import { computed } from "vue";
 
-import { tt } from "@jsl/Localization";
+import { tt } from "jsl/Localization";
 
 const maxWidthStyle = computed(() => {
     if (props.maxWidth != null && props.icon != null) {
