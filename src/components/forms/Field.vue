@@ -49,7 +49,7 @@ Example:
                     :name="name"
                     :rules="rules"
                     :label="_fieldLabel"
-                    :disabled="busy"
+                    :disabled="busy || disabled"
                 />
                 <v-text-field
                     v-else-if="fieldType === 'text'"
@@ -58,7 +58,7 @@ Example:
                     :name="name"
                     :rules="rules"
                     :label="_fieldLabel"
-                    :disabled="busy"
+                    :disabled="busy || disabled"
                 />
                 <v-text-field v-else-if="fieldType === 'combo'" />
                 <v-textarea
@@ -68,7 +68,7 @@ Example:
                     :name="name"
                     :rules="rules"
                     :label="_fieldLabel"
-                    :disabled="busy"
+                    :disabled="busy || disabled"
                 />
                 <component
                     :is="fieldType"
@@ -78,7 +78,7 @@ Example:
                     :name="name"
                     :rules="rules"
                     :label="_fieldLabel"
-                    :disabled="busy"
+                    :disabled="busy || disabled"
                 >
                     <template v-for="(_, slot) of $slots" v-slot:[slot]="scope">
                         <slot :name="slot" v-bind="scope" />
@@ -123,6 +123,9 @@ const props = defineProps({
 
     // Indicate the owning form is busy. When true, the field will be disabled for input.
     busy: { type: Boolean, default: false },
+
+    // Disabled the field, independent of its busy state
+    disabled: { type: Boolean, default: false },
 
     // If the anonymous slot is not explicitly set this component defines a field. These props allow to configure them:
 

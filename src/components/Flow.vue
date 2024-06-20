@@ -64,7 +64,15 @@ function onOK(result, state)
 <template>
     <Multiplexer :selected="_stepId">
         <template v-for="(s, index) in _steps" :key="id" #[s.id]>
-            <component :is="s.component" v-model:values="s.model" v-bind="s.props" :step="index + 1" @ok="s.ok" />
+            <component
+                :is="s.component"
+                v-model:values="s.model"
+                v-bind="s.props"
+                :step="index + 1"
+                @ok="s.ok"
+                :enableBack="index != 0"
+                @back="onBack"
+            />
         </template>
 
         <template #___done>
@@ -210,5 +218,12 @@ const _stepId = computed(() => {
  */
 function isDone() {
     return props.steps.length <= _step.value;
+}
+
+/**
+ * Handle back-requests.
+ */
+function onBack() {
+    _step.value--;
 }
 </script>
