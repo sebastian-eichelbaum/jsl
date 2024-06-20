@@ -3,9 +3,9 @@
         <span class="font-weight-light" style="color: #888" :style="{ 'font-size': size + 'rem' }"
             >Made by
         </span>
-        <Link tab unstyled :href="appConfig.urls.company">
+        <Link tab unstyled :href="appConfig.madeBy?.url || appConfig.urls.company">
             <span class="font-weight-bold" :style="{ 'font-size': size + 'rem' }">{{
-                appConfig.company
+                appConfig.madeBy?.company || appConfig.company
             }}</span>
         </Link>
     </div>

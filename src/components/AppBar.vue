@@ -11,13 +11,15 @@ Both slots get "disabled" bound
 <template>
     <v-app-bar :style="isFullscreen ? styleFullscreen : style" v-bind="{ ...$props, ...$attrs }">
         <v-app-bar-title class="title">
-            <AppLogo compact :disabled="unattendedMode" @click="onAppLogoClick" :clickOnly="appLogoGoHome" />
-            <span
-                v-if="version && !noVersion"
-                class="text-caption font-weight-light"
-                style="color: rgba(255, 255, 255, 0.3)"
-                >{{ version }}</span
-            >
+            <AppLogo
+                compact
+                height="32px"
+                :disabled="unattendedMode"
+                @click="onAppLogoClick"
+                :clickOnly="appLogoGoHome"
+                :showVersion="!noVersion"
+                :version="version"
+            />
         </v-app-bar-title>
         <div class="draggableRegion">&nbsp;</div>
 
@@ -62,6 +64,8 @@ import { vuetify } from "jsl/Vuetify";
 import App from "jsl/App.vue";
 import Main from "jsl/screens/Main.vue";
 
+import { appConfig } from "jsl/AppConfig";
+
 import { fwdProps, fwdBindProps } from "jsl/utils/ForwardVueProps";
 
 import Link from "jsl/components/Link.vue";
@@ -83,8 +87,8 @@ const props = defineProps({
     // Disables all buttons and the WindowButtons
     disabled: { type: Boolean, required: false, default: false },
 
-    // A nice version text to show, or null
-    version: { type: String, default: __APP_VERSION__ },
+    // A nice version text to show, or null if the AppConfig.version should be used.
+    version: { type: String, default: null },
 
     // If true, the app logo does not call any website or href. Instead, "goHome" is emitted.
     appLogoGoHome: { type: Boolean, default: false },
@@ -126,6 +130,10 @@ const styleFullscreen = computedBackgroundStyle(props, "fullscreen");
 
 const isFullscreen = ref(false);
 
+const _version = computed(() => {
+    return props.version || appConfig.version;
+});
+
 const unattendedMode = app.featureLocks.unattendedMode.locked;
 
 function onFullscreenChanged(newState) {
@@ -155,4 +163,11 @@ function onAppLogoClick() {
     /* Prevent selection of text */
     user-select: none;
 }
+
+/*
+.title >>> div {
+    display: flex;
+    align-items: flex-end;
+}
+*/
 </style>

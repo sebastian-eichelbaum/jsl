@@ -32,8 +32,8 @@ export class ElectronApp extends jslObjectAsyncInit {
         return {
             // The window configs.
             window: {
-                // An title for the window. If null, the name value from the top-level package.json is used. (default
-                // behavior of electron)
+                // An title for the window. If null, the productName value from the top-level package.json is used.
+                // (default behavior of electron)
                 title: null,
 
                 // Default window width/height.

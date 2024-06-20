@@ -11,14 +11,25 @@ export class AppConfig {
      */
     static defaultConfig() {
         return {
-            // Version info
-            version: "1.0",
+            // Version info. If null-ish, the macro __APP_VERSION__ is used.
+            version: null,
 
             // The application name
             name: "MyApp",
 
             // The company name
             company: "MyCompany",
+
+            // All options in AppConfig reflect values of the customer you are building this app for. This field allows
+            // to provide info on WHO wrote this app. It is only shown in those "made by" sections of your app.
+            //
+            // ALWAYS provide this. Believe me, some day you will customize the app for a certain customer. So, set this
+            // to your company/website to have a proper MadeBy field in your app.
+            madeBy: {
+                name: "RealAppName",
+                company: "ThoseWhoWroteThis",
+                url: "https://www.thosewhowrotethis.com",
+            },
 
             // Some of the URLs. Can be relative.
             urls: {
@@ -56,8 +67,21 @@ export class AppConfig {
                 company: DefaultLogo,
                 // A logo of the app itself
                 app: DefaultLogo,
+
                 // A compact logo of the app itself
-                appCompact: DefaultLogo,
+                // You can specify fiddle values for logos. This is true for all logos and shown here as an example
+                // - very handy for finetuning size and placement of logos in the app bar for example.
+                appCompact: {
+                    url: DefaultLogo,
+                    // How much space should the logo image cover? Aspect ratio is always respected. See these as some
+                    // kind of max sizes.
+                    width: "125px",
+                    height: "32px",
+ 
+                    // Logos are usually some fancy text. This allows to shift the assumed baseline of that text
+                    // from the bottom of the inage, upwards.
+                    baselineShift: "0px",
+                },
 
                 // A HTML-ified logo. Allows to inject HTML as Logo. Takes precedence over the given "app" logo if
                 // not nullish.
@@ -94,7 +118,7 @@ export class AppConfig {
 
     // The app version
     get version() {
-        return this.config.version;
+        return this.config.version || __APP_VERSION__;
     }
 
     // The company name
@@ -120,6 +144,11 @@ export class AppConfig {
     // Logos
     get logos() {
         return this.config.logos;
+    }
+
+    // Besides all white-labeling and customer adoption, who actually build this app?
+    get madeBy() {
+        return this.config.madeBy;
     }
 }
 
