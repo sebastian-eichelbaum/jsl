@@ -59,6 +59,11 @@ export class FirebaseApp extends Service {
                     apiKey: "abcdefghijklmonpqrstuvwxyz",
                     projectId: "my-project-id",
                 },
+
+                // Firebase uses the name "[DEFAULT]" as cache key. If multiple apps use this key with the same
+                // projectID and apiKey, the cache is shared. This can lead to issues for different build versions.
+                // Define some key to ensure a build uses its own cache.
+                cacheId: undefined,
             },
             ...Service.defaultConfig(),
         };
@@ -82,7 +87,12 @@ export class FirebaseApp extends Service {
     async _init() {
         super._init();
 
-        this._native = initializeApp(this.config.api);
+        if (this.config.cacheId == null) {
+            this._native = initializeApp(this.config.api);
+        } else {
+            this._native = initializeApp(this.config.api, this.config.cacheId);
+        }
+
         this.m_nativeDB = initializeFirestore(this.context.native, {
             localCache: persistentLocalCache({
                 cacheSizeBytes: CACHE_SIZE_UNLIMITED,
@@ -549,7 +559,7 @@ export class FirebaseStorage extends StorageService {
     async _init() {
         super._init();
 
-        this._native = getStorage();
+        this._native = getStorage(this.context.native);
     }
 
     /**
