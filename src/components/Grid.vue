@@ -22,6 +22,7 @@ A component that allows to define regular grids easily. This reflects some of th
 </template>
 
 <script setup>
+import { computed } from "vue";
 import { tt } from "jsl/Localization";
 
 defineOptions({
@@ -74,12 +75,49 @@ const props = defineProps({
 
     // Set the max width of the grid container. Handy in combination with cellWidth percentages.
     maxWidth: { type: String, default: "unset" },
+
+    // Force an upper limit for the amount of columns, if the columns prop is auto-fill.
+    // If this is a value >0, this overrides maxWidth.
+    maxCols: { type: Number, default: 0 },
+
+    // To ensure the grid is centered, an auto margin is used automatically. If this interferes with your own style, use
+    // this to disable that.
+    noAutoMargin: { type: Boolean, default: false },
+});
+
+// Create an auto margin if center is enabled
+const _margin = computed(() => {
+    if (props.noAutoMargin) {
+        return "unset";
+    }
+    return "0 auto";
+});
+
+// Max width influences the max amount of columns. If Create an auto margin if center is enabled
+const _maxWidth = computed(() => {
+    if (props.maxCols > 0) {
+        // width should be cell width plus gaps?
+        return (
+            "calc( (" +
+            props.columnGap +
+            "*" +
+            (props.maxCols - 1) +
+            ") + (" +
+            props.maxCols +
+            " * " +
+            props.cellWidth +
+            ") + 5px)" // tiny offset to compensate for some issues experienced in firefox
+        );
+    }
+    return props.maxWidth;
 });
 </script>
 
 <style scoped>
 #grid {
     display: grid;
+
+    margin: v-bind("_margin");
 
     /* Not yet fully working in most browsers */
     transition: all 0.5s;
@@ -103,7 +141,7 @@ const props = defineProps({
     justify-items: v-bind("justifyItems");
     align-items: v-bind("alignItems");
 
-    max-width: v-bind(maxWidth);
+    max-width: v-bind("_maxWidth");
 }
 
 .gridItem {
