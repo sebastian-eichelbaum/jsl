@@ -30,6 +30,13 @@ export class ElectronApp extends jslObjectAsyncInit {
      */
     static defaultConfig() {
         return {
+            startup: {
+                // Maximize the window on start (except in dev mode)
+                maximized: false,
+                // If true, the applicaction will be in fullscreen when starting. (except in dev mode)
+                fullscreen: false,
+            },
+
             // The window configs.
             window: {
                 // An title for the window. If null, the productName value from the top-level package.json is used.
@@ -45,9 +52,6 @@ export class ElectronApp extends jslObjectAsyncInit {
                 // Min width/height for the window. Depending on the OS and window manager, it is only a hint.
                 minWidth: 1280,
                 minHeight: 720,
-
-                // If true, the applicaction will be in fullscreen when starting. (except in dev mode)
-                fullscreen: false,
 
                 // Use the usual OS/window manager window frame?
                 frame: false,
@@ -205,7 +209,10 @@ export class ElectronApp extends jslObjectAsyncInit {
         // Create the browser window.
         const mainWindow = new BrowserWindow({
             ...this.config.window,
-            fullscreen: app.isPackaged ? this.config.window.fullscreen : false, // No fullscreen while developing
+            fullscreen: app.isPackaged ? this.config.startup.fullscreen : false, // No fullscreen while developing
+
+            // To avoid flicker, the window is not show n until its maximized-state is set properly.
+            show: false,
 
             webPreferences: {
                 preload: path.join(__dirname, "preload.js"),
@@ -248,6 +255,11 @@ export class ElectronApp extends jslObjectAsyncInit {
         if (this.config.window.title != null && this.config.window.title != "") {
             this.m_mainWindow.setTitle(this.config.window.title);
         }
+
+        if (app.isPackaged && this.config.startup.maximized) {
+            mainWindow.maximize();
+        }
+        mainWindow.show();
 
         this._applyCorsFixes(this.m_mainWindow);
     }
