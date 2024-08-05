@@ -69,7 +69,7 @@ export class FeatureLock extends jslObject {
             return;
         }
 
-        // This ensures an ever increasing amount of time to wait after a wrang entry
+        // This ensures an ever increasing amount of time to wait after a wrong entry
         if (this.m_lastTriedUnlock + this.config.unlockWaitResetAfter < Date.now()) {
             this.m_unlockWait = this.config.unlockWait;
         }
