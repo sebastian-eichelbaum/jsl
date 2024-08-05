@@ -33,6 +33,10 @@ export class App {
             vue: {
                 // Which component is the main (entry point component)?
                 mainComponent: null,
+
+                // Properties to pass to the main component
+                props: {},
+
                 // The id of the div to moint the app into
                 mountPoint: "#app",
 
@@ -95,7 +99,7 @@ export class App {
             makeFeatureLocks(this.config.featureLocks);
 
             // init vue
-            this.m_vueApp = createApp(this.config.vue.mainComponent);
+            this.m_vueApp = createApp(this.config.vue.mainComponent, this.config.vue.props || {});
             this.m_vueApp.use(this.vuetify.vuetify);
             this.m_vueApp.use(this.localization.vuei18n);
 

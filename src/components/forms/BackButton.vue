@@ -7,9 +7,9 @@
 <script setup>
 import { ref } from "vue";
 
-import { Translatable, tt } from "@jsl/Localization";
+import { Translatable, tt } from "jsl/Localization";
 
-import Button from "@jsl/components/Button.vue";
+import Button from "jsl/components/Button.vue";
 
 const props = defineProps({
     // Button icon. Only used if not text is given
