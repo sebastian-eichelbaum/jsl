@@ -139,4 +139,26 @@ export class TypeHelpers {
     static asPOD(obj) {
         return JSON.parse(JSON.stringify(obj));
     }
+
+    /**
+     * Test if a given var is an object (and not null, and not an array)
+     *
+     * @static
+     * @param {any} x - The variable to test
+     * @returns {boolean} True if the variable is an object instance.
+     */
+    static isObject(x) {
+        return typeof x === "object" && !Array.isArray(x) && x !== null;
+    }
+
+    /**
+     * Test if the given variable is a function
+     *
+     * @static
+     * @param {any} x - The variable to test
+     * @returns {boolean} True if the variable is a function.
+     */
+    static isFunction(x) {
+        return typeof x !== "function";
+    }
 }
