@@ -16,11 +16,32 @@ CardGrid is a Grid with some defaults and options that are tuned towards "media"
                     <span :class="titleClasses">{{ tt(title) }}</span>
                 </slot>
                 <v-spacer />
+
+                <Button
+                    v-for="action in titleActions"
+                    :key="action"
+                    class="mr-0"
+                    variant="tonal"
+                    :loading="action.loading"
+                    @click="action.onClicked"
+                    :icon="action.icon || 'mdi-help'"
+                    v-bind="{ ...actionCardProps, ...(action.props || {}) }"
+                />
+
                 <slot name="actions">
                     <!--<v-btn variant="tonal" icon="mdi-plus" />-->
                 </slot>
             </div>
         </template>
+
+        <ActionCard
+            v-for="action in actionCards"
+            :key="action"
+            @click="action.onClicked"
+            :icon="action.icon || 'mdi-help'"
+            :loading="action.loading"
+            v-bind="{ ...actionCardProps, ...(action.props || {}) }"
+        />
 
         <slot />
     </Grid>
@@ -34,6 +55,8 @@ const { xs } = useDisplay();
 import { tt } from "jsl/Localization";
 
 import Grid from "jsl/components/Grid.vue";
+import ActionCard from "@jsl/components/cards/ActionCard.vue";
+import Button from "@jsl/components/Button.vue";
 
 const props = defineProps({
     // Some common card size presets: x-small, small, medium, large, x-large, xx-large, xxx-large.
@@ -56,6 +79,54 @@ const props = defineProps({
 
     // An optional icon to show next to the title.
     titleIcon: { type: String, default: "" },
+
+    // A list of actions that create buttons next to the title. This is an array of objects:
+    titleActions: {
+        type: Array,
+        default: [
+            /*
+            // "Refresh" Button
+            {
+                // The icon to use
+                icon: "mdi-refresh",
+                // Allows to override titleActionProps for this action
+                props: {},
+                // A vue bool ref that indicates whether the button should be marked as loading.
+                loading: undefined,
+                // Called when triggering
+                onClicked: () => {
+                    console.log("click");
+                },
+            },*/
+        ],
+    },
+
+    // Props to pass to the Button representing the title action
+    titleActionProps: { default: {} },
+
+    // A list of action cards to create before any content card. This is an array of objects {icon, onClicked }.
+    actionCards: {
+        type: Array,
+        default: [
+            /*
+            // "Plus" Button
+            {
+                // The icon to use
+                icon: "mdi-plus",
+                // Allows to override actionCardProps for this action
+                props: {},
+                // A vue bool ref that indicates whether the button should be marked as loading.
+                loading: undefined,
+                // Called when triggering
+                onClicked: () => {
+                    console.log("click");
+                },
+            },*/
+        ],
+    },
+
+    // Props to pass to each created action card
+    actionCardProps: { default: { alpha: 0.3 } },
 
     // ... and the Grid props.
 });
@@ -113,7 +184,6 @@ const cellGaps = computed(() => {
     }
     return { r: w + "rem", c: w + "rem" };
 });
-
 </script>
 
 <style scoped>

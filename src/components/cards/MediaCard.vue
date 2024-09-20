@@ -57,7 +57,7 @@ Example:
                 <v-card-actions class="mr-4 ml-4 mb-4">
                     <slot name="footer" :isHovering="isHovering">
                         <v-row justify="space-between">
-                            <v-col align-self="center" :cols="!!$slots.actions ? 9 : 12">
+                            <v-col align-self="center" :cols="!!$slots.actions ? minChipCols : 12">
                                 <slot name="title" :isHovering="isHovering">
                                     <v-card-title class="pa-0 ma-0">
                                         {{ tt(title) }}
@@ -119,6 +119,9 @@ const props = defineProps({
 
     // Subtle ripple works nice with media cards.
     ripple: { default: { class: "text-background" } },
+
+    // When there are actions, the chip column gets smaller. This is the num of columns.
+    minChipCols: { type: Number, default: 9 },
 });
 
 const emit = defineEmits(["click"]);

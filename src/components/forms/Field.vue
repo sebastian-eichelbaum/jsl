@@ -6,7 +6,7 @@ Fields can instantiate arbitrary inputs. Either, provide a default slot value or
 
 Slots:
 * anonymous slot: if filled, you can provide arbitrary inputs for this field. "{busy, model, fieldProps}" is passed.
-* named field specific slots: 
+* named field specific slots:
 
 
 Example:
@@ -14,7 +14,7 @@ Example:
     // You must use the provided model - see jsl Form for details
     <template v-slot="{ busy, model }">
         <Field
-            v-model="model.someName" 
+            v-model="model.someName"
             name="someName"
             title="Cheese"
             prompt='Whats your favorit cheese?'
@@ -70,6 +70,16 @@ Example:
                     :label="_fieldLabel"
                     :disabled="busy || disabled"
                 />
+                <v-select
+                    v-else-if="fieldType === 'combobox'"
+                    v-bind="{ ...$props, ...$attrs, ..._fieldProps }"
+                    v-model="model"
+                    :name="name"
+                    :rules="rules"
+                    :label="_fieldLabel"
+                    :disabled="busy || disabled"
+                />
+
                 <component
                     :is="fieldType"
                     v-else-if="typeof fieldType == 'object'"
