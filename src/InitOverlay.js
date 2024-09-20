@@ -76,20 +76,47 @@ export default class InitOverlay {
      */
     static defaultConfig() {
         return {
+            // If defined and set to true, force dark defaults. If defined and set to false, force bright defaults.
+            dark: false,
+
+            // Bright background and gray spinner
             background: "rgba(255, 255, 255, 1)",
-            spinnerBackground: "rgba(225, 225, 225, 1)",
-            spinnerColor: "rgba(175, 175, 175, 1)",
+            spinnerBackground: "rgba(220, 220, 220, 1)",
+            spinnerColor: "rgba(100, 100, 100, 1)",
+        };
+    }
+
+    /**
+     * Like the default, but for dark mode
+     *
+     * @returns {object} The dark mode defaults
+     */
+    static defaultConfigDark() {
+        return {
+            // If defined and set to true, force dark defaults. If defined and set to false, force bright defaults.
+            dark: true,
+
+            // Dark background and gray spinner
+            background: "rgba(25, 25, 25, 1)",
+            spinnerBackground: "rgba(50, 50, 50, 1)",
+            spinnerColor: "rgba(200, 200, 200, 1)",
         };
     }
 
     /**
      * Inject the global overlay into the DOM at top-level.
+     *
+     * @static
+     * @param {object} [config] - Like @ref defaultConfig that configures the style of the overlay OR nullish if a
+     * default should be used, based on the user's dark-mode preference.
      */
-    static inject(config = {}) {
+    static inject(config = undefined) {
+        const defaultConfig = InitOverlay.getDefaultConfig(config?.dark);
+
         const processedStyle = overlayStyle
-            .replace("{background}", config.background || InitOverlay.defaultConfig().background)
-            .replace("{spinnerBackground}", config.spinnerBackground || InitOverlay.defaultConfig().spinnerBackground)
-            .replace("{spinnerColor}", config.spinnerColor || InitOverlay.defaultConfig().spinnerColor);
+            .replace("{background}", config?.background || defaultConfig.background)
+            .replace("{spinnerBackground}", config?.spinnerBackground || defaultConfig.spinnerBackground)
+            .replace("{spinnerColor}", config?.spinnerColor || defaultConfig.spinnerColor);
 
         const style = document.createElement("style");
         style.textContent = processedStyle;
@@ -105,8 +132,7 @@ export default class InitOverlay {
     // Hide the overlay
     static hide() {
         const target = document.getElementById("jsl_InitialLoadOverlay");
-        if(!target)
-        {
+        if (!target) {
             // Already gone
             return;
         }
@@ -122,5 +148,28 @@ export default class InitOverlay {
         setTimeout(function () {
             InitOverlay.hide();
         }, delay);
+    }
+
+    /**
+     * Return true if the user prefers dark mode
+     *
+     * @static
+     * @returns {boolean} True if the user prefers dark mode
+     */
+    static isDarkMode() {
+        return window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+    }
+
+    /**
+     * Get the correct default config, based on the user's dark mode preference.
+     *
+     * @param {boolean} [forceDark] - If set to true, the dark defaults are used, regardless of the user preference.
+     * @static
+     * @returns {Object} The config as in @ref defaultConfig
+     */
+    static getDefaultConfig(forceDark = undefined) {
+        const dark = (forceDark == null && InitOverlay.isDarkMode()) || forceDark === true;
+
+        return dark ? InitOverlay.defaultConfigDark() : InitOverlay.defaultConfig();
     }
 }
