@@ -159,6 +159,6 @@ export class TypeHelpers {
      * @returns {boolean} True if the variable is a function.
      */
     static isFunction(x) {
-        return typeof x !== "function";
+        return typeof x === "function";
     }
 }
