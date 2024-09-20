@@ -4,6 +4,7 @@ import { featureLocks as featureLockSingleton, make as makeFeatureLocks } from "
 import { localization as localizationSingleton, make as makeLocalization } from "jsl/Localization";
 import { make as makePlatform, platform as platformSingleton } from "jsl/Platform";
 import { make as makeVuetify, vuetify as vuetifySingleton } from "jsl/Vuetify";
+import { TypeHelpers } from "./utils/TypeHelpers";
 
 import _ from "lodash";
 
@@ -53,18 +54,23 @@ export class App {
     /**
      * Construct the vue app but do not yet init or mount.
      *
-     * @param {Function} configFactory - A function that generates the  app config
-     *     which basically is a collection of
-     * configs for each subsystem. @see App.defaultConfig for some details. The
-     * function gets passed the actual App instance. Use this in callbacks when
-     * needed.
+     * @param {Function} configFactory - A function that generates the  app config or the config object directly.
+     *   @see App.defaultConfig for details. The function gets passed the actual App instance. Use this in callbacks
+     *   when needed.
      */
     constructor(configFactory) {
-        if (typeof configFactory !== "function") {
-            throw new Error("App takes a factory function to create the config.", configFactory);
+        if (!TypeHelpers.isFunction(configFactory) && !TypeHelpers.isObject(configFactory)) {
+            throw new Error(
+                "App takes a factory function to create the config or the config object instance.",
+                configFactory,
+            );
         }
 
-        this.m_configFactory = configFactory;
+        this.m_configFactory = TypeHelpers.isFunction(configFactory)
+            ? configFactory
+            : (_) => {
+                  return configFactory;
+              };
         this.m_config = null; // _.merge(App.defaultConfig(), config);
         this.m_vueApp = null;
         this.m_isInit = false;
@@ -204,15 +210,27 @@ export let app = null;
  * Construct the App singleton and return the instance. If called multiple
  * times, this throws.
  *
- * @param {Object} config The config as in @see App.defaultConfig
+ * @param {Function} configFactory - A function that generates the app config or an object like @see App.defaultConfig.
  *
  * @return {Object} The instance
  */
-export function make(config) {
+export function make(configFactory) {
     if (app != null) {
         throw new Error("App is instantiated already.");
     }
 
-    app = new App(config);
+    app = new App(configFactory);
     return app;
+}
+
+/**
+ * Construct the App singleton and run it. If called multiple  times, this throws.
+ *
+ * @param {Function} configFactory - A function that generates the app config or an object like @see App.defaultConfig.
+ *
+ * @return {Promise} The promise representing the running app instance (the promise of @see App.run)
+ */
+export async function run(configFactory) {
+    const inst = make(configFactory);
+    return inst.run();
 }
