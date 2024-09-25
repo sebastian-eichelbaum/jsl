@@ -1,6 +1,9 @@
 import _ from "lodash";
 
-import DefaultLogo from "jsl/assets/DefaultLogo.png";
+import AppLogo from "jsl/assets/logos/app.png";
+import AppCompactLogo from "jsl/assets/logos/app.png";
+import CompanyLogo from "jsl/assets/logos/company.png";
+import Favicon from "jsl/assets/favicon.png";
 
 // Provides application customization points.
 export class AppConfig {
@@ -63,21 +66,24 @@ export class AppConfig {
 
             // Logo URLs
             logos: {
+                // A favicon
+                favicon: Favicon,
+
                 // A logo of the company
-                company: DefaultLogo,
+                company: CompanyLogo,
                 // A logo of the app itself
-                app: DefaultLogo,
+                app: AppLogo,
 
                 // A compact logo of the app itself
                 // You can specify fiddle values for logos. This is true for all logos and shown here as an example
                 // - very handy for finetuning size and placement of logos in the app bar for example.
                 appCompact: {
-                    url: DefaultLogo,
+                    url: AppCompactLogo,
                     // How much space should the logo image cover? Aspect ratio is always respected. See these as some
                     // kind of max sizes.
                     width: "125px",
                     height: "32px",
- 
+
                     // Logos are usually some fancy text. This allows to shift the assumed baseline of that text
                     // from the bottom of the inage, upwards.
                     baselineShift: "0px",
@@ -100,6 +106,9 @@ export class AppConfig {
      */
     constructor(config = {}) {
         this.m_config = _.merge(AppConfig.defaultConfig(), config);
+
+        // Set favicon as early as possible
+        this.update();
     }
 
     /**
@@ -149,6 +158,27 @@ export class AppConfig {
     // Besides all white-labeling and customer adoption, who actually build this app?
     get madeBy() {
         return this.config.madeBy;
+    }
+
+    /**
+     * Updates the site favicon and the title.
+     */
+    update() {
+        if (document == null) {
+            console.warn("Document not set. Cannot update AppConfig.");
+        }
+
+        // favicon
+        var link = document.querySelector("link[rel~='icon']");
+        if (!link) {
+            link = document.createElement("link");
+            link.rel = "icon";
+            document.head.appendChild(link);
+        }
+        link.href = this.config.logos.favicon;
+
+        // title
+        document.title = this.config.name;
     }
 }
 

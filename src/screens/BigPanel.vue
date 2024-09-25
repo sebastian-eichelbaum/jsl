@@ -62,7 +62,7 @@ import { useDisplay } from "vuetify";
 
 import { appConfig } from "jsl/AppConfig";
 
-import DefaultBackground from "jsl/assets/DefaultBackground.webp";
+import DefaultBackground from "jsl/assets/placeholders/background.webp";
 import Background from "jsl/components/Background.vue";
 
 import AppLogo from "jsl/components/AppLogo.vue";

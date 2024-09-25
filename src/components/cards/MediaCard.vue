@@ -105,7 +105,7 @@ import { vuetify } from "jsl/Vuetify";
 
 import Card from "jsl/components/cards/Card.vue";
 import Button from "jsl/components/Button.vue";
-import Placeholder_Media from "jsl/assets/Placeholder_Media.svg";
+import Placeholder_Media from "jsl/assets/placeholders/media.svg";
 
 const props = defineProps({
     // Media cover image
