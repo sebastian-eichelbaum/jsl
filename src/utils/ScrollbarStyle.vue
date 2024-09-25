@@ -1,4 +1,4 @@
-<!-- 
+<!--
 A utility component that sets a scrollbar style for the whole HTML doc. This uses the jsl-scrollbar SCSS mixin to
 generate a styled scrollbar for the HTML element.
 -->
@@ -38,6 +38,7 @@ onMounted(() => {
     root.style.setProperty("--jsl-scrollbarColor", colFG.value);
     root.style.setProperty("--jsl-scrollbarBackground", colBG.value);
     root.style.setProperty("--jsl-scrollbarWidth", props.width);
+    root.style.setProperty("--jsl-scrollbarGutter", !props.autohide ? "stable" : "unset");
     root.classList.add("jslapp-custom-scrollbar-html");
     if (props.autohide) {
         root.classList.add("jslapp-custom-scrollbar-html-autohide");
@@ -56,6 +57,11 @@ onMounted(() => {
     // This is required as the default main scss sets this to auto. This causes size changes whenever a dialog opens.
     overflow-x: hidden;
     overflow-y: unset;
-    @include jsl-scrollbars(var(--jsl-scrollbarWidth), var(--jsl-scrollbarColor), var(--jsl-scrollbarBackground));
+    @include jsl-scrollbars(
+        var(--jsl-scrollbarWidth),
+        var(--jsl-scrollbarColor),
+        var(--jsl-scrollbarBackground),
+        var(--jsl-scrollbarGutter)
+    );
 }
 </style>

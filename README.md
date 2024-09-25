@@ -54,10 +54,8 @@ A collection of UI components and backend wrappers. Its focus is on Vue, Vuetify
                 // ...
                 "@": path.resolve(__dirname, "./src"),
 
-                // JSL aliases:
-                "@jsl": path.resolve(__dirname, "./jsl/src"),
-                "@jslassets": path.resolve(__dirname, "./jsl/assets"),
-                "@jsllocales": path.resolve(__dirname, "./jsl/locales"),
+                // Optional: want to alias some specific parts of jsl?
+                // "@jsllocales": path.resolve(__dirname, "./jsl/locales"),
 
                 // Global asset alias
                 "@assets": path.resolve(__dirname, "./assets"),
@@ -81,20 +79,20 @@ A collection of UI components and backend wrappers. Its focus is on Vue, Vuetify
     </template>
 
     <script setup>
-        import App from "@jsl/App.vue";
+        import App from "jsl/App.vue";
     </script>
     ```
 
 -   Create a **new** `src/main.js`:
 
     ```js
-    import { run } from "@jsl/App";
+    import { run } from "jsl/App";
 
     // Import your main app component
     import App from "./App.vue";
 
     // Use all the boilerplate magic in jsl to bring up the app. This can either be a function that returns a config or the
-    // config directly. Refer to @see @jsl/App on how to configure it.
+    // config directly. Refer to @see jsl/App on how to configure it.
     run(async (_) => {
         return {
             // Configure Vue3 itself. Tell vue which component to use.
@@ -111,7 +109,7 @@ A collection of UI components and backend wrappers. Its focus is on Vue, Vuetify
                 // },
             },
 
-            // See @jsl/App for all the config options. A lot of these config options only make sense, once you use the jsl
+            // See jsl/App for all the config options. A lot of these config options only make sense, once you use the jsl
             // vue components and backend wrappers.
             // Check: platform, appConfig, backend, localization, vuetify, ...
         };
@@ -128,7 +126,7 @@ A collection of UI components and backend wrappers. Its focus is on Vue, Vuetify
     <body>
         <!-- Add this to ensure there is a nice spinner overlay until everything is loaded and started. -->
         <script type="module">
-            import InitOverlay from "@jsl/InitOverlay.js";
+            import InitOverlay from "jsl/InitOverlay.js";
             // Use the default. This loads either bright or dark mode, depending on the user's preference
             InitOverlay.inject();
 
@@ -153,13 +151,13 @@ A collection of UI components and backend wrappers. Its focus is on Vue, Vuetify
         <App>...</App>
     </template>
     <script setup>
-        import App from "@jsl/App.vue";
+        import App from "jsl/App.vue";
         // ...
     </script>
     ```
 
 -   To hide the spinner when done via JavaScript:
     ```js
-    import InitOverlay from "@jsl/InitOverlay";
+    import InitOverlay from "jsl/InitOverlay";
     InitOverlay.hide();
     ```

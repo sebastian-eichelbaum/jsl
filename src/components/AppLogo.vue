@@ -1,5 +1,5 @@
 <!--
-Displays the app logo. 
+Displays the app logo.
 
 * If an HTML override is given, it will be used. (see AppConfig.logos.appHTML/appCompactHTML.
 * If no AppConfig.urls.app is given and no explicit href prop is set, the link is disabled.
@@ -14,7 +14,9 @@ Displays the app logo.
             <v-img
                 v-if="compact"
                 :height="appConfig.logos.appCompact?.height || height"
-                :width="appConfig.logos.appCompact?.width || imgWidth"
+                :width="appConfig.logos.appCompact?.width || width"
+                :max-width="maxWidth"
+                :max-height="maxHeight"
                 position="0% 50%"
                 inline
                 :src="appConfig.logos.appCompact?.url || appConfig.logos.appCompact"
@@ -22,7 +24,9 @@ Displays the app logo.
             <v-img
                 v-else
                 :height="appConfig.logos.app?.height || height"
-                :width="appConfig.logos.app?.width || imgWidth"
+                :width="appConfig.logos.app?.width || width"
+                :max-width="maxWidth"
+                :max-height="maxHeight"
                 :src="appConfig.logos.app?.url || appConfig.logos.app"
             ></v-img>
         </span>
@@ -51,13 +55,18 @@ const props = defineProps({
     // Allows to override the link referred to when clicking the logo. If unset, the AppConfig app url is used.
     href: { type: String, required: false, default: null },
 
+    // Maximum width/height. Allows to limit the logo size while using the max possible space.
+    maxWidth: { type: [String, Number], required: false, default: undefined },
+    // Maximum width/height. Allows to limit the logo size while using the max possible space.
+    maxHeight: { type: [String, Number], required: false, default: undefined },
+
     // If true, clicking the logo does not trigger the href link. Only click is emitted.
     clickOnly: { type: Boolean, required: false, default: false },
 
     // If the images are used, these define width and height (behaves like max width/height in v-img)
-    imgWidth: { type: String, required: false, default: "200px" },
+    width: { type: [String, Number], required: false, default: "200" },
     // The height of the AppLogo
-    height: { type: String, required: false, default: "64px" },
+    height: { type: [String, Number], required: false, default: "64" },
 
     // A nice version text to show, or null if the AppConfig.version should be used.
     version: { type: String, default: null },

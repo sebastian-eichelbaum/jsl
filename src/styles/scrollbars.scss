@@ -1,5 +1,10 @@
 // Generate the necessary CSS to style scrollbars. Also works for the HTML tag
-@mixin jsl-scrollbars($size, $foreground-color, $background-color: mix($foreground-color, white, 50%)) {
+@mixin jsl-scrollbars(
+    $size,
+    $foreground-color,
+    $background-color: mix($foreground-color, white, 50%),
+    $gutter: stable
+) {
     $valSize: 0.5rem;
 
     @if $size == thin {
@@ -10,7 +15,7 @@
         $valSize: 0.65rem;
     } @else if $size == none {
         $valSize: 0;
-    } @else  {
+    } @else {
         $valSize: $size;
     }
 
@@ -33,6 +38,6 @@
     & {
         scrollbar-width: $size;
         scrollbar-color: $foreground-color $background-color;
-        scrollbar-gutter: stable;
+        scrollbar-gutter: $gutter;
     }
 }

@@ -55,8 +55,8 @@ const { xs } = useDisplay();
 import { tt } from "jsl/Localization";
 
 import Grid from "jsl/components/Grid.vue";
-import ActionCard from "@jsl/components/cards/ActionCard.vue";
-import Button from "@jsl/components/Button.vue";
+import ActionCard from "jsl/components/cards/ActionCard.vue";
+import Button from "jsl/components/Button.vue";
 
 const props = defineProps({
     // Some common card size presets: x-small, small, medium, large, x-large, xx-large, xxx-large.

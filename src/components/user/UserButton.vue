@@ -5,7 +5,7 @@ The anonymous slot is the UserDialog slot
 
 -->
 <template>
-    <Button v-if="backend.user" :hideText="smAndDown" v-bind="{ ...$props, ...$attrs }" :text="uname">
+    <Button v-if="backend.user" iconOnlyThreshold="sm" v-bind="{ ...$props, ...$attrs }" :text="uname">
         <UserDialog v-if="!noDialog" v-model="dialog" activator="parent" :service="service">
             <slot />
         </UserDialog>
@@ -21,9 +21,6 @@ import UserDialog from "jsl/components/user/UserDialog.vue";
 
 import { userName, userNameShort } from "jsl/utils/Backend";
 import { UserService, backend } from "jsl/Backend";
-
-import { useDisplay } from "vuetify";
-const { smAndDown } = useDisplay();
 
 const dialog = ref(false);
 

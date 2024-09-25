@@ -1,4 +1,4 @@
-<!-- 
+<!--
 A common App skeleton that provides a authorization screen and a main screen.
 
 This can be seen as an inspiration and tutorial on how to setup an app.
@@ -23,8 +23,8 @@ This can be seen as an inspiration and tutorial on how to setup an app.
         </v-main>
     </v-app>
 
-    <InitOverlay delay="200" />
-    <ScrollbarStyle />
+    <InitOverlay delay="200" v-if="!doNotHideInitOverlay" />
+    <ScrollbarStyle v-bind="fwdBindProps('scrollbarStyleProps', $props)" />
 
     <QuitDialog v-bind="fwdBindProps('quitDialogProps', $props)" handleWindowClose />
 </template>
@@ -53,10 +53,16 @@ const props = defineProps({
     // The user service to utilize
     userService: { type: UserService, default: null },
 
+    // If set, the init overlay is not managed. You have to take care of it
+    doNotHideInitOverlay: { type: Boolean, default: false },
+
     // Forward some BigPanel/Background component props. (As Background Style props as in Style.js)
     ...fwdProps("authBackground"),
     // Quit dialog props, especially the title and subtitle props might be interesting
     ...fwdProps("quitDialogProps"),
+
+    // Scrollbar props
+    ...fwdProps("scrollbarStyleProps"),
 });
 
 const userBackend = props.userService || backend?.user;

@@ -21,9 +21,9 @@
 <script setup>
 import { ref, reactive, computed, onMounted } from "vue";
 
-import CardGrid from "@jsl/components/CardGrid.vue";
+import CardGrid from "jsl/components/CardGrid.vue";
 
-import CheckoutCard from "@/components/CheckoutCard.vue";
+import CheckoutCard from "jsl/components/CheckoutCard.vue";
 
 const props = defineProps({
     // The props to apply to each content card

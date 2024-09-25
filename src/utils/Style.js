@@ -127,7 +127,7 @@ function makePropName(prefix, name) {
  * properties with the same prefix exists. The easiest way is to use makeBackgroundStyleProps.
  *
  * @param {String} prefix - The prefix used for the props.
- * @param {String} props - The properties. The list you got with your component instance.
+ * @param {Object} props - The properties. The list you got with your component instance.
  *
  * @return {Object} The vue computed prop
  *
@@ -143,6 +143,17 @@ export function computedBackgroundStyle(props, prefix) {
             props[makePropName(prefix, "blur")] ?? "0",
         ),
     );
+}
+
+/**
+ * Create a computed style like in @see computedBackgroundStyle but configure it to be invisible.
+ *
+ * @param {Object} props - The props
+ * @param {String} prefix - The prefix in the props
+ * @returns {Object} Computed, reactive style
+ */
+export function computedBackgroundStyleHidden(props, prefix) {
+    return computed(() => makeBackgroundStyle(props[makePropName(prefix, "color")] ?? "#FF0000", 0, 1, 0));
 }
 
 /**

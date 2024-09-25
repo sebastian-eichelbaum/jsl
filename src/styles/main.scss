@@ -11,8 +11,13 @@ html {
     // and use ScrollbarStyle.vue to configure it once the app is mounted.
     overflow: auto;
 
-    // Custom scrollbar? 
+    // Custom scrollbar?
     // > Check ScrollbarStyle.vue
+}
+
+body {
+    // If you use the jsl App component, this is not needed. If not, this ensures that the body has no margin.
+    margin: 0;
 }
 
 // Force this content to be max in size
@@ -26,12 +31,12 @@ html {
 }
 
 // for v-text-field inputs with jsl-extendedMessages, make the message field larger (suitable for two lines).
-.v-input.jsl-extendedMessages-2 .v-messages{
+.v-input.jsl-extendedMessages-2 .v-messages {
     min-height: 2.1em;
 }
 
 // for v-text-field inputs with jsl-extendedMessages, make the message field larger (suitable for two lines).
-.v-input.jsl-extendedMessages-3 .v-messages{
+.v-input.jsl-extendedMessages-3 .v-messages {
     min-height: 3.1em;
 }
 

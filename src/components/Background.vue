@@ -1,24 +1,42 @@
 <!--
 Generates a background as large as the parent. The slot will be drawn on top.
+
+TODO: reconsider the name. It is also the base for overlays.
 -->
 
 <template>
     <div id="wrapper">
         <div id="backgroundFilterLayer" :style="style" />
-        <div id="background" />
-        <div id="content">
+        <div id="background" v-if="!noBackground" />
+        <div id="content" :class="contentClass">
             <slot />
         </div>
     </div>
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, watch, nextTick } from "vue";
 
-import { computedBackgroundStyle, makeBackgroundStyleProps } from "jsl/utils/Style";
+import { computedBackgroundStyle, computedBackgroundStyleHidden, makeBackgroundStyleProps } from "jsl/utils/Style";
+
+// Visibility model
+const model = defineModel({ default: true });
 
 const props = defineProps({
+    // Classes for the content div
+    contentClass: { default: "" },
+
+    // An background image.
     image: { type: String, required: false, default: "none" },
+
+    // z-index. Especially relevant if the background is used as overlay with an absolute wrapper
+    zIndex: { type: [String, Number], default: "unset" },
+
+    // If true, the wrapper div is absolute. It will cover the whole viewport. If false, it is relative.
+    absolute: { type: Boolean, default: false },
+
+    // Set to disable the explicit background. Especially useful when using this as overlay.
+    noBackground: { type: Boolean, default: false },
 
     // generate blur, color, alpha, brightness props
     ...makeBackgroundStyleProps("", { color: "background", alpha: 0.0, brightness: 1.0, blur: 50 }),
@@ -40,21 +58,53 @@ const bgColor = computed({
         return "transparent";
     },
 });
-const style = computedBackgroundStyle(props);
+
+const absWrapper = computed({
+    get() {
+        return props.absolute ? "absolute" : "relative";
+    },
+});
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// The visibility mechanic
+//
+
+// This kind of overlays do not work nicely with v-transition. We implement this manually.
+const visible = computed(() => {
+    return model.value;
+});
+const pointerEvents = computed(() => {
+    return model.value ? "all" : "none";
+});
+const contentOpacity = computed(() => {
+    return model.value ? 1 : 0;
+});
+
+const style = computed(() => {
+    return visible.value ? computedBackgroundStyle(props).value : computedBackgroundStyleHidden(props).value;
+});
 </script>
 
 <style scoped>
 #wrapper {
     width: 100%;
     height: 100%;
-    position: relative;
+    position: v-bind(absWrapper);
     top: 0;
     bottom: 0;
     left: 0;
     right: 0;
+
+    pointer-events: v-bind(pointerEvents);
+
+    z-index: v-bind(props.zIndex);
 }
 
 #background {
+    transition: 0.5s;
+    transition-property: opacity, background-color, background-image;
+    opacity: v-bind(contentOpacity);
+
     width: 100vw;
     height: 100vh;
 
@@ -85,6 +135,10 @@ const style = computedBackgroundStyle(props);
 }
 
 #content {
+    transition: 0.5s;
+    transition-property: opacity;
+    opacity: v-bind(contentOpacity);
+
     position: relative;
     z-index: 2;
     width: 100%;
