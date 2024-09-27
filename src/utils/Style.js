@@ -34,7 +34,7 @@ function isThemeColor(color, theme) {
  *
  * @param {String|Object} color - A color by name (the vuetify colors like 'red
  *     darken-1' or 'primary'), a Hex or css
- * color like "rgba(255,0,255,1)" or an object {r,g,b} or {r,g,b,a}.
+ * color like "rgba(255,0,255,1)" or an object {r,g,b} or {r,g,b,a}. The keyword "transparent" is mapped to #00000000.
  *
  * @param {String} themeColors - The theme to use. If undefined, the current
  *     theme is used.
@@ -45,6 +45,10 @@ function isThemeColor(color, theme) {
 export function resolveColor(color, themeColors = null) {
     const th = themeColors || vuetify.themeColors;
     let resolveColor = color;
+
+    if (resolveColor == "transparent") {
+        resolveColor = "#00000000";
+    }
 
     // Resolve colors starting with "jsl."
     if (resolveColor.startsWith("jsl.")) {
