@@ -13,6 +13,9 @@ export const en = {
                 shop: "Shop",
                 yes: "Yes",
                 no: "No",
+                accept: "Accept",
+                continue: "Continue",
+                ok: "OK",
                 settings: "Settings",
                 profile: "Profile",
                 options: "Options",
@@ -71,6 +74,9 @@ export const en = {
                 unlockFailed: "Could not unlock.",
                 unlockFailedWrongPin: "@:common.msg.unlockFailed Wrong PIN.",
                 updateReadyToInstall: "Update available",
+                poweredBy: "Powered by {what}",
+                loadingPerc: "Loading: {percent}",
+                loading: "Loading",
             },
         },
 
@@ -131,7 +137,8 @@ export const en = {
                 logoutUnknownError: "@:user.msg.logoutFailed Unknown error. Guru code: {error}.",
 
                 recoverMailSent: "We have sent you an e-mail to reset your password.",
-                emailNotVerified: "You have not yet verified your e-mail address. We have sent you an e-mail with a verification link recently.",
+                emailNotVerified:
+                    "You have not yet verified your e-mail address. We have sent you an e-mail with a verification link recently.",
             },
             ui: {
                 login: "Login",
