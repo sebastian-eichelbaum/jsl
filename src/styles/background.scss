@@ -14,12 +14,27 @@
 }
 
 @mixin jsl-bgBlur-x($from, $to, $scale) {
-  @for $i from $from through $to {
-    .jsl-bgBlur-#{$scale * $i} {
-        @extend .jsl-bgBlur-Base;
-        backdrop-filter: blur(#{$scale*$i}px);
+    @for $i from $from through $to {
+        .jsl-bgBlur-#{$scale * $i} {
+            @extend .jsl-bgBlur-Base;
+            backdrop-filter: blur(#{$scale * $i}px);
+        }
     }
-  }
+}
+
+// Harder, cleaner outline
+.jsl-shadow-hard {
+    box-shadow: 0px 0px 10px 0px #000000 !important;
+}
+
+// Softer outline but strong shading
+.jsl-shadow-strong {
+    box-shadow: 0px 0px 20px 0px #000000 !important;
+}
+
+// Soft outline, soft shadow
+.jsl-shadow-soft {
+    box-shadow: 0px 0px 20px -5px #000000 !important;
 }
 
 // Make from 0 to 10 in 1px steps
@@ -43,11 +58,11 @@
 //
 
 @mixin jsl-bgAlpha-x($from, $to, $scale, $color, $name) {
-  @for $i from $from through $to {
-    .jsl-bgAlpha-#{$name}-#{$scale * $i} {
-        background-color: rgba($color, calc($scale * $i / 100.0)) !important;
+    @for $i from $from through $to {
+        .jsl-bgAlpha-#{$name}-#{$scale * $i} {
+            background-color: rgba($color, calc($scale * $i / 100)) !important;
+        }
     }
-  }
 }
 
 // Make from 0 to 10 in 1px steps
@@ -66,25 +81,22 @@
 // .jsl-bgAlpha-black-100,
 @include jsl-bgAlpha-x(1, 10, 10, #000000, "black");
 
-
 // As .jsl-bgAlpha-black-... but white
 @include jsl-bgAlpha-x(0, 9, 1, #ffffff, "white");
 @include jsl-bgAlpha-x(1, 10, 10, #ffffff, "white");
 
 // As .jsl-bgAlpha-black-... but theme background
-@include jsl-bgAlpha-x(0, 9, 1,  var(--v-theme-background), "background");
+@include jsl-bgAlpha-x(0, 9, 1, var(--v-theme-background), "background");
 @include jsl-bgAlpha-x(1, 10, 10, var(--v-theme-background), "background");
 
 // As .jsl-bgAlpha-black-... but theme surface
-@include jsl-bgAlpha-x(0, 9, 1,  var(--v-theme-surface), "surface");
+@include jsl-bgAlpha-x(0, 9, 1, var(--v-theme-surface), "surface");
 @include jsl-bgAlpha-x(1, 10, 10, var(--v-theme-surface), "surface");
 
 // As .jsl-bgAlpha-black-... but theme primary
-@include jsl-bgAlpha-x(0, 9, 1,  var(--v-theme-primary), "primary");
+@include jsl-bgAlpha-x(0, 9, 1, var(--v-theme-primary), "primary");
 @include jsl-bgAlpha-x(1, 10, 10, var(--v-theme-primary), "primary");
 
 // As .jsl-bgAlpha-black-... but theme secondary
-@include jsl-bgAlpha-x(0, 9, 1,  var(--v-theme-secondary), "secondary");
+@include jsl-bgAlpha-x(0, 9, 1, var(--v-theme-secondary), "secondary");
 @include jsl-bgAlpha-x(1, 10, 10, var(--v-theme-secondary), "secondary");
-
-

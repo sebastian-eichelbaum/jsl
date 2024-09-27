@@ -47,3 +47,9 @@ body {
     transition-duration: 0.1s;
     transition-property: padding;
 }*/
+
+// Justify but center the last line
+.text-center-justify {
+    text-align: justify;
+    text-align-last: center;
+}
