@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="text-center">
         <Link tab unstyled :href="appConfig.urls.legal.dataPrivacy" class="text-justify text-body-2" :style="style">{{
             $t("common.ui.dataPrivacy")
         }}</Link>

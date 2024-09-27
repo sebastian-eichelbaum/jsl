@@ -7,17 +7,18 @@ TODO: reconsider the name. It is also the base for overlays.
 <template>
     <div id="wrapper">
         <div id="backgroundFilterLayer" :style="style" />
-        <div id="background" v-if="!noBackground" />
-        <div id="content" :class="contentClass">
+        <div id="background" v-if="!noBackground" :class="{ invisibleByDefault: initDefaults }" />
+        <div id="content" :class="[contentClass, { invisibleByDefault: initDefaults }]">
             <slot />
         </div>
     </div>
 </template>
 
 <script setup>
-import { ref, computed, watch, nextTick } from "vue";
+import { ref, computed, watch, nextTick, onMounted } from "vue";
 
 import { computedBackgroundStyle, computedBackgroundStyleHidden, makeBackgroundStyleProps } from "jsl/utils/Style";
+import { afterDomUpdate } from "jsl/utils/Await";
 
 // Visibility model
 const model = defineModel({ default: true });
@@ -65,14 +66,20 @@ const absWrapper = computed({
     },
 });
 
+// When VUE adds the background overlay to the DOM, it is visible by default. In some situations the DOM update and
+// initialization of the component takes place with a visible delay. To prevent this, ensure the content, background and
+// filters are hidden by default and are removed after VUE has added and initialized everything.
+const initDefaults = ref(true);
+onMounted(() => {
+    afterDomUpdate(() => {
+        initDefaults.value = false;
+    });
+});
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // The visibility mechanic
 //
 
-// This kind of overlays do not work nicely with v-transition. We implement this manually.
-const visible = computed(() => {
-    return model.value;
-});
 const pointerEvents = computed(() => {
     return model.value ? "all" : "none";
 });
@@ -81,7 +88,7 @@ const contentOpacity = computed(() => {
 });
 
 const style = computed(() => {
-    return visible.value ? computedBackgroundStyle(props).value : computedBackgroundStyleHidden(props).value;
+    return model.value ? computedBackgroundStyle(props).value : computedBackgroundStyleHidden(props).value;
 });
 </script>
 
@@ -132,6 +139,10 @@ const style = computed(() => {
     bottom: 0;
     left: 0;
     z-index: 1;
+}
+
+.invisibleByDefault {
+    opacity: 0 !important;
 }
 
 #content {

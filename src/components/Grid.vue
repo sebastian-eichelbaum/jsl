@@ -32,6 +32,9 @@ defineOptions({
 });
 
 const props = defineProps({
+    // Set the grid width. Unset by default.
+    width: { type: [String, Number], default: undefined },
+
     // Set this if an empty default slot is ok - hides the dummy entries.
     okEmptyDefault: { type: Boolean, default: false },
 
@@ -93,6 +96,14 @@ const _margin = computed(() => {
     return "0 auto";
 });
 
+// Create an auto margin if center is enabled
+const _width = computed(() => {
+    if (props.width == null) {
+        return "unset";
+    }
+    return props.width;
+});
+
 // Max width influences the max amount of columns. If Create an auto margin if center is enabled
 const _maxWidth = computed(() => {
     if (props.maxCols > 0) {
@@ -116,6 +127,8 @@ const _maxWidth = computed(() => {
 <style scoped>
 #grid {
     display: grid;
+
+    width: v-bind("_width");
 
     margin: v-bind("_margin");
 
