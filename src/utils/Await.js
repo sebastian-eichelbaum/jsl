@@ -29,6 +29,19 @@ export default class Await {
         const poll = (resolve) => (pred() ? resolve() : setTimeout(() => poll(resolve), interval));
         return new Promise(poll);
     }
+
+    /**
+     * Use the double requestAnimationFrame-trick to wait until the DOM has been updated.
+     *
+     * @static
+     * @async
+     * @returns {Promise} Resolves once the DOM is updated.
+     */
+    static async domUpdate() {
+        return new Promise((resolve) => {
+            afterDomUpdate(resolve);
+        });
+    }
 }
 
 /**
@@ -111,5 +124,16 @@ export function makeDebouncedSingleRun(func, wait, options = {}) {
 export function wait(milliseconds) {
     return new Promise((resolve) => {
         setTimeout(resolve, milliseconds);
+    });
+}
+
+/**
+ * Use the double-requestAnimationFrame trick as discussed in this issue: https://github.com/vuejs/vue/issues/9200
+ *
+ * @param {Function} callback - Function to call after DOM update.
+ */
+export function afterDomUpdate(callback) {
+    requestAnimationFrame(() => {
+        requestAnimationFrame(callback);
     });
 }
