@@ -14,6 +14,7 @@ Both slots get "disabled" bound
             <AppLogo
                 compact
                 height="32px"
+                max-height="32px"
                 :disabled="unattendedMode"
                 @click="onAppLogoClick"
                 :clickOnly="appLogoGoHome"

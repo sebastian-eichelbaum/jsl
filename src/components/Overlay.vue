@@ -35,7 +35,15 @@ Example:
             "
             v-if="enableTitlebar"
         >
-            <AppLogo v-if="appLogo" compact height="32px" clickOnly v-bind="fwdBindProps('appLogoProps', $props)" />
+            <AppLogo
+                v-if="appLogo"
+                compact
+                width="src:200px"
+                height="auto"
+                max-height="32px"
+                clickOnly
+                v-bind="fwdBindProps('appLogoProps', $props)"
+            />
             <div :class="titleClass">{{ tt(title) }}</div>
             <BackButton
                 v-if="allowSelfClose"
@@ -90,7 +98,7 @@ const props = defineProps({
     allowSelfClose: { type: Boolean, default: false },
 
     // If set, show the AppLogo component.
-    appLogo: { type: Boolean, default: false },
+    appLogo: { type: Boolean, default: true },
 
     // If set, the overlay will show a title
     title: { type: [String, Translatable], default: undefined },

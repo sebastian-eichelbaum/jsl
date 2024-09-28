@@ -26,19 +26,19 @@ Displays the app logo.
             <v-img
                 v-if="compact"
                 :height="_height"
-                :width="appConfig.logos.appCompact?.width || width"
+                :width="_width"
                 :max-width="maxWidth"
                 :max-height="maxHeight"
-                position="0% 50%"
-                inline
+                :position="position ?? '0% 50%'"
                 :src="appConfig.logos.appCompact?.url || appConfig.logos.appCompact"
             ></v-img>
             <v-img
                 v-else
                 :height="_height"
-                :width="appConfig.logos.app?.width || width"
+                :width="_width"
                 :max-width="maxWidth"
                 :max-height="maxHeight"
+                :position="position"
                 :src="appConfig.logos.app?.url || appConfig.logos.app"
             ></v-img>
         </span>
@@ -80,10 +80,22 @@ const props = defineProps({
     // If true, clicking the logo does not trigger the href link. Only click is emitted.
     clickOnly: { type: Boolean, required: false, default: false },
 
-    // If the images are used, these define width and height (behaves like max width/height in v-img)
-    width: { type: [String, Number], required: false, default: "200" },
-    // The height of the AppLogo - use "auto" to automagically set
-    height: { type: [String, Number], required: false, default: "64" },
+    // If the images are used, these define width and height - there are some magic values:
+    //  * "auto" or nullish - do not set any size to v-img.
+    //  * "src" - use the size given in AppConfig.logos.[compact].width/height. If not defined, do not set any size.
+    //  * "src:256px" - like src, but if not defined, use the value after ":" as fallback.
+    //  * anything else - set this value
+    //
+    // Use maxWidth/maxHeight to constrain sizes.
+    width: { type: [String, Number], required: false, default: "src:200px" },
+    // The height of the AppLogo - see width for details
+    height: { type: [String, Number], required: false, default: "src:64px" },
+
+    // Set the css object-position prop. This allows to align the image inside its container. By default, it is aligned
+    // center center. To get an image to the left while centering vertically, set "left center"
+    //
+    // If "compact" is set, this defaults to "left center", "center center" else.
+    position: { type: String, default: undefined },
 
     // A nice version text to show, or null if the AppConfig.version should be used.
     version: { type: String, default: null },
@@ -121,14 +133,27 @@ const asHTMLOverride = computed(() => {
     }
 });
 
-const _height = computed(() => {
-    if (props.height == "auto" || props.height == null) {
+function calcSize(prop, src) {
+    if (prop === "auto" || prop == null) {
         return undefined;
     }
 
-    const setHeight = props.compact ? props.appConfig?.logos?.appCompact?.height : props.appConfig?.logos?.app?.height;
+    if (prop.startsWith("src")) {
+        console.log(src, prop.slice(4));
+        const r = src ?? (prop.slice(4) || undefined);
+        console.log(r);
+        return r;
+    }
 
-    return setHeight || props.height;
+    return prop;
+}
+
+const _width = computed(() => {
+    return calcSize(props.width, props.compact ? appConfig?.logos?.appCompact?.width : appConfig?.logos?.app?.width);
+});
+
+const _height = computed(() => {
+    return calcSize(props.height, props.compact ? appConfig?.logos?.appCompact?.height : appConfig?.logos?.app?.height);
 });
 
 const emit = defineEmits([
