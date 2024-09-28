@@ -1,13 +1,30 @@
 <!--
-Generates a full-size div that can be used to render into
+Generates a full-size div that can be used to render into. It provides additional style-able panels at each corder/edge
+in scoped slots.
+
+Consider using RenderViewPanel to add overlays into the render canvas.
+
+* The anonymous slot is a child of the wrapper and can be used to place overlays with position:absolute
 -->
 
 <template>
-    <div id="wrapper">
-        <div class="canvas" :id="canvasId">
+    <template v-if="!relative">
+        <div id="fullscreenContainer">
+            <div id="jslRenderViewWrapper">
+                <div class="canvas" :id="canvasId"></div>
+
+                <slot />
+            </div>
+        </div>
+    </template>
+
+    <template v-else>
+        <div id="jslRenderViewWrapper">
+            <div class="canvas" :id="canvasId"></div>
+
             <slot />
         </div>
-    </div>
+    </template>
 </template>
 
 <script setup>
@@ -17,11 +34,25 @@ const props = defineProps({
 
     // The id of the canvas itself. Use this in your renderer as the target id.
     canvasId: { type: String, required: true },
+
+    // The renderview is fixed to cover the whole viewport by default. If you want to place the render view inside
+    // some other container, use relative.
+    relative: { type: Boolean, default: false },
 });
 </script>
 
 <style scoped>
-#wrapper {
+#fullscreenContainer {
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
+#jslRenderViewWrapper {
     width: 100%;
     height: 100%;
     position: relative;
@@ -34,10 +65,10 @@ const props = defineProps({
 .canvas {
     background-color: v-bind("bgColor");
 
-    width: 100vw;
-    height: 100vh;
+    width: 100%;
+    height: 100%;
 
-    position: fixed;
+    position: absolute;
     top: 0;
     right: 0;
     bottom: 0;
