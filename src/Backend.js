@@ -833,7 +833,24 @@ export class DatabaseService extends Service {
             return this._getDoc(this.doc(this.collection(collectionOrDocument), id).handle);
         }
 
-        throw new Error("Cannot retireve document. No collection or document given.");
+        throw new Error("Cannot retrieve document. No collection or document given.");
+    }
+
+    /**
+     * Write data to a given document, overwriting any existing data.
+     *
+     * @async
+     * @param {CollectionHandle} collectionOrDocument - The collection handle
+     * @param {Object} data - Some data to write
+     * @throws {Error} - If the given document cannot be written to/is invalid.
+     * @returns {Promise<>} Resolves when done
+     */
+    async setDoc(collectionOrDocument, data) {
+        if (collectionOrDocument instanceof DocumentHandle) {
+            return this._setDoc(collectionOrDocument.handle, data);
+        }
+
+        throw new Error("Cannot set document. No collection or document given.");
     }
 
     /**
@@ -942,12 +959,24 @@ export class DatabaseService extends Service {
      * Implements the fetch functionality as described in @see DatabaseService.getDoc.
      *
      * @async
-     * @param {any} args - The args passed to @see DatabaseService.getDoc - The doc cis your native handle
+     * @param {any} args - The args passed to @see DatabaseService.getDoc - The doc is your native handle
      * @throws {Error} - If unimplemented
      * @returns {Promise<Object>} The document. MUST return null if the doc does not exists.
      */
     async _getDoc(...args) {
         throw new Error("Abstract function called.");
+    }
+
+    /**
+     * Implements the write functionality as described in @see DatabaseService.setDoc.
+     *
+     * @async
+     * @param {any} args - The args passed to @see DatabaseService.setDoc - The doc is your native handle
+     * @throws {Error} - If unimplemented
+     * @returns {Promise<>} Resolves/Fails. No return value.
+     */
+    async _setDoc(...args) {
+        throw new Error("Abstracs function called.");
     }
 }
 
