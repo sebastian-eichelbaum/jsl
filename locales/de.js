@@ -25,6 +25,7 @@ export const de = {
                 start: "Starten",
                 stop: "Stoppen",
                 delete: "Löschen",
+                edit: "Bearbeiten",
                 download: "Herunterladen",
                 play: "Spielen",
                 yourX: "Deine {x}",
@@ -46,6 +47,9 @@ export const de = {
                 support: "Support",
                 help: "Hilfe",
                 visit: "Besuche {what}",
+                visitWebsite: "Website besuchen",
+                mailToContact: "Kontakt aufnehmen",
+                moreDetails: "Mehr Details",
             },
             prompt: {
                 areYouSure: "Bist du sicher?",
@@ -55,6 +59,7 @@ export const de = {
                 enterLockPin: "Neue Sperr-PIN eingeben.",
                 updateReadyToInstall:
                     "Ein Update wurde heruntergeladen. Das Update wird nach einem Neustart automatisch installiert.",
+                bookNow: "Jetzt buchen!",
             },
             msg: {
                 greet: "Hallo {user}",

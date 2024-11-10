@@ -25,6 +25,7 @@ export const en = {
                 start: "Start",
                 stop: "Stop",
                 delete: "Delete",
+                edit: "Edit",
                 download: "Download",
                 play: "Play",
                 yourX: "Your {x}",
@@ -46,6 +47,9 @@ export const en = {
                 support: "Support",
                 help: "Help",
                 visit: "Visit {what}",
+                visitWebsite: "Visit our website",
+                mailToContact: "Get in touch",
+                moreDetails: "More Details",
             },
             prompt: {
                 areYouSure: "Are you sure?",
@@ -55,6 +59,7 @@ export const en = {
                 enterLockPin: "Enter new PIN to lock.",
                 updateReadyToInstall:
                     "An update has been downloaded. The update will be installed automatically upon restart.",
+                bookNow:"Book now!",
             },
             msg: {
                 greet: "Hello {user}",
