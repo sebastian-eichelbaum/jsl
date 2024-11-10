@@ -10,13 +10,13 @@ A convenient wrapper around v-btn. It provides some more useful defaults like
 
 <template>
     <v-btn
-        id="jslBtn"
         v-bind="{ ...$props, ...$attrs }"
         :prepend-icon="icon"
         :icon="!withText"
         :style="{ 'justify-self': justifySelf, 'align-self': alignSelf }"
         :text="undefined"
         :size="size_"
+        class="jslBtn"
         :class="{ jslBtnDisabled: disabled }"
     >
         <v-icon v-if="!withText">{{ icon }}</v-icon>
@@ -132,7 +132,7 @@ const size_ = computed(() => {
 </script>
 
 <style scoped>
-#jslBtn {
+.jslBtn {
     transition: opacity 0.5s;
 }
 
