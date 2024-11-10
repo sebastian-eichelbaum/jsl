@@ -38,13 +38,13 @@ Example:
             <AppLogo
                 v-if="appLogo"
                 compact
-                width="src:200px"
+                :width="_appLogoWidth"
                 height="auto"
                 max-height="32px"
                 clickOnly
                 v-bind="fwdBindProps('appLogoProps', $props)"
             />
-            <div :class="titleClass">{{ tt(title) }}</div>
+            <div class="titleCenterShift" :class="titleClass">{{ tt(title) }}</div>
             <BackButton
                 v-if="allowSelfClose"
                 size="small"
@@ -98,7 +98,7 @@ const props = defineProps({
     allowSelfClose: { type: Boolean, default: false },
 
     // If set, show the AppLogo component.
-    appLogo: { type: Boolean, default: true },
+    appLogo: { type: Boolean, default: false },
 
     // If set, the overlay will show a title
     title: { type: [String, Translatable], default: undefined },
@@ -137,7 +137,13 @@ const _titleBarStyleEnabled = computed(() => {
     return !props.noTitleBarStyling && model.value && !titleAndLogoDisabled;
 });
 
-const titleBarStyle = computed(() => {});
+// Required to move the title to make it centered
+const _appLogoWidth = computed(() => {
+    if (props.appLogo) {
+        return "200px";
+    }
+    return "0px";
+});
 
 function onClose() {
     model.value = false;
@@ -169,6 +175,11 @@ function onClose() {
     justify-content: space-between;
 
     z-index: 10;
+}
+
+/* Moves the title to the left to ensure it is centered, if the appLogo is shown. */
+.titleCenterShift {
+    margin-left: calc(v-bind(_appLogoWidth) * -1);
 }
 
 .ensureMinHeight {

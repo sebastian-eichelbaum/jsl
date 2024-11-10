@@ -13,6 +13,9 @@ import { resolveColor } from "jsl/utils/Style";
 import { useTheme } from "jsl/Vuetify";
 
 const props = defineProps({
+    // Set to disable any scrollbar modification
+    disabled: { type: Boolean, required: false, default: false },
+
     // Thumber color. If unset, jsl.scrollbarFG or vuetify "surface" is used.
     color: { type: String, required: false, default: "" },
     // Background. If unset, jsl.scrollbarBG or vuetify "background" is used.
@@ -32,8 +35,11 @@ const colBG = computed(() => {
 });
 
 onMounted(() => {
-    // console.log(vuetify.themeConfig);
+    if (props.disabled) {
+        return;
+    }
 
+    // console.log(vuetify.themeConfig);
     let root = document.documentElement;
     root.style.setProperty("--jsl-scrollbarColor", colFG.value);
     root.style.setProperty("--jsl-scrollbarBackground", colBG.value);

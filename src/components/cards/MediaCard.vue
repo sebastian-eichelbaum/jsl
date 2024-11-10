@@ -56,14 +56,14 @@ Example:
 
                 <v-card-actions class="mr-4 ml-4 mb-4">
                     <slot name="footer" :isHovering="isHovering">
-                        <v-row justify="space-between">
+                        <v-row justify="space-between" style="width: 100%">
                             <v-col align-self="center" :cols="!!$slots.actions ? minChipCols : 12">
                                 <slot name="title" :isHovering="isHovering">
                                     <v-card-title class="pa-0 ma-0">
                                         {{ tt(title) }}
                                     </v-card-title>
 
-                                    <v-card-subtitle class="pa-0 ma-0" vif="subtitle">
+                                    <v-card-subtitle class="pa-0 ma-0" v-if="subtitle">
                                         {{ tt(subtitle) }}
                                     </v-card-subtitle>
                                 </slot>
@@ -123,11 +123,4 @@ const props = defineProps({
     // When there are actions, the chip column gets smaller. This is the num of columns.
     minChipCols: { type: Number, default: 9 },
 });
-
-const emit = defineEmits(["click"]);
-
-const onClick = () => {
-    // Just forward?
-    emit("click");
-};
 </script>

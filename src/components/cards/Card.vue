@@ -8,7 +8,7 @@ A common base card that defines background, shapes, sizes and can detect hover. 
 -- Slots:
 
 * Anonymous slot {isHovering}: the card contents
-* overlay: the contents of the overlay to show on hover via prop overlayOnHover or on demand via showOverlay 
+* overlay: the contents of the overlay to show on hover via prop overlayOnHover or on demand via showOverlay
 -->
 <template>
     <v-hover v-model="hoverState">

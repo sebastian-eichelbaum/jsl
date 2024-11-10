@@ -13,7 +13,7 @@ CardGrid is a Grid with some defaults and options that are tuned towards "media"
             <div class="titleContainer" :class="{ titleContainerWrap: xs }">
                 <slot name="header">
                     <v-icon v-if="titleIcon" class="titleIcon" :class="titleClasses">{{ titleIcon }}</v-icon>
-                    <span :class="titleClasses">{{ tt(title) }}</span>
+                    <span class="text-truncate" :class="titleClasses">{{ tt(title) }}</span>
                 </slot>
                 <v-spacer />
 

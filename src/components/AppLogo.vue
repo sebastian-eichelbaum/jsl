@@ -138,10 +138,10 @@ function calcSize(prop, src) {
         return undefined;
     }
 
-    if (prop.startsWith("src")) {
-        console.log(src, prop.slice(4));
+    if (prop?.startsWith?.("src")) {
+        // console.log(src, prop.slice(4));
         const r = src ?? (prop.slice(4) || undefined);
-        console.log(r);
+        //console.log(r);
         return r;
     }
 
