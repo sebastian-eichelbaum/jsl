@@ -26,6 +26,7 @@ import {
     persistentMultipleTabManager,
     persistentLocalCache,
     setDoc,
+    addDoc,
 } from "firebase/firestore";
 
 import { getDownloadURL, getStorage, ref } from "firebase/storage";
@@ -543,7 +544,18 @@ export class FirestoreService extends DatabaseService {
      * Implements the setDoc functionality as described in @see DatabaseService.setDoc
      */
     async _setDoc(doc, data) {
-        return setDoc(doc, data);
+        return setDoc(doc, data).then(() => {
+            return doc.id;
+        });
+    }
+
+    /**
+     * Implements the addDoc functionality as described in @see DatabaseService.addDoc
+     */
+    async _addDoc(collection, data) {
+        return addDoc(collection, data).then((doc) => {
+            return doc.id;
+        });
     }
 }
 
