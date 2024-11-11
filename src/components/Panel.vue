@@ -24,6 +24,9 @@ const props = defineProps({
     // but has the advantage that it also works without explicit height in the parent.
     noExpand: { type: Boolean, default: false },
 
+    // If set, the container will have a height of 100vh
+    fillHeight: { type: Boolean, default: false },
+
     // Where to justify the whole panel if it is not as large/larger than the container.
     // Only takes affect when noExpand is not set.
     justify: { type: String, required: false, default: "center" },
@@ -37,6 +40,9 @@ const props = defineProps({
 
     // Alignment of the footer contents: start, center, end
     footerAlign: { type: String, required: false, default: "center" },
+
+    // Where to justify the footer if there is enough space? Start, End, Center
+    footerJustify: { type: String, required: false, default: "center" },
 });
 
 function alignStyle(align) {
@@ -58,6 +64,14 @@ function alignStyle(align) {
 
 const growBody = computed(() => {
     return props.noExpand === true ? 0 : 1;
+});
+
+const containerHeight = computed(() => {
+    return props.fillHeight === true ? "100vh" : null;
+});
+
+const containerOverflow = computed(() => {
+    return props.fillHeight === true ? "hidden" : null;
 });
 </script>
 
@@ -102,15 +116,19 @@ const growBody = computed(() => {
 
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: v-bind(footerJustify);
     flex-wrap: wrap;
 }
 
 .fullSize {
     display: flex;
-    flex-direction: column;
+    /* enabling breaks long panels into two columns .. */
+    /* flex-direction: column; */
     /*justify-content: space-between;*/
     justify-content: v-bind(justify);
     flex-wrap: wrap;
+    height: v-bind(containerHeight);
+
+    /* overflow: v-bind(containerOverflow); */
 }
 </style>
