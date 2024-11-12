@@ -36,6 +36,9 @@ const props = defineProps({
     // can override that "smartness". Set "auto" or undefined for smart, "horizontal", "h" or "vertical", "v".
     flexDirection: { type: String, default: undefined },
 
+    // flex-start, flex-end, stretch, baseline, center or undefined
+    alignItems: { type: String, default: undefined },
+
     // Where to put it? Possible values: b,t,r,l,bl,br,tl,tr
     location: { type: String, default: "bl" },
 
@@ -244,6 +247,8 @@ const boxOpacity = computed(() => {
     flex-wrap: wrap;
     justify-content: space-evenly;
 
+    align-items: v-bind(alignItems);
+
     display: flex;
 }
 
@@ -252,6 +257,8 @@ const boxOpacity = computed(() => {
     flex-direction: row;
     flex-wrap: wrap;
     justify-content: space-evenly;
+
+    align-items: v-bind(alignItems);
 
     display: flex;
 }
