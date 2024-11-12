@@ -17,7 +17,7 @@ A nice busy overlay spinner with rounded percent and message display.
                         :size="spinnerSize"
                         :width="spinnerWidth"
                         :color="spinnerColor"
-                            :indeterminate="indeterminate || percent == null || percent < 0"
+                        :indeterminate="isIndeterminate"
                         :model-value="roundedPercent"
                         id="spinner"
                     >
@@ -49,7 +49,7 @@ const props = defineProps({
     percent: { type: Number, required: false, default: -1 },
 
     // Explicitly set the spinner to indeterminate mode although a percentage might be present
-    indeterminate: { type: Boolean, required: false, default:false },
+    indeterminate: { type: Boolean, required: false, default: false },
 
     // If the default overlay is used, this defines the size of the v-progress-circular
     spinnerSize: { required: false, default: 70 },
@@ -60,6 +60,7 @@ const props = defineProps({
 });
 
 const roundedPercent = computed(() => Math.round(props.percent == null ? -1 : props.percent));
+const isIndeterminate = computed(() => props.indeterminate || props.percent == null || props.percent < 0);
 
 const position = computed(() => {
     return props.overlay === true ? "absolute" : "unset";
