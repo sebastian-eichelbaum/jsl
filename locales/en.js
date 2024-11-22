@@ -34,6 +34,7 @@ export const en = {
                 yourX: "Your {x}",
                 project: "Project | Projects",
                 app: "App | Apps",
+                preview: "Preview | Previews",
                 game: "Game | Games",
                 hardware: "Hardware | Hardware",
                 lock: "Lock",

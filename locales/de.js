@@ -34,6 +34,7 @@ export const de = {
                 yourX: "Deine {x}",
                 project: "Projekt | Projekte",
                 app: "App | Apps",
+                preview: "Preview | Previews",
                 game: "Spiel | Spiele",
                 hardware: "Hardware | Hardware",
                 lock: "Sperren",
