@@ -4,7 +4,7 @@ Provides a button that opens the shop iff localization.multipleLocalesSupported 
 <template>
     <Button
         v-if="alwaysShow || localization.multipleLocalesSupported"
-        :hideText="smAndDown"
+        iconOnlyThreshold="sm"
         v-bind="{ ...$props, ...$attrs }"
         :text="localization.localeName"
     >
@@ -14,7 +14,6 @@ Provides a button that opens the shop iff localization.multipleLocalesSupported 
 
 <script setup>
 import { ref, computed } from "vue";
-import { useDisplay } from "vuetify";
 
 import { localization } from "jsl/Localization";
 
@@ -27,6 +26,4 @@ const props = defineProps({
 
     // + Props of jsl/components/Button.vue
 });
-
-const { smAndDown } = useDisplay();
 </script>

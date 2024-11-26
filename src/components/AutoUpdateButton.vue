@@ -4,7 +4,7 @@ Provides a button that opens the shop iff appConfig.urls.shop is not nullish.
 <template>
     <Button
         v-if="canUpdate || updateAvailable"
-        :hideText="smAndDown"
+        iconOnlyThreshold="sm"
         v-bind="{ ...$props, ...$attrs }"
         @click="askUpdateNow"
         :loading="updateAvailable && !canUpdate"
@@ -25,7 +25,6 @@ Provides a button that opens the shop iff appConfig.urls.shop is not nullish.
 </template>
 
 <script setup>
-import { useDisplay } from "vuetify";
 import { ref } from "vue";
 
 import Button from "jsl/components/Button.vue";
@@ -54,7 +53,6 @@ const props = defineProps({
     // And the Button props
 });
 
-const { smAndDown } = useDisplay();
 const canUpdate = ref(false);
 const updateAvailable = ref(false);
 const dialog = ref(false);

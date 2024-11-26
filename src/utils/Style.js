@@ -34,7 +34,7 @@ function isThemeColor(color, theme) {
  *
  * @param {String|Object} color - A color by name (the vuetify colors like 'red
  *     darken-1' or 'primary'), a Hex or css
- * color like "rgba(255,0,255,1)" or an object {r,g,b} or {r,g,b,a}.
+ * color like "rgba(255,0,255,1)" or an object {r,g,b} or {r,g,b,a}. The keyword "transparent" is mapped to #00000000.
  *
  * @param {String} themeColors - The theme to use. If undefined, the current
  *     theme is used.
@@ -45,6 +45,10 @@ function isThemeColor(color, theme) {
 export function resolveColor(color, themeColors = null) {
     const th = themeColors || vuetify.themeColors;
     let resolveColor = color;
+
+    if (resolveColor == "transparent") {
+        resolveColor = "#00000000";
+    }
 
     // Resolve colors starting with "jsl."
     if (resolveColor.startsWith("jsl.")) {
@@ -100,7 +104,7 @@ export function makeBackgroundStyle(color, alpha, brightness, blur) {
         ") brightness(" +
         brightness +
         "); " +
-        "transition-property: backdrop-filter, background-color;" +
+        "transition-property: backdrop-filter, background-color, opacity;" +
         "transition-duration: 0.5s;"
     );
 }
@@ -127,7 +131,7 @@ function makePropName(prefix, name) {
  * properties with the same prefix exists. The easiest way is to use makeBackgroundStyleProps.
  *
  * @param {String} prefix - The prefix used for the props.
- * @param {String} props - The properties. The list you got with your component instance.
+ * @param {Object} props - The properties. The list you got with your component instance.
  *
  * @return {Object} The vue computed prop
  *
@@ -143,6 +147,17 @@ export function computedBackgroundStyle(props, prefix) {
             props[makePropName(prefix, "blur")] ?? "0",
         ),
     );
+}
+
+/**
+ * Create a computed style like in @see computedBackgroundStyle but configure it to be invisible.
+ *
+ * @param {Object} props - The props
+ * @param {String} prefix - The prefix in the props
+ * @returns {Object} Computed, reactive style
+ */
+export function computedBackgroundStyleHidden(props, prefix) {
+    return computed(() => makeBackgroundStyle(props[makePropName(prefix, "color")] ?? "#FF0000", 0, 1, 0));
 }
 
 /**

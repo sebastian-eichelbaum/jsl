@@ -833,7 +833,47 @@ export class DatabaseService extends Service {
             return this._getDoc(this.doc(this.collection(collectionOrDocument), id).handle);
         }
 
-        throw new Error("Cannot retireve document. No collection or document given.");
+        throw new Error("Cannot retrieve document. No collection or document given.");
+    }
+
+    /**
+     * Write data to a given document, overwriting any existing data.
+     *
+     * @async
+     * @param {CollectionHandle} documentHandle - The document handle
+     * @param {Object} data - Some data to write
+     * @throws {Error} - If the given document cannot be written to/is invalid.
+     * @returns {Promise<string>} Resolves when done, returns the ID of the document
+     */
+    async setDoc(documentHandle, data) {
+        if (documentHandle instanceof DocumentHandle) {
+            return this._setDoc(documentHandle.handle, data);
+        }
+
+        throw new Error("Cannot set document. No collection or document given.");
+    }
+
+    /**
+     * Add a document to the DB
+     *
+     * @async
+     * @param {DocumentHandle|CollectionHandle|String} collectionOrDocument - If a collection is given, a document with
+     * a new generated ID is created. If a DocumentHandle is given, a document with this ID will be generated or
+     * overwritten.
+     * @param {Object} data - The data to write
+     * @returns {Promise<string>} The document ID
+     */
+    async addDoc(collectionOrDocument, data) {
+        if (collectionOrDocument instanceof DocumentHandle) {
+            return this.setDoc(collectionOrDocument, data);
+        }
+
+        // If it is a string or CollectionHandle, use it and fetch create the doc with a new ID
+        if (Test.isNonEmptyStringOrInstanceOf(collectionOrDocument, CollectionHandle)) {
+            return this._addDoc(this.collection(collectionOrDocument).handle, data);
+        }
+
+        throw new Error("Cannot add document. No collection or document given.");
     }
 
     /**
@@ -942,12 +982,36 @@ export class DatabaseService extends Service {
      * Implements the fetch functionality as described in @see DatabaseService.getDoc.
      *
      * @async
-     * @param {any} args - The args passed to @see DatabaseService.getDoc - The doc cis your native handle
+     * @param {any} args - The args passed to @see DatabaseService.getDoc - The doc is your native handle
      * @throws {Error} - If unimplemented
      * @returns {Promise<Object>} The document. MUST return null if the doc does not exists.
      */
     async _getDoc(...args) {
         throw new Error("Abstract function called.");
+    }
+
+    /**
+     * Implements the write functionality as described in @see DatabaseService.setDoc.
+     *
+     * @async
+     * @param {any} args - The args passed to @see DatabaseService.setDoc - The doc is your native handle
+     * @throws {Error} - If unimplemented
+     * @returns {Promise<string>} Resolves/Fails. Returns the document ID.
+     */
+    async _setDoc(...args) {
+        throw new Error("Abstracs function called.");
+    }
+
+    /**
+     * Implements the create+write functionality as described in @see DatabaseService.addDoc.
+     *
+     * @async
+     * @param {any} args - The args passed to @see DatabaseService.addDoc - The doc is your native handle
+     * @throws {Error} - If unimplemented
+     * @returns {Promise<string>} Resolves/Fails. Returns the document ID.
+     */
+    async _addDoc(...args) {
+        throw new Error("Abstracs function called.");
     }
 }
 

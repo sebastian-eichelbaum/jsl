@@ -7,7 +7,7 @@ import { Test } from "./Assert";
  * Usage:
  * import { persistance } from "jsl/Persistance";
  * persistance.in("mru").get("workingDir");
- * persistance.in("mru").set("workingDir", "/home/user/stuff);
+ * persistance.in("mru").set("workingDir", "/home/user/stuff");
  */
 export class Persist {
     /**

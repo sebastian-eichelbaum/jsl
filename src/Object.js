@@ -53,6 +53,11 @@ export class jslObjectAsyncInit extends jslObject {
         this.m_objectAsyncInitOK = false;
         this.m_objectAsyncInitFailed = false;
         this.m_objectAsyncInitFailCause = null;
+
+        this.m_objectAsyncInitInitPromise = new Promise((resolve, reject) => {
+            this.m_objectAsyncInitInitPromiseResolve = resolve;
+            this.m_objectAsyncInitInitPromiseReject = reject;
+        });
     }
 
     /**
@@ -61,6 +66,15 @@ export class jslObjectAsyncInit extends jslObject {
      * @return {Promise} The config of this object
      */
     async init(...args) {}
+
+    /**
+     * Get the promise that resolves or rejects once init succeeds or fails.
+     *
+     * @returns {Promise} Resolves after init succeeded. Rejects on error.
+     */
+    get initPromise() {
+        return this.m_objectAsyncInitInitPromise;
+    }
 
     /**
      * Check if the initialization is done
@@ -98,6 +112,8 @@ export class jslObjectAsyncInit extends jslObject {
         this.m_objectAsyncInitOK = false;
         this.m_objectAsyncInitFailed = true;
         this.m_objectAsyncInitFailCause = e;
+
+        this.m_objectAsyncInitInitPromiseReject(e);
     }
 
     /**
@@ -107,5 +123,7 @@ export class jslObjectAsyncInit extends jslObject {
         this.m_objectAsyncInitOK = true;
         this.m_objectAsyncInitFailed = false;
         this.m_objectAsyncInitFailCause = null;
+
+        this.m_objectAsyncInitInitPromiseResolve();
     }
 }

@@ -13,7 +13,7 @@ CardGrid is a Grid with some defaults and options that are tuned towards "media"
             <div class="titleContainer" :class="{ titleContainerWrap: xs }">
                 <slot name="header">
                     <v-icon v-if="titleIcon" class="titleIcon" :class="titleClasses">{{ titleIcon }}</v-icon>
-                    <span :class="titleClasses">{{ tt(title) }}</span>
+                    <span class="text-truncate" :class="titleClasses">{{ tt(title) }}</span>
                 </slot>
                 <v-spacer />
 
@@ -55,8 +55,8 @@ const { xs } = useDisplay();
 import { tt } from "jsl/Localization";
 
 import Grid from "jsl/components/Grid.vue";
-import ActionCard from "@jsl/components/cards/ActionCard.vue";
-import Button from "@jsl/components/Button.vue";
+import ActionCard from "jsl/components/cards/ActionCard.vue";
+import Button from "jsl/components/Button.vue";
 
 const props = defineProps({
     // Some common card size presets: x-small, small, medium, large, x-large, xx-large, xxx-large.

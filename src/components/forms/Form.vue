@@ -181,7 +181,7 @@ async function doInit(model) {
                                             </slot>
                                         </v-col>
                                         <v-spacer />
-                                        <v-col align="end">
+                                        <v-col align="end" class="text-end">
                                             <slot name="footerEnd" :busy="noBusyOverlay && isBusy" :model="valuesModel">
                                                 <SubmitButton
                                                     v-if="!noSubmit"

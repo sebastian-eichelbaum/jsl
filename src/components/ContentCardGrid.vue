@@ -21,7 +21,7 @@
 <script setup>
 import { ref, reactive, computed, onMounted } from "vue";
 
-import CardGrid from "@jsl/components/CardGrid.vue";
+import CardGrid from "jsl/components/CardGrid.vue";
 
 const props = defineProps({
     // The props to apply to each content card

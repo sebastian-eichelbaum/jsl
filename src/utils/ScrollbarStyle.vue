@@ -1,4 +1,4 @@
-<!-- 
+<!--
 A utility component that sets a scrollbar style for the whole HTML doc. This uses the jsl-scrollbar SCSS mixin to
 generate a styled scrollbar for the HTML element.
 -->
@@ -13,6 +13,9 @@ import { resolveColor } from "jsl/utils/Style";
 import { useTheme } from "jsl/Vuetify";
 
 const props = defineProps({
+    // Set to disable any scrollbar modification
+    disabled: { type: Boolean, required: false, default: false },
+
     // Thumber color. If unset, jsl.scrollbarFG or vuetify "surface" is used.
     color: { type: String, required: false, default: "" },
     // Background. If unset, jsl.scrollbarBG or vuetify "background" is used.
@@ -32,12 +35,16 @@ const colBG = computed(() => {
 });
 
 onMounted(() => {
-    // console.log(vuetify.themeConfig);
+    if (props.disabled) {
+        return;
+    }
 
+    // console.log(vuetify.themeConfig);
     let root = document.documentElement;
     root.style.setProperty("--jsl-scrollbarColor", colFG.value);
     root.style.setProperty("--jsl-scrollbarBackground", colBG.value);
     root.style.setProperty("--jsl-scrollbarWidth", props.width);
+    root.style.setProperty("--jsl-scrollbarGutter", !props.autohide ? "stable" : "unset");
     root.classList.add("jslapp-custom-scrollbar-html");
     if (props.autohide) {
         root.classList.add("jslapp-custom-scrollbar-html-autohide");
@@ -56,6 +63,11 @@ onMounted(() => {
     // This is required as the default main scss sets this to auto. This causes size changes whenever a dialog opens.
     overflow-x: hidden;
     overflow-y: unset;
-    @include jsl-scrollbars(var(--jsl-scrollbarWidth), var(--jsl-scrollbarColor), var(--jsl-scrollbarBackground));
+    @include jsl-scrollbars(
+        var(--jsl-scrollbarWidth),
+        var(--jsl-scrollbarColor),
+        var(--jsl-scrollbarBackground),
+        var(--jsl-scrollbarGutter)
+    );
 }
 </style>

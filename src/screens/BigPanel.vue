@@ -33,7 +33,7 @@ import myImage from "assets/myImage.png";
                     >
                         <v-row no-gutters class="fill-height">
                             <v-col cols="12" align-self="start" :align="headerAlign" class="mb-3">
-                                <slot name="headers">
+                                <slot name="header">
                                     <AppLogo />
                                 </slot>
                             </v-col>
@@ -43,7 +43,7 @@ import myImage from "assets/myImage.png";
 
                             <v-col cols="12" :align="footerAlign" align-self="end" class="mt-3">
                                 <slot name="footer">
-                                    <LanguageButton :hideText="false" rounded class="ma-5 mb-10" v-if="!hideLanguage" />
+                                    <LanguageButton :iconOnly="false" rounded class="ma-5 mb-10" v-if="!hideLanguage" />
                                     <MadeByCompany v-if="!hideMadeBy" />
                                     <LegalLinks v-if="!hideLegal" />
                                 </slot>
@@ -62,7 +62,7 @@ import { useDisplay } from "vuetify";
 
 import { appConfig } from "jsl/AppConfig";
 
-import DefaultBackground from "jsl/assets/DefaultBackground.webp";
+import DefaultBackground from "jsl/assets/placeholders/background.webp";
 import Background from "jsl/components/Background.vue";
 
 import AppLogo from "jsl/components/AppLogo.vue";

@@ -14,24 +14,37 @@ Both slots get "disabled" bound
             <AppLogo
                 compact
                 height="32px"
+                max-height="32px"
                 :disabled="unattendedMode"
                 @click="onAppLogoClick"
                 :clickOnly="appLogoGoHome"
                 :showVersion="!noVersion"
                 :version="version"
+                v-bind="fwdBindProps('appLogoProps', $props)"
             />
         </v-app-bar-title>
-        <div class="draggableRegion">&nbsp;</div>
+        <div class="draggableRegion">
+            <slot name="center">&nbsp;</slot>
+        </div>
 
         <template v-slot:append>
+            <slot name="prepend" :disabled="disabled" />
+            <div v-if="$slots.prepend && !noPrependSpacer" class="mr-5"></div>
+
             <slot :disabled="disabled">
-                <ShopButton v-if="!unattendedMode && !noShopButton && !noButtons" class="mr-5" :disabled="disabled" />
+                <ShopButton
+                    v-if="!unattendedMode && !noShopButton && !noButtons"
+                    class="mr-5"
+                    :disabled="disabled"
+                    v-bind="fwdBindProps('shopButtonsProps', $props)"
+                />
                 <LanguageButton
                     v-if="!noLanguageButton && !noButtons"
                     maxWidth="150px"
                     rounded="xl"
                     class="mr-5"
                     :disabled="disabled"
+                    v-bind="fwdBindProps('languageButtonProps', $props)"
                 />
                 <UserButton
                     v-if="!unattendedMode && !noUserButton && !noButtons"
@@ -40,10 +53,12 @@ Both slots get "disabled" bound
                     class="mr-5"
                     :service="userService"
                     :disabled="disabled"
+                    v-bind="fwdBindProps('userButtonsProps', $props)"
                 />
             </slot>
 
             <slot name="append" :disabled="disabled" />
+            <div v-if="$slots.append && !noAppendSpacer" class="mr-5"></div>
 
             <WindowButtons
                 v-if="!unattendedMode"
@@ -107,6 +122,11 @@ const props = defineProps({
     // Disable version display
     noVersion: { type: Boolean, default: false },
 
+    // Spacing between the prepend slot and the default buttons?
+    noPrependSpacer: { type: Boolean, default: false },
+    // Spacing between the append slot and the window buttons/edge of the appbar?
+    noAppendSpacer: { type: Boolean, default: false },
+
     // Background style color, blur, alpha, brightness
     // This also creates the prop "color" that is also used by v-app-bar.
     ...makeBackgroundStyleProps("", { color: "surface", alpha: 1.0, brightness: 1.0, blur: 20 }),
@@ -118,6 +138,12 @@ const props = defineProps({
 
     // Properties to pass to the window buttons
     ...fwdProps("windowButtonsProps"),
+
+    // Other props to forward to nested elements
+    ...fwdProps("appLogoProps"),
+    ...fwdProps("languageButtonProps"),
+    ...fwdProps("userButtonProps"),
+    ...fwdProps("shopButtonProps"),
 });
 
 const emit = defineEmits([
@@ -154,6 +180,9 @@ function onAppLogoClick() {
     height: 100%;
     width: 100%;
     display: inline-block;
+
+    align-content: center;
+    text-align: center;
 }
 
 .title {

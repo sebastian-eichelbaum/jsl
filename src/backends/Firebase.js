@@ -26,6 +26,7 @@ import {
     persistentMultipleTabManager,
     persistentLocalCache,
     setDoc,
+    addDoc,
 } from "firebase/firestore";
 
 import { getDownloadURL, getStorage, ref } from "firebase/storage";
@@ -111,7 +112,17 @@ export class FirebaseApp extends Service {
 }
 
 /**
- * Provides the firebase user management as backend service
+ * Provides the firebase user management as backend service.
+ * To make this work, create a DB "users". Each document is keyed by user id. Ensure read/write rules for the authorized
+ * user like this:
+ *
+ * '''
+ * // User can read/write their own entry.
+ * match /users/{document} {
+ *     allow read: if request.auth.uid == document;
+ *     allow write: if request.auth.uid == document;
+ * }
+ * '''
  */
 export class FirebaseUserService extends UserService {
     /**
@@ -507,7 +518,10 @@ export class FirestoreService extends DatabaseService {
 
             // Re-format to fullfill the return value spec of DatabaseService.query
             snapshot.forEach((doc) => {
-                result.push({ id: doc.id, data: doc.data() });
+                result.push({
+                    id: doc.id,
+                    data: doc.data(),
+                });
             });
 
             return result;
@@ -515,7 +529,7 @@ export class FirestoreService extends DatabaseService {
     }
 
     /**
-     * Implements the search functionality as described in @see DatabaseService.getDoc
+     * Implements the getDoc functionality as described in @see DatabaseService.getDoc
      */
     async _getDoc(doc) {
         return getDoc(doc).then((snapshot) => {
@@ -523,6 +537,24 @@ export class FirestoreService extends DatabaseService {
                 return null;
             }
             return snapshot.data();
+        });
+    }
+
+    /**
+     * Implements the setDoc functionality as described in @see DatabaseService.setDoc
+     */
+    async _setDoc(doc, data) {
+        return setDoc(doc, data).then(() => {
+            return doc.id;
+        });
+    }
+
+    /**
+     * Implements the addDoc functionality as described in @see DatabaseService.addDoc
+     */
+    async _addDoc(collection, data) {
+        return addDoc(collection, data).then((doc) => {
+            return doc.id;
         });
     }
 }

@@ -13,6 +13,9 @@ export const en = {
                 shop: "Shop",
                 yes: "Yes",
                 no: "No",
+                accept: "Accept",
+                continue: "Continue",
+                ok: "OK",
                 settings: "Settings",
                 profile: "Profile",
                 options: "Options",
@@ -22,11 +25,16 @@ export const en = {
                 start: "Start",
                 stop: "Stop",
                 delete: "Delete",
+                edit: "Edit",
+                view: "View",
+                share: "Share",
+                publish: "Publish",
                 download: "Download",
                 play: "Play",
                 yourX: "Your {x}",
                 project: "Project | Projects",
                 app: "App | Apps",
+                preview: "Preview | Previews",
                 game: "Game | Games",
                 hardware: "Hardware | Hardware",
                 lock: "Lock",
@@ -43,6 +51,9 @@ export const en = {
                 support: "Support",
                 help: "Help",
                 visit: "Visit {what}",
+                visitWebsite: "Visit our website",
+                mailToContact: "Get in touch",
+                moreDetails: "More Details",
             },
             prompt: {
                 areYouSure: "Are you sure?",
@@ -52,6 +63,7 @@ export const en = {
                 enterLockPin: "Enter new PIN to lock.",
                 updateReadyToInstall:
                     "An update has been downloaded. The update will be installed automatically upon restart.",
+                bookNow:"Book now!",
             },
             msg: {
                 greet: "Hello {user}",
@@ -71,6 +83,9 @@ export const en = {
                 unlockFailed: "Could not unlock.",
                 unlockFailedWrongPin: "@:common.msg.unlockFailed Wrong PIN.",
                 updateReadyToInstall: "Update available",
+                poweredBy: "Powered by {what}",
+                loadingPerc: "Loading: {percent}",
+                loading: "Loading",
             },
         },
 
@@ -131,7 +146,8 @@ export const en = {
                 logoutUnknownError: "@:user.msg.logoutFailed Unknown error. Guru code: {error}.",
 
                 recoverMailSent: "We have sent you an e-mail to reset your password.",
-                emailNotVerified: "You have not yet verified your e-mail address. We have sent you an e-mail with a verification link recently.",
+                emailNotVerified:
+                    "You have not yet verified your e-mail address. We have sent you an e-mail with a verification link recently.",
             },
             ui: {
                 login: "Login",
