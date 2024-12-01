@@ -10,7 +10,18 @@ A nice busy overlay spinner with rounded percent and message display.
 
 <template>
     <v-fade-transition mode="out-in">
-        <div id="overlay" v-if="busy">
+        <div id="overlay" v-if="failed">
+            <div id="overlayContent">
+                <v-icon icon="mdi-close" size="x-large" class="spinner" :color="spinnerColor" />
+                <p class="text-body-2 pr-10 pl-10 pt-4 font-weight-bold">{{ tt(failedMessage) }}</p>
+            </div>
+        </div>
+        <div id="overlay" v-if="ok && !failed">
+            <div id="overlayContent">
+                <v-icon icon="mdi-check" size="x-large" class="spinner" :color="spinnerColor" />
+            </div>
+        </div>
+        <div id="overlay" v-if="busy && !ok && !failed">
             <div id="overlayContent">
                 <slot name="spinner" :message="msg" :percent="roundedPercent">
                     <v-progress-circular
@@ -19,7 +30,7 @@ A nice busy overlay spinner with rounded percent and message display.
                         :color="spinnerColor"
                         :indeterminate="isIndeterminate"
                         :model-value="roundedPercent"
-                        id="spinner"
+                        class="spinner"
                     >
                         <span v-if="roundedPercent >= 0" class="font-weight-bold">{{ roundedPercent }}%</span>
                     </v-progress-circular>
@@ -33,7 +44,7 @@ A nice busy overlay spinner with rounded percent and message display.
 <script setup>
 import { ref, watch, computed } from "vue";
 
-import { localization } from "jsl/Localization";
+import { localization, Translatable, tt } from "jsl/Localization";
 
 const props = defineProps({
     // Make this an overlay?
@@ -41,6 +52,13 @@ const props = defineProps({
 
     // If true, the form is assumed to be busy
     busy: { type: Boolean, required: false, default: false },
+
+    // If true, show a small check icon instead of the spinner
+    ok: { type: Boolean, required: false, default: false },
+    // Set true to indicate a failure. Overrides "OK"
+    failed: { type: Boolean, required: false, default: false },
+    // Message to show on failure
+    failedMessage: { type: [String, Translatable], required: false, default: null },
 
     // A message to display.
     msg: { type: String, required: false, default: "" },
@@ -86,7 +104,7 @@ const height = computed(() => {
     left: 0;
 }
 
-#spinner {
+.spinner {
     left: 50%;
     transform: translateX(-50%);
 }

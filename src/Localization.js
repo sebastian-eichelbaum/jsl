@@ -545,6 +545,10 @@ export class Translatable {
             return new Translatable(what || "", count, details);
         }
 
+        if (what.ts != null) {
+            return new Translatable(new TranslatedString(what), count, details);
+        }
+
         const asString = what?.toString();
         if (!asString) {
             throw new Error("Translation messages must be strings, translatable, {key,...} or convertible to string.");

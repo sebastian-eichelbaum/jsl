@@ -137,3 +137,12 @@ export function afterDomUpdate(callback) {
         requestAnimationFrame(callback);
     });
 }
+
+/**
+ * Awaits the next dom update.
+ *
+ * @returns {Promise} Resolves after dom update
+ */
+export function domUpdate() {
+    return new Promise(afterDomUpdate);
+}

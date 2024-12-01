@@ -252,6 +252,30 @@ export class Validations {
 
         return true;
     }
+
+    /**
+     * Allow a max file size
+     *
+     * @param {Number} [maxMB] - The max file size in MB
+     * @returns {Function} a function that returns {Boolean|String}. True if the file size is <= maxMB.
+     */
+    maxFileSize(maxMB = 1) {
+        return (value) => {
+            if (value instanceof File) {
+                return value.size / (1024 * 1024) > maxMB
+                    ? this.m_handler("form.msg.inputFileSizeMax", { maxMB: maxMB })
+                    : true;
+            }
+            if (Array.isArray(value)) {
+                const size = value.reduce((s, f) => s + f.size, 0);
+                return size / (1024 * 1024) > maxMB
+                    ? this.m_handler("form.msg.inputFileSizeMax", { maxMB: maxMB })
+                    : true;
+            }
+
+            return false;
+        };
+    }
 }
 
 import BindMembers from "jsl/utils/BindMembers";

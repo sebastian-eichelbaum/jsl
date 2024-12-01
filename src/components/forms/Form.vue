@@ -21,7 +21,7 @@ Emits:
 
 Example:
 
-<Form ... @submit="do" :initHandler="doInit">
+<Form ... @submit="doSubmit" :initHandler="doInit">
     // It is important that all fields use the model provided by the form.
     // This ensures that the form can get and forward all values properly.
     <template v-slot="{ busy, model }">
@@ -43,7 +43,7 @@ Example:
     // If you want to keep the default submit button but add something at footer-left, use the footerStart slot.
 </Form>
 
-async function do(state)
+async function doSubmit(state)
 {
     // state.values contains the model values of all fields that used the model
     // Make sure that all fields use the form-provided model!
@@ -628,11 +628,9 @@ function setBusy(value = true, delayMs = 0) {
 /**
  * Handle back events.
  */
-function onBack()
-{
+function onBack() {
     emit("back");
 }
-
 </script>
 
 <style scoped>

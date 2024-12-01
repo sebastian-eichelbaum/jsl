@@ -8,7 +8,7 @@ relative to the location. For example, rounded will, by default, round the corne
 <template>
     <div
         id="jslRenderViewPanel"
-        :class="[locationClass, flexClass, borderClass, paddingClass]"
+        :class="[locationClass, flexClass, borderClass, paddingClass, shadowClass]"
         :style="backgroundStyle"
     >
         <slot> TODO: content </slot>
@@ -73,6 +73,9 @@ const props = defineProps({
     // better if the edge padding is not as large.
     edgePadding: { type: String, default: "6px" },
 
+    // Add a "soft", "strong", or "hard" shadow. Use "none" to disable that
+    shadow: { type: String, default: "none" },
+
     // Panel background.
     ...makeBackgroundStyleProps("", { color: "transparent", alpha: 1.0, brightness: 1.0, blur: 0 }),
 });
@@ -97,6 +100,19 @@ const locationClass = computed(() => {
             return "_t _r";
     }
     return "_l _b";
+});
+
+const shadowClass = computed(() => {
+    switch (props.shadow) {
+        case "soft":
+            return "jsl-shadow-soft";
+        case "strong":
+            return "jsl-shadow-strong";
+        case "hard":
+            return "jsl-shadow-hard";
+        default:
+            return "";
+    }
 });
 
 const flexClass = computed(() => {
@@ -202,7 +218,15 @@ const borderRadius = computed(() => {
 });
 
 const pointerEvents = computed(() => {
-    return props.noEventCapture === true ? "none" : "all";
+    return props.noEventCapture === true || model.value == false ? "none" : "all";
+});
+
+const overflowX = computed(() => {
+    return "unset";
+});
+
+const overflowY = computed(() => {
+    return "auto";
 });
 
 const backgroundStyle = computed(() => {
@@ -211,6 +235,35 @@ const backgroundStyle = computed(() => {
 
 const boxOpacity = computed(() => {
     return model.value ? 1.0 : 0.0;
+});
+
+const boxTransform = computed(() => {
+    if (model.value == true) {
+        // Must not be empty when combined with those transforms in the _r/_l,... classes
+        return "translate(0, 0) scale(1)";
+    }
+
+    // TODO: having a translation on the right causes the wrapper to grow -> scrollbars. Find a way to make this look
+    // like for the cases on the left (slide in instead of scale in).
+
+    switch (props.location) {
+        case "b":
+            return "scale(0)";
+        case "t":
+            return "scale(0)";
+        case "r":
+            return "scale(0)";
+        case "l":
+            return "translate(-100%, 0)";
+        case "bl":
+            return "translate(-100%, 0)";
+        case "br":
+            return "scale(0)";
+        case "tl":
+            return "translate(-100%, 0)";
+        case "tr":
+            return "scale(0)";
+    }
 });
 </script>
 
@@ -221,24 +274,29 @@ const boxOpacity = computed(() => {
 
 ._l {
     left: 0;
+
+    transform: v-bind(boxTransform);
 }
 ._r {
     right: 0;
+    transform: v-bind(boxTransform);
 }
 ._t {
     top: 0;
+    transform: v-bind(boxTransform);
 }
 ._b {
     bottom: 0;
+    transform: v-bind(boxTransform);
 }
 
 ._hCenter {
     left: 50%;
-    transform: translate(-50%, 0);
+    transform: translate(-50%, 0) v-bind(boxTransform);
 }
 ._vCenter {
     top: 50%;
-    transform: translate(0, -50%);
+    transform: translate(0, -50%) v-bind(boxTransform);
 }
 
 ._flexV {
@@ -324,8 +382,8 @@ const boxOpacity = computed(() => {
  */
 
 .box {
-    transition: 0.5s;
-    transition-property: opacity;
+    transition: 0.3s;
+    transition-property: backdrop-filter, background-color, opacity, transform !important;
 
     opacity: v-bind(boxOpacity);
 
@@ -337,6 +395,9 @@ const boxOpacity = computed(() => {
     min-height: v-bind(minHeight);
     max-width: v-bind(maxWidth);
     max-height: v-bind(maxHeight);
+
+    overflow-x: v-bind(overflowX);
+    overflow-y: v-bind(overflowY);
 
     pointer-events: v-bind(pointerEvents);
 }

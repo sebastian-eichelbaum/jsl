@@ -17,7 +17,7 @@ A convenient wrapper around v-btn. It provides some more useful defaults like
         :text="undefined"
         :size="size_"
         class="jslBtn"
-        :class="{ jslBtnDisabled: disabled }"
+        :class="{ jslBtnDisabled: disabled, jslBtnSpacing: iconAlignLeft }"
     >
         <v-icon v-if="!withText">{{ icon }}</v-icon>
 
@@ -111,6 +111,9 @@ const props = defineProps({
     // xs,sm,md,lg,xl,xxl - unset if this feature should not be used.
     iconOnlyThreshold: { type: String, default: undefined },
 
+    // If set, there will be "spacing-between" the text and icon. This pushes the icon to the left.
+    iconAlignLeft: { type: Boolean, default: false },
+
     improvedLoader: { type: Boolean, default: false },
     improvedLoaderValue: { default: -1 },
 
@@ -138,5 +141,9 @@ const size_ = computed(() => {
 
 .jslBtnDisabled {
     opacity: 0.2;
+}
+
+.jslBtnSpacing {
+    justify-content: space-between;
 }
 </style>
