@@ -54,6 +54,7 @@ export const de = {
                 visitWebsite: "Website besuchen",
                 mailToContact: "Kontakt aufnehmen",
                 moreDetails: "Mehr Details",
+                uploadX: "{what} hochladen",
             },
             prompt: {
                 areYouSure: "Bist du sicher?",
@@ -85,6 +86,8 @@ export const de = {
                 poweredBy: "Powered by {what}",
                 loadingPerc: "Laden: {percent}",
                 loading: "Laden",
+                unknownBackendError:
+                    "Fehler. Stelle sicher, dass du online bist und versuche es erneut. Guru code: {error}.",
             },
         },
 
@@ -100,6 +103,7 @@ export const de = {
                 inputPasswordsDoNotMatch: "Passwort stimmt nicht überein",
                 inputBlacklistedChar: "Zeichen nicht erlaubt: {chars}", // "char" is the offending char
                 inputNumbersOnly: "Nur Zahlen erlaubt",
+                inputFileSizeMax: "Datei zu groß. Max: {maxMB}MB",
 
                 inputNotValidated: "Korigiere die markierten Felder",
             },
@@ -115,7 +119,10 @@ export const de = {
                 name: "Name",
                 company: "Firma",
             },
-            prompt: {},
+            prompt: {
+                allowedFileTypes: "Dateien: {what}",
+                maxAllowedSize: "Max. Größe: {what}MB",
+            },
         },
 
         user: {

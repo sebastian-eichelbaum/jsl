@@ -54,6 +54,7 @@ export const en = {
                 visitWebsite: "Visit our website",
                 mailToContact: "Get in touch",
                 moreDetails: "More Details",
+                uploadX: "Upload {what}",
             },
             prompt: {
                 areYouSure: "Are you sure?",
@@ -63,7 +64,7 @@ export const en = {
                 enterLockPin: "Enter new PIN to lock.",
                 updateReadyToInstall:
                     "An update has been downloaded. The update will be installed automatically upon restart.",
-                bookNow:"Book now!",
+                bookNow: "Book now!",
             },
             msg: {
                 greet: "Hello {user}",
@@ -86,6 +87,7 @@ export const en = {
                 poweredBy: "Powered by {what}",
                 loadingPerc: "Loading: {percent}",
                 loading: "Loading",
+                unknownBackendError: "Error. Ensure that you are online and retry. Guru code: {error}.",
             },
         },
 
@@ -100,6 +102,7 @@ export const en = {
                 inputPasswordsDoNotMatch: "Passwords do not match",
                 inputBlacklistedChar: "Character not allowed: {chars}", // "char" is the offending char
                 inputNumbersOnly: "Character not allowed: Numbers only",
+                inputFileSizeMax: "File too big. Max: {maxMB}MB",
 
                 inputNotValidated: "Correct the highlighted fields",
             },
@@ -115,7 +118,10 @@ export const en = {
                 name: "Name",
                 company: "Company",
             },
-            prompt: {},
+            prompt: {
+                allowedFileTypes: "Files: {what}",
+                maxAllowedSize: "Max. size: {what}MB",
+            },
         },
 
         user: {
