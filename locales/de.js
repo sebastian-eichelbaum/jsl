@@ -55,6 +55,7 @@ export const de = {
                 mailToContact: "Kontakt aufnehmen",
                 moreDetails: "Mehr Details",
                 uploadX: "{what} hochladen",
+                hint: "Hinweis",
             },
             prompt: {
                 areYouSure: "Bist du sicher?",

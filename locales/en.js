@@ -55,6 +55,7 @@ export const en = {
                 mailToContact: "Get in touch",
                 moreDetails: "More Details",
                 uploadX: "Upload {what}",
+                hint: "Hint",
             },
             prompt: {
                 areYouSure: "Are you sure?",
