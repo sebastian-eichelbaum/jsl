@@ -18,6 +18,11 @@ export class Vuetify {
      */
     static defaultConfig() {
         return {
+            // ATTENTION: you can create "./src/vuetify-settings.scss" and override those vuetify variables with:
+            // @use "vuetify/settings" with (
+            // $tooltip-background-color: rgba(0, 0, 0, 0.85),
+            // $tooltip-text-color: #dddddd
+            // );
             themes: {
                 // Add arbitrary themes.
                 // Ref to https://vuetifyjs.com/en/features/theme/

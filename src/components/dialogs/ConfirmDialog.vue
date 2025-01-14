@@ -76,13 +76,50 @@ const titleStyle = computedBackgroundStyle(props, "titleBackground");
 
 const emit = defineEmits(["yes", "no"]);
 
+let askPromise = null;
+
 const onYes = () => {
     model.value = false;
     emit("yes");
+    askPromise?.resolve?.(true);
 };
 
 const onNo = () => {
     model.value = false;
     emit("no");
+    askPromise?.resolve?.(false);
 };
+
+/**
+ * Open the dialog and return a promise that resolves to true when yes, false when no
+ *
+ * @async
+ *
+ * Usage:
+ *
+ * <template>
+ * ...
+ * <ConfirmDialog ref="quitDialog" v-model="quitDialogModel" />
+ * ...
+ * <script setup>
+ * const quitDialog = ref();
+ * const quitDialogModel = ref(false);
+ * onBeforeRouteLeave(async (to, from) => {
+ *   return quitDialog.value.ask(quitDialogModel);
+ * });
+ */
+async function ask(model) {
+    const p = new Promise((resolve, reject) => {
+        askPromise = { resolve: resolve, reject: reject };
+    });
+    model.value = true;
+
+    return p.finally(() => {
+        askPromise = null;
+    });
+}
+
+defineExpose({
+    ask,
+});
 </script>

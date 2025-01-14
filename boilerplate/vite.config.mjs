@@ -1,4 +1,6 @@
 import _ from "lodash";
+import path from "path";
+import fs from "fs";
 
 import vue from "@vitejs/plugin-vue";
 import vuetify from "vite-plugin-vuetify";
@@ -11,7 +13,21 @@ export const defaultConfig = {
         // Mandatory
         vue(),
         // Useful?
-        vuetify(),
+        vuetify({
+            // If the user created this file, use it as config file in vuetify. It allows to override those vuetify
+            // variables.
+            styles: fs.existsSync("./src/vuetify-settings.scss")
+                ? {
+                      // Ensures that you can override those vite variables. Generate a file
+                      // vuetify-settings.scss:
+                      // Fill with
+                      // @use "vuetify/settings" with (
+                      //     $tooltip-background-color: #ff0000
+                      //);
+                      configFile: "./src/vuetify-settings.scss",
+                  }
+                : undefined,
+        }),
     ],
     define: {
         // Provide the package app version
