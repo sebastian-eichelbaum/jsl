@@ -33,8 +33,11 @@ export class ElectronApp extends jslObjectAsyncInit {
             startup: {
                 // Maximize the window on start (except in dev mode)
                 maximized: false,
-                // If true, the applicaction will be in fullscreen when starting. (except in dev mode)
+                // If true, the application will be in fullscreen when starting. (except in dev mode)
                 fullscreen: false,
+                // Must be set to a string to ensure a single instance. Apps using the same instance "id" are assumed to
+                // be the same.
+                singleInstance: null,
             },
 
             // The window configs.
@@ -122,6 +125,18 @@ export class ElectronApp extends jslObjectAsyncInit {
     async init() {
         super.init();
 
+        if (
+            !!this.config.startup.singleInstance &&
+            (typeof this.config.startup.singleInstance === "string" ||
+                this.config.startup.singleInstance instanceof String)
+        ) {
+            // Ensure a single instance
+            const instanceLock = app.requestSingleInstanceLock({ myKey: this.config.startup.singleInstance });
+            if (!instanceLock) {
+                app.quit();
+            }
+        }
+
         let resolve;
         const promise = new Promise((res, _rej) => {
             resolve = res;
@@ -151,6 +166,19 @@ export class ElectronApp extends jslObjectAsyncInit {
         app.on("window-all-closed", () => {
             if (process.platform !== "darwin") {
                 app.quit();
+            }
+        });
+
+        // Called when another instance was started - bring the window to the front
+        app.on("second-instance", (event, commandLine, workingDirectory, additionalData) => {
+            console.log("Another instance was started.");
+
+            // Someone tried to run a second instance, we should focus our window.
+            if (this.mainWindow) {
+                if (this.mainWindow.isMinimized()) {
+                    this.mainWindow.restore();
+                }
+                this.mainWindow.focus();
             }
         });
 
