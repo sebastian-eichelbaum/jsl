@@ -11,7 +11,7 @@ Consider using RenderViewPanel to add overlays into the render canvas.
     <template v-if="!relative">
         <div id="fullscreenContainer">
             <div id="jslRenderViewWrapper">
-                <div class="canvas" :id="canvasId"></div>
+                <component :is="canvasType" class="canvas" :id="canvasId" />
 
                 <slot />
             </div>
@@ -20,7 +20,7 @@ Consider using RenderViewPanel to add overlays into the render canvas.
 
     <template v-else>
         <div id="jslRenderViewWrapper">
-            <div class="canvas" :id="canvasId"></div>
+            <component :is="canvasType" class="canvas" :id="canvasId" />
 
             <slot />
         </div>
@@ -34,6 +34,9 @@ const props = defineProps({
 
     // The id of the canvas itself. Use this in your renderer as the target id.
     canvasId: { type: String, required: true },
+
+    // Depending on your renderer, the canvas should either be a div as container or a html canvas.
+    canvasType: { type: String, default: "canvas" },
 
     // The renderview is fixed to cover the whole viewport by default. If you want to place the render view inside
     // some other container, use relative.
@@ -74,5 +77,8 @@ const props = defineProps({
     bottom: 0;
     left: 0;
     z-index: 0;
+
+    /* Prevents the babylonjs focus frame */
+    outline: none;
 }
 </style>
