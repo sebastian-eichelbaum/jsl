@@ -29,6 +29,16 @@ function isThemeColor(color, theme) {
 }
 
 /**
+ * Convert the given color (hex, or name) to an RGB(A) tuple.
+ *
+ * @param {String} color - The color name or hex value to convert
+ * @returns {Object} RGB(A) tuple
+ */
+export function colorToRGB(color) {
+    return parseColor(color);
+}
+
+/**
  * Resolve a given color string into rgba tuple. It supports css style colors, vuetify color names, manually added
  * vuetify color names, jsl color names.
  *
