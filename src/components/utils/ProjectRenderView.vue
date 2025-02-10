@@ -77,7 +77,7 @@ async function init(project, canvasId, state) {
             </div>
         </Overlay>
 
-        <RenderView :canvasId="canvasId"> </RenderView>
+        <RenderView :canvasId="canvasId" v-bind="canvasProps"> </RenderView>
 
         <slot />
     </div>
@@ -107,6 +107,9 @@ const props = defineProps({
 
     // Allows to override the canvas ID used by the renderer
     canvasId: { type: String, default: "mainViewerCanvas" },
+
+    // Forwards those canvas probs to jsl RenderView:
+    canvasProps: { type: Object, default: {} },
 
     // The background used for overlays like the loader
     ...fwdProps("background"),

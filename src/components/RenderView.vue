@@ -32,6 +32,13 @@ const props = defineProps({
     // The default color before your renderer/content engine takes over
     bgColor: { type: String, required: false, default: "#000000" },
 
+    // The top/left/bottom/right position of the canvas. Allows to offset the canvas inside the wrapper.
+    // Must be % or a unit like px/vh/vw/...
+    canvasTop: { type: String, default: "0px" },
+    canvasBottom: { type: String, default: "0px" },
+    canvasLeft: { type: String, default: "0px" },
+    canvasRight: { type: String, default: "0px" },
+
     // The id of the canvas itself. Use this in your renderer as the target id.
     canvasId: { type: String, required: true },
 
@@ -56,6 +63,8 @@ const props = defineProps({
 }
 
 #jslRenderViewWrapper {
+    background-color: v-bind("bgColor");
+
     width: 100%;
     height: 100%;
     position: relative;
@@ -68,14 +77,14 @@ const props = defineProps({
 .canvas {
     background-color: v-bind("bgColor");
 
-    width: 100%;
-    height: 100%;
+    width: calc(100% - v-bind("canvasLeft") - v-bind("canvasRight"));
+    height: calc(100% - v-bind("canvasTop") - v-bind("canvasBottom"));
 
     position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
+    top: v-bind("canvasTop");
+    right: v-bind("canvasRight");
+    bottom: v-bind("canvasBottom");
+    left: v-bind("canvasLeft");
     z-index: 0;
 
     /* Prevents the babylonjs focus frame */
