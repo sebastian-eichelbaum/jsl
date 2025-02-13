@@ -36,7 +36,7 @@ export class ChildProcess extends jslObjectAsyncInit {
                 reuse: false,
 
                 // If boolean true and if the app is in prodction mode, the executable is searched in the application
-                // resource path. This is the place where additional resources are placed if configured in 
+                // resource path. This is the place where additional resources are placed if configured in
                 // forge.config.js in packagerConfig.extraResource:[...]
                 isInResourcePath: false,
             },
@@ -224,7 +224,7 @@ export class ChildProcess extends jslObjectAsyncInit {
             return;
         }
 
-        this.m_state.output = "--- ChildProcess.spawn: " + JSON.stringify(this.config) + "\n";
+        this.m_state.output = "--- ChildProcess:spawn: " + JSON.stringify(this.config) + "\n";
         if (this.config.verbose) {
             console.log("Spawning:", this.config.execute);
         }
@@ -244,7 +244,7 @@ export class ChildProcess extends jslObjectAsyncInit {
             throw new Error("Cannot spawn child process. Handle invalid.");
         }
 
-        this.m_state.output = "--- ChildProcess.run: " + JSON.stringify(this.config) + "\n";
+        this.m_state.output = "--- ChildProcess:run: " + JSON.stringify(this.config) + "\n";
         return window?.jslChildProcess?.spawn?.(this.m_key).then(() => {
             return this.m_promise;
         });
@@ -262,7 +262,7 @@ export class ChildProcess extends jslObjectAsyncInit {
             return;
         }
 
-        this.m_state.output = "--- ChildProcess.kill" + "\n";
+        this.m_state.output = "--- ChildProcess:kill" + "\n";
         return window?.jslChildProcess?.kill?.(this.m_key);
     }
 

@@ -58,6 +58,7 @@ export class jslObjectAsyncInit extends jslObject {
             this.m_objectAsyncInitInitPromiseResolve = resolve;
             this.m_objectAsyncInitInitPromiseReject = reject;
         });
+        this._resetInit();
     }
 
     /**
@@ -125,5 +126,15 @@ export class jslObjectAsyncInit extends jslObject {
         this.m_objectAsyncInitFailCause = null;
 
         this.m_objectAsyncInitInitPromiseResolve();
+    }
+
+    /**
+     * Resets the init promise. Use this to re-init something.
+     */
+    _resetInit() {
+        this.m_objectAsyncInitInitPromise = new Promise((resolve, reject) => {
+            this.m_objectAsyncInitInitPromiseResolve = resolve;
+            this.m_objectAsyncInitInitPromiseReject = reject;
+        });
     }
 }

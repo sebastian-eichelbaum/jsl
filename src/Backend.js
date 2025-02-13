@@ -310,6 +310,66 @@ export class ServiceError extends Translatable {
 }
 
 /**
+ * Provides the means to report issues and bugs to the developers.
+ */
+export class BugReportService extends Service {
+    /**
+     * Default configuration
+     */
+    static defaultConfig() {
+        return {
+            ...{
+                //
+            },
+            ...Service.defaultConfig(),
+        };
+    }
+
+    /**
+     * Create the backend service.
+     *
+     * @param {Object} config - The config as in @see StorageService.defaultConfig.
+     *     Merged with the default.
+     */
+    constructor(config = {}) {
+        super(_.merge(StorageService.defaultConfig(), config || {}));
+    }
+
+    /**
+     * Send a bug report.
+     *
+     * @async
+     * @param {Object} config - An object {sender, description, attachments}
+     * @throws {ServiceError} - If the config is invalid
+     * @returns {Promise} Resolves on success or rejects on error
+     */
+    async send(config) {
+        if (!config?.sender?.trim?.()) {
+            throw new ServiceError(this, "bugReportSenderEmpty", { sender: config?.sender });
+        }
+
+        const cfg = {
+            sender: config?.sender || "",
+            description: config?.description || "<no description>",
+            attachments: config?.attachments || [],
+        };
+
+        return this._send(cfg);
+    }
+
+    /**
+     * Implement send.
+     *
+     * @async
+     * @param {any} args - The args passed to @see BugReportService.send
+     * @returns {Promise} Resolves on success.
+     */
+    async _send(...args) {
+        throw new Error("Abstract function called.");
+    }
+}
+
+/**
  * Provides common user management functionality.
  */
 export class UserService extends Service {
@@ -1401,6 +1461,15 @@ export class Backend {
      */
     get database() {
         return this.services?.database;
+    }
+
+    /**
+     * The backend back reporting service, if any.
+     *
+     * @returns {BugReportService} The service or null
+     */
+    get bugReport() {
+        return this.services?.bugReport;
     }
 
     /**

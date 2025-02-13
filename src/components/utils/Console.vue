@@ -6,7 +6,30 @@
                 {{ title }}
             </v-toolbar-title>
             <v-spacer></v-spacer>
+            <v-spacer></v-spacer>
+
+            <v-menu>
+                <template v-slot:activator="{ props }">
+                    <v-btn v-bind="props" icon="mdi-filter" />
+                </template>
+                <v-list>
+                    <v-list-item @click="() => onFilter('debug')">
+                        <v-list-item-title>Debug</v-list-item-title>
+                    </v-list-item>
+                    <v-list-item @click="() => onFilter('info')">
+                        <v-list-item-title>Info</v-list-item-title>
+                    </v-list-item>
+                    <v-list-item @click="() => onFilter('warn')">
+                        <v-list-item-title>Warning</v-list-item-title>
+                    </v-list-item>
+                    <v-list-item @click="() => onFilter('error')">
+                        <v-list-item-title>Error</v-list-item-title>
+                    </v-list-item>
+                </v-list>
+            </v-menu>
+
             <v-btn icon="mdi-content-copy" @click="onCopyToClipboard" />
+            <v-btn v-if="backend.bugReporter != null" icon="mdi-bug" @click="onSendReport" />
         </v-toolbar>
 
         <component is="pre" id="stdout" ref="stdoutPre" class="jslapp-custom-scrollbar-html">
@@ -21,6 +44,8 @@
                 </span>
             </div>
         </component>
+
+        <SendBugReport ref="bugReporter" />
     </v-card>
 </template>
 
@@ -28,21 +53,45 @@
 import { ref, watch, nextTick, onMounted, computed } from "vue";
 import { ChildProcess } from "jsl/platforms/electron/ChildProcess";
 
+import { backend } from "jsl/Backend";
+
+import SendBugReport from "jsl/components/utils/SendBugReport.vue";
+
 const props = defineProps({
     // Title to show
-    title: { type: String, default: "Console" },
+    title: { type: String, default: "common.ui.console" },
 
     // The process
     process: { type: ChildProcess, default: null },
 
     maxHeight: { default: "400px" },
     minHeight: { default: "400px" },
+
+    // Log below this level are not printed. Allowed: "error", "warn", "info", "debug",
+    // If the user explicitly defines a filter level, this value is ignored.
+    minLogLevel: { type: String, default: "info" },
+
+    // If set, do not print messages that do not start with a log level tag.
+    skipUntagged: { type: Boolean, default: false },
 });
 
 const stdoutPre = ref();
 
+const bugReporter = ref();
+const filterLevel = ref();
+
+function onFilter(value) {
+    filterLevel.value = value;
+}
+
 function onCopyToClipboard() {
     navigator.clipboard.writeText(props.process?.output);
+}
+
+async function onSendReport() {
+    return bugReporter.value.sendReport({
+        attachments: [{ name: "common.ui.consoleLog", data: props.process?.output || "no output" }],
+    });
 }
 
 // Track changes in the model to handle scroll
@@ -63,28 +112,70 @@ function scrollToBottom() {
     });
 }
 
+const minLogLevel = computed(() => {
+    const levelAsNum = (asString) => {
+        switch (asString) {
+            case "debug":
+                return 0;
+            case "info":
+                return 1;
+            case "warn":
+                return 2;
+            case "error":
+                return 3;
+            default:
+                return -1;
+        }
+    };
+
+    const filterLevelNum = levelAsNum(filterLevel.value);
+    if (filterLevelNum >= 0) {
+        return filterLevelNum;
+    }
+
+    return levelAsNum(props.minLogLevel);
+});
+
 const fancyOutput = computed(() => {
     const src = props.process?.state?.output || "";
     let result = "";
     var arr = src.split("\n");
     for (const line of arr) {
-        if (line.startsWith("DBG")) {
+        if (line.startsWith("DBG") || line.startsWith("---")) {
+            if (minLogLevel.value > 0) {
+                continue;
+            }
+
             result += '<span class="jslConsoleDBGTag">DBG</span>' + line.slice(3) + "\n";
             continue;
         }
 
         if (line.startsWith("INF")) {
+            if (minLogLevel.value > 1) {
+                continue;
+            }
             result += '<span class="jslConsoleINFTag">INF</span>' + line.slice(3) + "\n";
             continue;
         }
 
         if (line.startsWith("WRN")) {
+            if (minLogLevel.value > 2) {
+                continue;
+            }
             result += '<span class="jslConsoleWRNTag">WRN</span>' + line.slice(3) + "\n";
             continue;
         }
 
         if (line.startsWith("ERR")) {
+            if (minLogLevel.value > 3) {
+                continue;
+            }
+
             result += '<span class="jslConsoleERRTag">ERR</span>' + line.slice(3) + "\n";
+            continue;
+        }
+
+        if (props.skipUntagged) {
             continue;
         }
 
@@ -160,5 +251,7 @@ onMounted(() => {
     word-wrap: break-word;*/
     overflow: auto;
     font-size: smaller;
+
+    height: 100%;
 }
 </style>
