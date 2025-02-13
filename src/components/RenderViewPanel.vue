@@ -76,6 +76,9 @@ const props = defineProps({
     // Add a "soft", "strong", or "hard" shadow. Use "none" to disable that
     shadow: { type: String, default: "none" },
 
+    // Enables the slide in animation for cases like top and bottom where they are disabled by default
+    slideIn: { type: Boolean, default: false },
+
     // Panel background.
     ...makeBackgroundStyleProps("", { color: "transparent", alpha: 1.0, brightness: 1.0, blur: 0 }),
 });
@@ -248,8 +251,14 @@ const boxTransform = computed(() => {
 
     switch (props.location) {
         case "b":
+            if (props.slideIn === true) {
+                return "translate(0, 100%)";
+            }
             return "scale(0)";
         case "t":
+            if (props.slideIn === true) {
+                return "translate(0, -100%)";
+            }
             return "scale(0)";
         case "r":
             return "scale(0)";
