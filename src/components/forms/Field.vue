@@ -48,7 +48,7 @@ Example:
                     v-model="model"
                     :name="name"
                     :rules="rules"
-                    :label="_fieldLabel"
+                    :label="tt(_fieldLabel).toString()"
                     :disabled="busy || disabled"
                 />
                 <v-text-field
@@ -57,7 +57,7 @@ Example:
                     v-model="model"
                     :name="name"
                     :rules="rules"
-                    :label="_fieldLabel"
+                    :label="tt(_fieldLabel).toString()"
                     :disabled="busy || disabled"
                 />
                 <v-text-field v-else-if="fieldType === 'combo'" />
@@ -67,7 +67,7 @@ Example:
                     v-model="model"
                     :name="name"
                     :rules="rules"
-                    :label="_fieldLabel"
+                    :label="tt(_fieldLabel).toString()"
                     :disabled="busy || disabled"
                 />
                 <v-select
@@ -76,7 +76,7 @@ Example:
                     v-model="model"
                     :name="name"
                     :rules="rules"
-                    :label="_fieldLabel"
+                    :label="tt(_fieldLabel).toString()"
                     :disabled="busy || disabled"
                 />
 
@@ -87,7 +87,7 @@ Example:
                     v-model="model"
                     :name="name"
                     :rules="rules"
-                    :label="_fieldLabel"
+                    :label="tt(_fieldLabel).toString()"
                     :disabled="busy || disabled"
                 >
                     <template v-for="(_, slot) of $slots" v-slot:[slot]="scope">
