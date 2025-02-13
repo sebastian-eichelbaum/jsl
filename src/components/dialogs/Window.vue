@@ -5,14 +5,14 @@ Use windows for more complex dialogs. The plain ModalDialog is good for question
 -->
 
 <template>
-    <ModalDialog v-model="model" @close="onClose" v-bind="{ ...$props, ...$attrs }">
+    <ModalDialog v-model="model" @close="onClose" v-bind="{ ...$props, ...$attrs }" :persistent="isPersistent">
         <v-toolbar density="comfortable" :color="windowTitleBG">
             <v-icon v-if="icon" class="ml-5">{{ icon }}</v-icon>
             <v-toolbar-title class="font-weight-medium">
-                {{ title }}
+                {{ tt(title) }}
             </v-toolbar-title>
             <v-spacer></v-spacer>
-            <v-btn icon @click="doClose">
+            <v-btn icon :disabled="!allowClose" @click="doClose">
                 <v-icon>mdi-close</v-icon>
             </v-btn>
         </v-toolbar>
@@ -21,7 +21,7 @@ Use windows for more complex dialogs. The plain ModalDialog is good for question
             <v-card-title>
                 {{ tt(greetText) }}
             </v-card-title>
-            <v-card-subtitle class="mt-3 text-wrap text-body-2" style="white-space: break-spaces !important;">{{
+            <v-card-subtitle class="mt-3 text-wrap text-body-2" style="white-space: break-spaces !important">{{
                 tt(greetSubtext)
             }}</v-card-subtitle>
         </v-card-item>
@@ -55,6 +55,7 @@ import Button from "jsl/components/Button.vue";
 
 const model = defineModel();
 
+
 const props = defineProps({
     // Dialog max width.
     maxWidth: { default: 500 },
@@ -72,6 +73,12 @@ const props = defineProps({
     noGreetBox: { type: Boolean, default: false },
     // The brightness of the box. If > 1, it gets brighter
     greetBrightness: { type: Number, default: 0.66 },
+
+    // If false, the window cannot be closed (except by closing it externally via its model)
+    allowClose: { type: Boolean, default: true },
+
+    // Make the dialog persistent - this disallows closing it with "ESC" or clicking outside of it.
+    persistent: { type: Boolean, default: false },
 });
 
 // TODO: add background style?
@@ -79,11 +86,22 @@ const windowTitleBG = computed(() => {
     return props.titleBackground || useTheme()?.jsl?.windowTitleBG || "background";
 });
 
+const isPersistent = computed(() => {
+    return props.persistent || !props.allowClose;
+});
+
 function doClose() {
+    if (!props.allowClose) {
+        return;
+    }
+
     model.value = false;
 }
 
 function onClose() {
+    if (!props.allowClose) {
+        return;
+    }
     model.value = false;
 }
 
