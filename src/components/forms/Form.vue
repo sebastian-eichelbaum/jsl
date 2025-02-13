@@ -83,7 +83,7 @@ async function doInit(model) {
 
 <template>
     <div :style="{ 'max-width': maxWidth }">
-        <BusyOverlay :busy="!noBusyOverlay && isBusy">
+        <BusyOverlay :busy="!noBusyOverlay && isBusy" :ok="_isOK">
             <v-row>
                 <v-col cols="12" v-if="title" :align="titleAlign">
                     <span :class="titleClass" :style="titleStyle">{{ tt(titlePrefix) }} {{ tt(title) }}</span>
@@ -225,6 +225,7 @@ import _ from "lodash";
 
 import { Translatable, tt } from "jsl/Localization";
 import { fwdProps, fwdBindProps } from "jsl/utils/ForwardVueProps";
+import { wait } from "jsl/utils/Await";
 
 import BusyOverlay from "jsl/components/BusyOverlay.vue";
 import Grid from "jsl/components/Grid.vue";
@@ -312,6 +313,9 @@ const props = defineProps({
     // Forward all v-row props
     ...fwdProps("row"),
 
+    // If set, this is the time in millisec to show an OK indicator on success
+    okIndicatorDuration: { type: Number, default: 0 },
+
     // Model for field values. Forwarded to the default slot. You can set this to capture or modify field values easily.
     // The object members are named as the fields "name" properties.
     values: { type: Object, default: reactive({}) },
@@ -385,6 +389,7 @@ const alertProps = fwdBindProps("alert", props, {
     border: "start",
 });
 
+const _isOK = ref(false);
 const _busy = ref(false);
 const isBusy = computed(() => {
     return props.busy || _busy.value;
@@ -451,7 +456,12 @@ async function submit(submitEvent) {
 
                 return action(formState);
             })
-            .then((result) => {
+            .then(async (result) => {
+                if (props.okIndicatorDuration > 0) {
+                    setState({ busy: true, busyDelay: 0, ok: true });
+                    await wait(props.okIndicatorDuration);
+                }
+
                 setState(
                     _.merge(
                         { reset: formState?.resetOnOK || true, busy: false, busyDelay: 500, error: null },
@@ -556,6 +566,8 @@ async function init() {
  *      reset: false,
  *      // If set and boolean, update busy state
  *      busy: null,
+ *      // If set and boolean true, the busy overlay shows a little success icon
+ *      ok: null,
  *      // If set and number, delay busy state update in ms
  *      busyDelay: 0,
  *      // Error string or Translatable passed on to the form error component.
@@ -583,7 +595,7 @@ function setState(newState) {
     }
 
     if (newState?.busy != null) {
-        setBusy(newState.busy, newState?.busyDelay || 0);
+        setBusy(newState.busy, newState?.busyDelay || 0, newState?.ok);
     }
 }
 
@@ -617,11 +629,13 @@ function reset() {
  * Set the form busy. This prevents any new submissions
  *
  * @param {Boolean} [value] - The busy state
+ * @param {Boolean} [ok] - If true, a little check symbol is shown to indicate success
  * @param {Number} [outDelayMs] - A delay in millisec
  */
-function setBusy(value = true, delayMs = 0) {
+function setBusy(value = true, delayMs = 0, ok = false) {
     setTimeout(() => {
         _busy.value = value;
+        _isOK.value = ok;
     }, delayMs);
 }
 
