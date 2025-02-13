@@ -56,6 +56,11 @@ export const de = {
                 moreDetails: "Mehr Details",
                 uploadX: "{what} hochladen",
                 hint: "Hinweis",
+                bugReport: "Fehlerbericht",
+                attachment: "Anhang | Anhänge",
+                console: "Konsole",
+                consoleLog: "Konsolenausgabe",
+                unavailable: "Nicht verfügbar",
             },
             prompt: {
                 areYouSure: "Bist du sicher?",
@@ -66,6 +71,7 @@ export const de = {
                 updateReadyToInstall:
                     "Ein Update wurde heruntergeladen. Das Update wird nach einem Neustart automatisch installiert.",
                 bookNow: "Jetzt buchen!",
+                sendBugReport: "Fehlerbericht senden",
             },
             msg: {
                 greet: "Hallo {user}",
@@ -89,6 +95,11 @@ export const de = {
                 loading: "Laden",
                 unknownBackendError:
                     "Fehler. Stelle sicher, dass du online bist und versuche es erneut. Guru code: {error}.",
+                sendBugReport:
+                    "Bitte beschreibe dein Problem. Wie hast du den Fehler ausgelöst, was hast du als Ergebnis erwartet und was ist tatsächlich passiert?",
+                sendBugReportFailed:
+                    "Der Fehlerbericht konnte nicht abgeschickt werden. Bitte stell sicher, dass du online bist und versuche es erneut.",
+                serviceUnavailable: "Dieser Service/diese Funktion steht aktuell nicht zur Verfügung.",
             },
         },
 
@@ -119,6 +130,8 @@ export const de = {
                 lastname: "Nachame",
                 name: "Name",
                 company: "Firma",
+                description: "Beschreibung",
+                sender: "Absender ({what})",
             },
             prompt: {
                 allowedFileTypes: "Dateien: {what}",

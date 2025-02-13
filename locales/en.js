@@ -56,6 +56,11 @@ export const en = {
                 moreDetails: "More Details",
                 uploadX: "Upload {what}",
                 hint: "Hint",
+                bugReport: "Bug Report",
+                attachment: "Attachment | Attachments",
+                console: "Console",
+                consoleLog: "Console Log",
+                unavailable: "Not available",
             },
             prompt: {
                 areYouSure: "Are you sure?",
@@ -66,6 +71,7 @@ export const en = {
                 updateReadyToInstall:
                     "An update has been downloaded. The update will be installed automatically upon restart.",
                 bookNow: "Book now!",
+                sendBugReport: "Send Bug Report",
             },
             msg: {
                 greet: "Hello {user}",
@@ -89,6 +95,10 @@ export const en = {
                 loadingPerc: "Loading: {percent}",
                 loading: "Loading",
                 unknownBackendError: "Error. Ensure that you are online and retry. Guru code: {error}.",
+                sendBugReport:
+                    "Please describe your issue. How did you trigger the issue, what outcome did you expect and what happened instead?",
+                sendBugReportFailed: "Sending the bug report failed. Please ensure that you are online and try again.",
+                serviceUnavailable: "This service/functionality is currently unavailable.",
             },
         },
 
@@ -118,6 +128,8 @@ export const en = {
                 lastname: "Last name",
                 name: "Name",
                 company: "Company",
+                description: "Description",
+                sender: "Sender ({what})",
             },
             prompt: {
                 allowedFileTypes: "Files: {what}",
