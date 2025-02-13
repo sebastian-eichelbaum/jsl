@@ -2,10 +2,28 @@ import _ from "lodash";
 import path from "path";
 import fs from "fs";
 
+// ATTENTION: To utilize this boilerplate:
+//
+// npm install --save-dev vite-plugin-vuetify
+// npm install --save-dev "@vitejs/plugin-vue"
+
 import vue from "@vitejs/plugin-vue";
 import vuetify from "vite-plugin-vuetify";
 
 import { defineConfig as viteDefineConfig } from "vite";
+
+// Integrate .env dotfile vars
+import { config as dotenvConfig } from "dotenv";
+dotenvConfig();
+
+// The defined/injected variables, common to all jsl based apps
+const commonDefines = {
+    // Provide the package app version
+    __APP_VERSION__: JSON.stringify(process.env.npm_package_version),
+
+    // Pick-up the env var "APP_CUSTOMIZATION_ID" to make specific builds
+    __APP_CUSTOMIZATION_ID__: JSON.stringify(process.env.APP_CUSTOMIZATION_ID || ""),
+};
 
 // https://vitejs.dev/config/
 export const defaultConfig = {
@@ -29,13 +47,7 @@ export const defaultConfig = {
                 : undefined,
         }),
     ],
-    define: {
-        // Provide the package app version
-        __APP_VERSION__: JSON.stringify(process.env.npm_package_version),
-
-        // Pick-up the env var "APP_CUSTOMIZATION_ID" to make specific builds
-        __APP_CUSTOMIZATION_ID__: JSON.stringify(process.env.APP_CUSTOMIZATION_ID || ""),
-    },
+    define: commonDefines,
     resolve: {
         alias: {},
     },
@@ -60,4 +72,51 @@ export function defineConfig(...configs) {
     );
 
     return viteDefineConfig(mergedCfg);
+}
+
+/**
+ * Generate an Electron vite config for the main process and extend the defaults with the given overrides.
+ */
+export function makeMainConfig(config = {}) {
+    return viteDefineConfig(
+        _.merge(
+            {
+                define: commonDefines,
+                resolve: {
+                    // Some libs that can run in both Web and Node.js, such as `axios`, we need to tell Vite to build them in Node.js.
+                    browserField: false,
+                    conditions: ["node"],
+                    mainFields: ["module", "jsnext:main", "jsnext"],
+                    alias: {
+                        // "@": path.resolve(__dirname, "./src"),
+                    },
+                },
+            },
+            config || {},
+        ),
+    );
+}
+
+/**
+ * Generate an Electron vite config for the render process and extend the defaults with the given overrides.
+ */
+export function makeRendererConfig(config = {}) {
+    // The render process is the same as the standard web build.
+    // NOTE: defineConfig automatically merges with defaultConfig
+    return defineConfig(config || {});
+}
+
+/**
+ * Generate an Electron preload vite config and extend the defaults with the given overrides.
+ */
+export function makePreloadConfig(config = {}) {
+    // NOTE: defineConfig automatically merges with defaultConfig. This is not wanted here.
+    return viteDefineConfig(
+        _.merge(
+            {
+                define: commonDefines,
+            },
+            config || {},
+        ),
+    );
 }

@@ -12,7 +12,8 @@
     "license": "BSD-2-Clause",
     "devDependencies": {
         "sass": "^1.69.7",
-        "sass-loader": "^13.3.3"
+        "sass-loader": "^13.3.3",
+        "dotenv": "^16.4.7"
     },
     "dependencies": {
         "@mdi/font": "^7.3.67",
