@@ -145,15 +145,10 @@ async function onSubmit(state) {
         if (reporter == null) {
             throw "common.msg.sendBugReportFailed";
         }
-        await reporter
-            .send({
-                sender: state.values.sender,
-                description: state.values.description,
-                attachments: allAttachments.value,
-            })
-            .catch((e) => {
-                throw "common.msg.sendBugReportFailed";
-            });
+        await reporter.send(state.values.sender, state.values.description, allAttachments.value).catch((e) => {
+            console.error(e);
+            throw "common.msg.sendBugReportFailed";
+        });
 
         return;
     });

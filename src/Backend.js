@@ -339,22 +339,18 @@ export class BugReportService extends Service {
      * Send a bug report.
      *
      * @async
-     * @param {Object} config - An object {sender, description, attachments}
+     * @param {String} sender - The sender info. Must not be empty/nullish.
+     * @param {String} description - A description
+     * @param {Array<Object>} attachments - A list of {name, data}
      * @throws {ServiceError} - If the config is invalid
      * @returns {Promise} Resolves on success or rejects on error
      */
-    async send(config) {
-        if (!config?.sender?.trim?.()) {
-            throw new ServiceError(this, "bugReportSenderEmpty", { sender: config?.sender });
+    async send(sender, description, attachments) {
+        if (!sender?.trim?.()) {
+            throw new ServiceError(this, "bugReportSenderEmpty", { sender: sender });
         }
 
-        const cfg = {
-            sender: config?.sender || "",
-            description: config?.description || "<no description>",
-            attachments: config?.attachments || [],
-        };
-
-        return this._send(cfg);
+        return this._send(sender, description || "<no description>", attachments);
     }
 
     /**

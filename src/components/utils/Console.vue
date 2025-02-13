@@ -29,7 +29,7 @@
             </v-menu>
 
             <v-btn icon="mdi-content-copy" @click="onCopyToClipboard" />
-            <v-btn v-if="backend.bugReporter != null" icon="mdi-bug" @click="onSendReport" />
+            <v-btn v-if="backend.bugReport != null" icon="mdi-bug" @click="onSendReport" />
         </v-toolbar>
 
         <component is="pre" id="stdout" ref="stdoutPre" class="jslapp-custom-scrollbar-html">
@@ -51,8 +51,9 @@
 
 <script setup>
 import { ref, watch, nextTick, onMounted, computed } from "vue";
-import { ChildProcess } from "jsl/platforms/electron/ChildProcess";
 
+import { ChildProcess } from "jsl/platforms/electron/ChildProcess";
+import { tt } from "jsl/Localization";
 import { backend } from "jsl/Backend";
 
 import SendBugReport from "jsl/components/utils/SendBugReport.vue";
@@ -90,7 +91,7 @@ function onCopyToClipboard() {
 
 async function onSendReport() {
     return bugReporter.value.sendReport({
-        attachments: [{ name: "common.ui.consoleLog", data: props.process?.output || "no output" }],
+        attachments: [{ name: tt("common.ui.consoleLog").toString(), data: props.process?.output || "no output" }],
     });
 }
 

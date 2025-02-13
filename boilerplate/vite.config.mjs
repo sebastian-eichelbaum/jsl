@@ -18,6 +18,9 @@ dotenvConfig();
 
 // The defined/injected variables, common to all jsl based apps
 const commonDefines = {
+    // The package name as defined in the package json during build
+    __APP_NAME__: JSON.stringify(process.env.npm_package_name || ""),
+
     // Provide the package app version
     __APP_VERSION__: JSON.stringify(process.env.npm_package_version),
 
