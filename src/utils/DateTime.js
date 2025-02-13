@@ -63,8 +63,10 @@ export class DateTime {
         const day = date.toLocaleString("default", { day: "2-digit" });
 
         const h = date.toLocaleString("default", { hour: "2-digit", hour12: false });
-        const m = date.toLocaleString("default", { minute: "2-digit" });
-        const s = date.toLocaleString("default", { second: "2-digit" });
+        const m = ("0" + date.getMinutes()).slice(-2);
+        // const m = date.toLocaleString("default", { minute: "2-digit" });
+        const s = ("0" + date.getSeconds()).slice(-2);
+        //const s = date.toLocaleString("default", { second: "2-digit" });
 
         return year + "." + month + "." + day + " - " + h + ":" + m + ":" + s;
     }
