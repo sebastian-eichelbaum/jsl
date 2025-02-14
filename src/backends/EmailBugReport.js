@@ -18,6 +18,9 @@ export class EmailBugReportService extends BugReportService {
             ...{
                 // The receiver
                 to: null, // "bug-manager@abcd.com",
+                // The sender of the mail. Most SMTP servers reject mails not coming from their own supported domains.
+                // So, define a sender in the domain of the server.
+                from: null, // "bug-reporter@abcd.com",
                 source: null, // which program send this?
                 server: {
                     // The SMTP server user name
@@ -70,6 +73,7 @@ export class EmailBugReportService extends BugReportService {
             // The full config contains some non-copyable things like errorMap. So copy the relevant data
             {
                 to: this.config.to,
+                from: this.config.from,
                 source: this.config.source,
                 server: this.config.server,
             },
@@ -124,7 +128,8 @@ export function connectIPCMain(_app) {
         });
 
         const info = await transporter.sendMail({
-            from: sender,
+            from: config.from,
+            replyTo: sender,
             to: config.to,
             subject: "Bug Report - " + config.source + ": " + DateTime.ddmmyyhhmmss(),
             text: "Description:\n\n" + description + "\n\nAttachments:\n\n" + attachmentsStr,
