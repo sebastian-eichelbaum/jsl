@@ -24,7 +24,7 @@ const steps = [
     ...
 ];
 
-// Transforms the single-step results in steps to some arbitrary result as needed.
+// Transforms the single-step results in steps to some arbitrary result as needed. Can be async.
 function resultMapper(stepResults, mapped)
 {
     // take the values. "result" contains the value returned by the submit handler of the step's form
@@ -39,11 +39,11 @@ function resultMapper(stepResults, mapped)
         path: mapped["CreateWorkingDir"].result.path,
         fullModel: mapped["CreateWorkingDir"].rawValues,
     };
- 
+
     // If no mapper is defined, the default mapped "mapped" will be used
     // I.e.
 
-    // { 
+    // {
     //   "CreateWorkingDir": {
     //     "path": "/home/seb/Daten/EffigosTest",
     //     "name": "asd"
@@ -76,10 +76,12 @@ function onOK(result, state)
         </template>
 
         <template #___done>
-            <!-- Show the steps and their results as JSON -->
-            <slot name="done" :result="_mappedResult">
-                {{ _steps }}
-            </slot>
+            <BusyOverlay :busy="_mappingResult">
+                <!-- Show the steps and their results as JSON -->
+                <slot name="done" :result="_mappedResult">
+                    {{ _steps }}
+                </slot>
+            </BusyOverlay>
         </template>
     </Multiplexer>
 </template>
@@ -99,6 +101,7 @@ function defaultMapper(state) {
 import { ref, reactive, computed, onMounted, markRaw } from "vue";
 
 import Multiplexer from "jsl/components/Multiplexer.vue";
+import BusyOverlay from "jsl/components/BusyOverlay.vue";
 
 const props = defineProps({
     // Step definitions
@@ -107,6 +110,7 @@ const props = defineProps({
     // Maps the steps results to some custom result object of your liking.
     // If not set, an object { ...step.id: step.result} is returned
     // As second param, the default mapped results are passed on for convenience.
+    // Can be async.
     resultMapper: {
         type: Function,
         required: false,
@@ -131,6 +135,7 @@ const _step = ref(0);
 
 // Flow result after all steps are done.
 let _mappedResult = {};
+let _mappingResult = ref(false);
 
 // The steps as given via props but prepared an enhanced to be used her.
 const _steps = ref([]);
@@ -158,7 +163,7 @@ onMounted(() => {
             throw new Error("Each step requires a string ID.");
         }
 
-        step.ok = (state) => {
+        step.ok = async (state) => {
             // State is the object send along OK in jsl Form.vue
             step.result = state.result;
             step.state = state.state;
@@ -173,15 +178,20 @@ onMounted(() => {
                     ...props.steps[_step.value].props,
                     ...props.steps[_step.value]?.propsSet?.(_trackedResults),
                 };
+
+                return;
             }
 
-            if (isDone()) {
-                _mappedResult = defaultMapper(stepsResult);
-                if (props.resultMapper != null) {
-                    _mappedResult = props?.resultMapper?.(stepsResult, _mappedResult);
-                }
-                emit("ok", _mappedResult, stepsResult);
+            _mappedResult = defaultMapper(stepsResult);
+            if (props?.resultMapper != null) {
+                _mappingResult.value = true;
+                _mappedResult = await props.resultMapper(stepsResult, _mappedResult);
+
+                _mappingResult.value = false;
+                _step.preparingResult = false;
             }
+
+            emit("ok", _mappedResult, stepsResult);
         };
 
         if (step.model == null) {
