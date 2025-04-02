@@ -53,3 +53,8 @@ body {
     text-align: justify;
     text-align-last: center;
 }
+
+// Disallow text selection
+.jsl-noTextSelect {
+    user-select: none;
+}
