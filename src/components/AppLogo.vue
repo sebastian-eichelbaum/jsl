@@ -48,6 +48,13 @@ Displays the app logo.
             style="color: rgba(255, 255, 255, 0.3)"
             >{{ _version }}</span
         >
+        <span
+            v-if="_channel && showChannel"
+            class="text-caption font-weight-light versionBaselineShift text-uppercase"
+            style="color: rgba(255, 255, 255, 0.4)"
+        >
+            &nbsp;<b>{{ _channel }}</b>
+        </span>
     </Link>
 </template>
 
@@ -100,8 +107,14 @@ const props = defineProps({
     // A nice version text to show, or null if the AppConfig.version should be used.
     version: { type: String, default: null },
 
+    // A version channel. Usually something like "preview" or "prod". If null, AppConfig.channel is used
+    channel: { type: String, default: null },
+
     // Disable version display
     showVersion: { type: Boolean, default: false },
+
+    // Disable channel display next to the version number?
+    showChannel: { type: Boolean, default: false },
 
     // Show a "powered by"- text?
     showPoweredBy: { type: Boolean, default: false },
@@ -115,6 +128,10 @@ const _href = computed(() => {
 
 const _version = computed(() => {
     return props.version || appConfig.version;
+});
+
+const _channel = computed(() => {
+    return props.channel || appConfig.channel;
 });
 
 const versionBaselineShift = computed(() => {

@@ -24,8 +24,11 @@ const commonDefines = {
     // Provide the package app version
     __APP_VERSION__: JSON.stringify(process.env.npm_package_version),
 
-    // Pick-up the env var "APP_CUSTOMIZATION_ID" to make specific builds
+    // Pick-up the env var "APP_CUSTOMIZATION_ID" to make specific builds.
     __APP_CUSTOMIZATION_ID__: JSON.stringify(process.env.APP_CUSTOMIZATION_ID || ""),
+
+    // USe env "APP_CHANNEL" to specify a release channel.
+    __APP_CHANNEL__: JSON.stringify(process.env.APP_CHANNEL || ""),
 };
 
 // https://vitejs.dev/config/

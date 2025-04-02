@@ -17,6 +17,10 @@ export class AppConfig {
             // Version info. If null-ish, the macro __APP_VERSION__ is used.
             version: null,
 
+            // Allows to specify a release channel name. If null, the env var __APP_CHANNEL__ is used. You might also
+            // want to set this to __APP_CUSTOMIZATION_ID__
+            channel: null,
+
             // The application name
             name: "MyApp",
 
@@ -128,6 +132,11 @@ export class AppConfig {
     // The app version
     get version() {
         return this.config.version || __APP_VERSION__;
+    }
+
+    // The app channel
+    get channel() {
+        return this.config.channel || __APP_CHANNEL__;
     }
 
     // The company name
