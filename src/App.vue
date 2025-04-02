@@ -4,9 +4,20 @@ A common App skeleton that provides a authorization screen and a main screen.
 This can be seen as an inspiration and tutorial on how to setup an app.
 
 * The anonymous slot defines the main screen content.
+* The slot "overlay" represents the content of the global app overlay. The props "overlay" forward props to the jsl Overlay
 -->
 
 <template>
+    <Overlay
+        v-if="!noOverlay"
+        fixed
+        :z-index="5000"
+        v-bind="fwdBindProps('overlay', $props)"
+        :modelValue="overlayVisible"
+    >
+        <slot name="overlay" />
+    </Overlay>
+
     <v-app id="app">
         <v-main>
             <Multiplexer :selected="screen">
@@ -47,6 +58,8 @@ import Multiplexer from "jsl/components/Multiplexer.vue";
 
 import Authentfication from "jsl/views/Authentication.vue";
 
+import Overlay from "jsl/components/Overlay.vue";
+
 import { UserService, backend } from "jsl/Backend";
 
 const props = defineProps({
@@ -56,6 +69,12 @@ const props = defineProps({
     // If set, the init overlay is not managed. You have to take care of it
     doNotHideInitOverlay: { type: Boolean, default: false },
 
+    // If true, the overlay is activated. To fully disable the global overlay, use noOverlay
+    overlayVisible: { type: Boolean, default: false },
+
+    // Fully disables the integrated global overlay
+    noOverlay: { type: Boolean, default: false },
+
     // Forward some BigPanel/Background component props. (As Background Style props as in Style.js)
     ...fwdProps("authBackground"),
     // Quit dialog props, especially the title and subtitle props might be interesting
@@ -63,6 +82,9 @@ const props = defineProps({
 
     // Scrollbar props
     ...fwdProps("scrollbarStyleProps"),
+
+    // The overlay
+    ...fwdProps("overlay"),
 });
 
 const userBackend = props.userService || backend?.user;

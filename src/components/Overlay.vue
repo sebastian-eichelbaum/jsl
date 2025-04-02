@@ -86,7 +86,8 @@ import { makeBackgroundStyleProps, computedBackgroundStyle, computedBackgroundSt
 const model = defineModel({ default: true });
 
 const props = defineProps({
-    // The z-index. 1500 is above the app bar but below dialogs
+    // The z-index. 1500 is above the app bar but below dialogs and menus
+    // This is on purpose as overlays can be used as dialog background.
     zIndex: { type: Number, default: 1500 },
 
     // Classes to apply to the created component.

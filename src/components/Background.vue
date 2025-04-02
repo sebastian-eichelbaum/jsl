@@ -36,6 +36,10 @@ const props = defineProps({
     // If true, the wrapper div is absolute. It will cover the whole viewport. If false, it is relative.
     absolute: { type: Boolean, default: false },
 
+    // If true, the wrapper div is fixed (position). It will cover the whole viewport, but does not scroll. Takes
+    // precedence over absolute.
+    fixed: { type: Boolean, default: false },
+
     // Set to disable the explicit background. Especially useful when using this as overlay.
     noBackground: { type: Boolean, default: false },
 
@@ -62,7 +66,7 @@ const bgColor = computed({
 
 const absWrapper = computed({
     get() {
-        return props.absolute ? "absolute" : "relative";
+        return props.fixed ? "fixed" : props.absolute ? "absolute" : "relative";
     },
 });
 
