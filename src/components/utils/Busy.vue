@@ -12,13 +12,13 @@ A nice busy overlay spinner with rounded percent and message display.
     <v-fade-transition mode="out-in">
         <div id="overlay" v-if="failed">
             <div id="overlayContent">
-                <v-icon icon="mdi-close" size="x-large" class="spinner" :color="spinnerColor" />
+                <v-icon icon="mdi-close" size="x-large" class="spinner" :color="failedColor" />
                 <p class="text-body-2 pr-10 pl-10 pt-4 font-weight-bold">{{ tt(failedMessage) }}</p>
             </div>
         </div>
         <div id="overlay" v-if="ok && !failed">
             <div id="overlayContent">
-                <v-icon icon="mdi-check" size="x-large" class="spinner" :color="spinnerColor" />
+                <v-icon icon="mdi-check" size="x-large" class="spinner" :color="okColor" />
             </div>
         </div>
         <div id="overlay" v-if="busy && !ok && !failed">
@@ -60,6 +60,10 @@ const props = defineProps({
     failed: { type: Boolean, required: false, default: false },
     // Message to show on failure
     failedMessage: { type: [String, Translatable], required: false, default: null },
+
+    // Color to use for the OK and failure icons
+    okColor: { type: String, required: false, default: "success" },
+    failedColor: { type: String, required: false, default: "error" },
 
     // A message to display.
     msg: { type: String, required: false, default: "" },
