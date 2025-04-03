@@ -51,7 +51,7 @@ Displays the app logo.
         <span
             v-if="_channel && showChannel"
             class="text-caption font-weight-light versionBaselineShift text-uppercase"
-            style="color: rgba(255, 255, 255, 0.4)"
+            :style="_channelStyle"
         >
             &nbsp;<b>{{ _channel }}</b>
         </span>
@@ -62,6 +62,7 @@ Displays the app logo.
 import { computed } from "vue";
 
 import { tt, Translatable } from "jsl/Localization";
+import { resolveColor } from "jsl/utils/Style";
 
 import { appConfig } from "jsl/AppConfig";
 import Link from "jsl/components/Link.vue";
@@ -109,6 +110,8 @@ const props = defineProps({
 
     // A version channel. Usually something like "preview" or "prod". If null, AppConfig.channel is used
     channel: { type: String, default: null },
+    // The color to highlight the channel, or a function that takes the channel as string, and returns a matching color.
+    channelColor: { type: [String, Function], required: false, default: "rgba(255, 255, 255, 0.4)" },
 
     // Disable version display
     showVersion: { type: Boolean, default: false },
@@ -132,6 +135,14 @@ const _version = computed(() => {
 
 const _channel = computed(() => {
     return props.channel || appConfig.channel;
+});
+
+const _channelStyle = computed(() => {
+    if (typeof props.channelColor === "function") {
+        return "color: " + resolveColor(props.channelColor(_channel.value)).toCSS();
+    }
+
+    return "color: " + resolveColor(props.channelColor || "rgba(255, 255, 255, 0.4)").toCSS();
 });
 
 const versionBaselineShift = computed(() => {
