@@ -1,5 +1,5 @@
 <template>
-    <ConfirmDialog v-bind="{ ...$props, ...$attrs }" v-model="dialogModel" @yes="onYes">
+    <ConfirmDialog :z-index="9999" v-bind="{ ...$props, ...$attrs }" v-model="dialogModel" @yes="onYes">
         <slot />
     </ConfirmDialog>
 </template>
