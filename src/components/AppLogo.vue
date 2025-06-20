@@ -123,6 +123,9 @@ const props = defineProps({
     showPoweredBy: { type: Boolean, default: false },
     // The text
     poweredByText: { type: [String, Translatable], default: tt("common.msg.poweredBy") },
+
+    // How to self-align the HTML logo.
+    htmlLogoAlignSelf: { type: String, default: "end" },
 });
 
 const _href = computed(() => {
@@ -215,7 +218,7 @@ function onClick() {
 }
 
 .htmlLogo {
-    align-self: end;
+    align-self: v-bind("htmlLogoAlignSelf");
 }
 
 .imgLogo {
