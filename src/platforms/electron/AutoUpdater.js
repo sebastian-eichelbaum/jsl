@@ -71,23 +71,23 @@ export function setup(app, config) {
     };
 
     const notifyUpdateStatusIPC = (cb) => {
-        app.mainWindow.webContents.send(cb);
+        app.mainWindow.webContents.send(cb, { config: cfg });
     };
 
     const notifyUpdateErrorIPC = (error) => {
         app.mainWindow.webContents.send("onUpdateError", { error: JSON.parse(JSON.stringify(error)) });
     };
 
-    autoUpdater.on("update-downloaded", (event, releaseNotes, releaseName) => {
+    autoUpdater.on("update-downloaded", (_event, releaseNotes, releaseName) => {
         _main_updateReady = true;
         notifyUpdateIPC(releaseNotes, releaseName);
     });
 
-    autoUpdater.on("checking-for-update", (event) => {
+    autoUpdater.on("checking-for-update", (_event) => {
         notifyUpdateStatusIPC("onUpdateCheck");
     });
 
-    autoUpdater.on("update-available", (event) => {
+    autoUpdater.on("update-available", (_event) => {
         notifyUpdateStatusIPC("onUpdateAvailable");
     });
 
@@ -172,8 +172,8 @@ export class AutoUpdater {
     static defaultCallbacks() {
         return {
             // Called when an update was loaded and can be applied.
-            onUpdateReady: () => {
-                console.log("Update ready.");
+            onUpdateReady: (details) => {
+                console.log("Update ready.", details);
             },
 
             // Called on error. Usualyy when sevrer urls mismatch or an network error happended.
@@ -182,18 +182,18 @@ export class AutoUpdater {
             },
 
             // Called whenever an update check is triggered
-            onUpdateCheck: () => {
-                console.log("Update check");
+            onUpdateCheck: (details) => {
+                console.log("Update check", details);
             },
 
             // Called whenever an update check returned and available update
-            onUpdateAvailable: () => {
-                console.log("Update available");
+            onUpdateAvailable: (details) => {
+                console.log("Update available", details);
             },
 
             // Called whenever an update check is triggered
-            onUpdateUnavailable: () => {
-                console.log("Update unavailable");
+            onUpdateUnavailable: (details) => {
+                console.log("Update unavailable", details);
             },
         };
     }
@@ -206,24 +206,24 @@ export class AutoUpdater {
     constructor(callbacks) {
         this.m_callbacks = _.merge(AutoUpdater.defaultCallbacks(), callbacks || {});
 
-        window?.jslAutoUpdater?.onUpdateReady?.(() => {
-            this.m_callbacks?.onUpdateReady?.();
+        window?.jslAutoUpdater?.onUpdateReady?.((details) => {
+            this.m_callbacks?.onUpdateReady?.(details);
         });
 
         window?.jslAutoUpdater?.onUpdateError?.((error) => {
             this.m_callbacks?.onUpdateError?.(error);
         });
 
-        window?.jslAutoUpdater?.onUpdateCheck?.(() => {
-            this.m_callbacks?.onUpdateCheck?.();
+        window?.jslAutoUpdater?.onUpdateCheck?.((details) => {
+            this.m_callbacks?.onUpdateCheck?.(details);
         });
 
-        window?.jslAutoUpdater?.onUpdateAvailable?.(() => {
-            this.m_callbacks?.onUpdateAvailable?.();
+        window?.jslAutoUpdater?.onUpdateAvailable?.((details) => {
+            this.m_callbacks?.onUpdateAvailable?.(details);
         });
 
-        window?.jslAutoUpdater?.onUpdateUnavailable?.(() => {
-            this.m_callbacks?.onUpdateUnavailable?.();
+        window?.jslAutoUpdater?.onUpdateUnavailable?.((details) => {
+            this.m_callbacks?.onUpdateUnavailable?.(details);
         });
 
         // In case we missed it, re-inform about an ready update
