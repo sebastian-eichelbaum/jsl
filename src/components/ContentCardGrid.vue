@@ -7,6 +7,7 @@
         v-bind="{ ...$props, ...$attrs }"
         :titleActions="titleActions"
         :actionCards="actionCards"
+        v-if="!(hideIfEmpty && isEmpty)"
     >
         <component
             v-for="item in mappedContent"
@@ -24,6 +25,10 @@ import { ref, reactive, computed, onMounted } from "vue";
 import CardGrid from "jsl/components/CardGrid.vue";
 
 const props = defineProps({
+    // If true, the component will not render if there is no content to show. This works regardless of the action cards
+    // that might be present.
+    hideIfEmpty: { type: Boolean, default: false },
+
     // The props to apply to each content card
     contentCardProps: { default: {} },
 
@@ -50,6 +55,10 @@ const props = defineProps({
             dataMap: null,
         },
     },
+});
+
+const isEmpty = computed(() => {
+    return props.content?.data == null || props.content.data.length === 0;
 });
 
 const mappedContent = computed(() => {
