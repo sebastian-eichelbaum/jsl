@@ -50,6 +50,10 @@ export class ChildProcess extends jslObjectAsyncInit {
             // Map the given return code to some error message. Can be a localization string. Only called for return
             // codes that are not OK after testing with okReturnCode
             badReturnCodeMap: (returnCode) => "Bad error code",
+
+            // If true, the command configuration will not be shown when logging or throwing. Use this to hide sensitive
+            // information like passwords etc. that might be passed as arguments.
+            hideConfig: false,
         };
     }
 
@@ -83,6 +87,13 @@ export class ChildProcess extends jslObjectAsyncInit {
             onStdErr: (data) => {
                 // console.log("ChildProcess stderr:", data);
             },
+
+            /**
+             *Called whenever the program prints something to either stdout or stderr
+             *
+             * @param {String} data - The new text on either stdout or stderr
+             */
+            onOut: (data) => {},
         };
     }
 
@@ -105,7 +116,7 @@ export class ChildProcess extends jslObjectAsyncInit {
      *
      * @static
      * @async
-    Boolean* @param {Object} config - The config as in @see defaultConfig
+     * @param {Object} config - The config as in @see defaultConfig
      * @returns {Promise<Object>} The promise that resolves once the process is done, or fails on error. The process
      * status is returned. @see ChildProcess.run.
      */
@@ -160,9 +171,17 @@ export class ChildProcess extends jslObjectAsyncInit {
                 this.m_state.returnCode = value.status.returnCode;
 
                 if (this.m_state.failed) {
-                    this.m_promiseReject({ status: value.status, config: value.config });
+                    this.m_promiseReject({
+                        status: value.status,
+                        config: this.m_config.hideConfig ? null : value.config,
+                        output: this.m_state.output,
+                    });
                 } else {
-                    this.m_promiseResolve({ status: value.status, config: value.config });
+                    this.m_promiseResolve({
+                        status: value.status,
+                        config: this.m_config.hideConfig ? null : value.config,
+                        output: this.m_state.output,
+                    });
                 }
             }
 
@@ -177,6 +196,7 @@ export class ChildProcess extends jslObjectAsyncInit {
             const out = new TextDecoder().decode(value.data);
             this.m_state.output += out;
             this.m_callbacks?.onStdOut?.(out);
+            this.m_callbacks?.onOut?.(out);
         });
 
         window?.jslChildProcess?.onStreamErrUpdate((value) => {
@@ -187,6 +207,7 @@ export class ChildProcess extends jslObjectAsyncInit {
             const out = new TextDecoder().decode(value.data);
             this.m_state.output += out;
             this.m_callbacks?.onStdErr?.(out);
+            this.m_callbacks?.onOut?.(out);
         });
 
         window?.jslChildProcess?.onRemoved((value) => {
@@ -215,8 +236,7 @@ export class ChildProcess extends jslObjectAsyncInit {
      *
      * @async
      * @returns {Promise<>} The async promise. The promise finishes once the
-     *     process has been started. To receive
-     * updates on processes, use the onStatusUpdate callback.
+     *     process has been started. To receive updates on processes, use the onStatusUpdate callback.
      */
     async spawn() {
         if (!this.valid) {
@@ -224,7 +244,7 @@ export class ChildProcess extends jslObjectAsyncInit {
             return;
         }
 
-        this.m_state.output = "--- ChildProcess:spawn: " + JSON.stringify(this.config) + "\n";
+        // this.m_state.output = "--- ChildProcess:spawn: " + JSON.stringify(this.config) + "\n";
         if (this.config.verbose) {
             console.log("Spawning:", this.config.execute);
         }
@@ -244,7 +264,7 @@ export class ChildProcess extends jslObjectAsyncInit {
             throw new Error("Cannot spawn child process. Handle invalid.");
         }
 
-        this.m_state.output = "--- ChildProcess:run: " + JSON.stringify(this.config) + "\n";
+        // this.m_state.output = "--- ChildProcess:run: " + JSON.stringify(this.config) + "\n";
         return window?.jslChildProcess?.spawn?.(this.m_key).then(() => {
             return this.m_promise;
         });
@@ -262,7 +282,7 @@ export class ChildProcess extends jslObjectAsyncInit {
             return;
         }
 
-        this.m_state.output = "--- ChildProcess:kill" + "\n";
+        // this.m_state.output = "--- ChildProcess:kill" + "\n";
         return window?.jslChildProcess?.kill?.(this.m_key);
     }
 
@@ -338,6 +358,48 @@ export class ChildProcess extends jslObjectAsyncInit {
      */
     get runPromise() {
         return this.m_promise;
+    }
+
+    /**
+     * Generate an iterator for lines matching the given tag in the current output.
+     *
+     * @param {String} tag - The tag. A line must start with this tag to match.
+     * @param {Boolean} reverse - If true, the output is processed in reverse order (from bottom to top).
+     *
+     * @returns {Iterable<String>} An iterable of matching lines, excluding the tag.
+     */
+    *matchingLines(tag, reverse = false) {
+        let out = this.output.split("\n");
+        if (reverse) {
+            out = out.reverse();
+        }
+
+        for (const line of out) {
+            if (line.startsWith(tag)) {
+                yield line.substring(tag.length).trim();
+            }
+        }
+    }
+
+    /**
+     * Generate an iterator for lines matching the given tag and return the parsed JSON object back.
+     *
+     * @param {String} tag - The tag. A line must start with this tag to match.
+     * @param {Boolean} reverse - If true, the output is processed in reverse order (from bottom to top).
+     * @param {Boolean} silent - If true, JSON parsing errors are not logged to the console.
+     *
+     * @returns {Iterable<Object>} An iterable of objects parsed from matching lines.
+     */
+    *matchingJSONLines(tag, reverse = false, silent = false) {
+        for (const line of this.matchingLines(tag, reverse)) {
+            try {
+                yield JSON.parse(line);
+            } catch (e) {
+                if (!silent) {
+                    console.warn("ChildProcess: Could not parse JSON:", line, e);
+                }
+            }
+        }
     }
 }
 
@@ -446,8 +508,8 @@ export function connectIPCMain(app) {
         }
 
         inst.config.executable = fixExe(inst.config.executable, inst.config.isInResourcePath);
-        console.log(inst.config);
-        console.log(config);
+        // console.log(inst.config);
+        // console.log(config);
 
         return inst.key;
     });
@@ -462,7 +524,7 @@ export function connectIPCMain(app) {
             throw new Error("Spawn failed: could not start already running process: " + key);
         }
 
-        console.log("jslChildProcess:spawn: ", inst);
+        // console.log("jslChildProcess:spawn: ", inst);
         inst.process = spawn(inst.config.executable, inst.config.args, {
             // Where to run. If null/undef, NODE starts the app in this main process'
             // cwd
@@ -477,7 +539,7 @@ export function connectIPCMain(app) {
 
         inst.status.running = true;
         inst.process.on("close", (code) => {
-            console.log("Spawned child closed: exit code: ", code);
+            // console.log("Spawned child closed: exit code: ", code);
 
             inst.status.running = false;
             inst.status.closed = true;
@@ -532,7 +594,7 @@ export function connectIPCMain(app) {
             throw new Error("jslChildProcess:kill failed: no process started yet: " + key);
         }
 
-        console.log("jslChildProcess:kill: ", inst);
+        // console.log("jslChildProcess:kill: ", inst);
 
         const pid = inst.process?.pid;
         if (pid == null) {

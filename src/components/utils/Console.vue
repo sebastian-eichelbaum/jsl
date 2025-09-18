@@ -32,7 +32,7 @@
             <v-btn v-if="backend.bugReport != null" icon="mdi-bug" @click="onSendReport" />
         </v-toolbar>
 
-        <component is="pre" id="stdout" ref="stdoutPre" class="jslapp-custom-scrollbar-html">
+        <component is="pre" id="stdout" ref="stdoutPre" class="jslapp-custom-scrollbar-html bottomShift">
             <pre v-html="fancyOutput" />
             <div style="color: rgba(255, 255, 255, 0.3)">
                 &gt;
@@ -44,6 +44,12 @@
                 </span>
             </div>
         </component>
+
+        <v-slide-y-reverse-transition>
+            <div class="BottomBar" v-if="$slots.bottomBar && showBottomBar">
+                <slot name="bottomBar"></slot>
+            </div>
+        </v-slide-y-reverse-transition>
 
         <SendBugReport ref="bugReporter" />
     </v-card>
@@ -57,6 +63,8 @@ import { tt } from "jsl/Localization";
 import { backend } from "jsl/Backend";
 
 import SendBugReport from "jsl/components/utils/SendBugReport.vue";
+
+import { useIntervalFn } from "@vueuse/core";
 
 const props = defineProps({
     // Title to show
@@ -74,6 +82,17 @@ const props = defineProps({
 
     // If set, do not print messages that do not start with a log level tag.
     skipUntagged: { type: Boolean, default: false },
+
+    // if set, the console shows messages tagged "SYS"
+    showSYS: { type: Boolean, default: false },
+
+    // Interval in ms in which the console output is updated.
+    // NOTE: Setting this value too low can cause high CPU load. The default feels reasonably smooth without overloading
+    // the CPU.
+    updateInterval: { type: Number, default: 333 },
+
+    // if set, show a bottom bar with the "bottom" slot content
+    showBottomBar: { type: Boolean, default: false },
 });
 
 const stdoutPre = ref();
@@ -95,20 +114,11 @@ async function onSendReport() {
     });
 }
 
-// Track changes in the model to handle scroll
-watch(
-    () => props.process?.output,
-    (newValue, oldValue) => {
-        scrollToBottom();
-    },
-    { immediate: true },
-);
-
 function scrollToBottom() {
     nextTick().then(() => {
         stdoutPre?.value?.scrollBy({
             top: 100000,
-            behavior: "smooth",
+            behavior: "instant",
         });
     });
 }
@@ -137,8 +147,23 @@ const minLogLevel = computed(() => {
     return levelAsNum(props.minLogLevel);
 });
 
+// Do not update the console more often than once per x ms. It creates a lot of CPU load otherwise.
+const output = ref("");
+const { pause, resume, isActive } = useIntervalFn(() => {
+    output.value = props.process?.output || "";
+}, props.updateInterval);
+
+// Track changes in the model to handle scroll
+watch(
+    output,
+    (newValue, oldValue) => {
+        scrollToBottom();
+    },
+    { immediate: true },
+);
+
 const fancyOutput = computed(() => {
-    const src = props.process?.state?.output || "";
+    const src = output.value || "";
     let result = "";
     var arr = src.split("\n");
     for (const line of arr) {
@@ -173,6 +198,14 @@ const fancyOutput = computed(() => {
             }
 
             result += '<span class="jslConsoleERRTag">ERR</span>' + line.slice(3) + "\n";
+            continue;
+        }
+
+        if (line.startsWith("SYS")) {
+            if (minLogLevel.value > 0 || !props.showSYS) {
+                continue;
+            }
+            result += '<span class="jslConsoleSYSTag">SYS</span>' + line.slice(3) + "\n";
             continue;
         }
 
@@ -232,6 +265,16 @@ onMounted(() => {
     color: #ddd;
     font-weight: bold;
 }
+.jslConsoleSYSTag {
+    padding-left: 5px;
+    padding-right: 5px;
+    padding-top: 2px;
+    padding-bottom: 3px;
+
+    background: #193eae;
+    color: #ddd;
+    font-weight: bold;
+}
 </style>
 
 <style scoped>
@@ -254,5 +297,29 @@ onMounted(() => {
     font-size: smaller;
 
     height: 100%;
+}
+
+.BottomBar {
+    padding: 1em;
+
+    position: absolute;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(5px);
+    width: 100%;
+    /*transform: translateY(90%);*/
+
+    display: flex;
+    align-items: center;
+}
+
+.BottomBarTitle {
+    font-weight: bold;
+    margin-left: 0.5em;
+    margin-right: 0.5em;
+}
+
+.bottomShift {
+    padding-bottom: 5em !important;
 }
 </style>
