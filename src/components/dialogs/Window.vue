@@ -18,12 +18,14 @@ Use windows for more complex dialogs. The plain ModalDialog is good for question
         </v-toolbar>
 
         <v-card-item v-if="!noGreetBox" :style="greetBoxStyle" class="pb-5 pt-5">
-            <v-card-title>
-                {{ tt(greetText) }}
-            </v-card-title>
-            <v-card-subtitle class="mt-3 text-wrap text-body-2" style="white-space: break-spaces !important">{{
-                tt(greetSubtext)
-            }}</v-card-subtitle>
+            <slot name="greetBox">
+                <v-card-title>
+                    {{ tt(greetText) }}
+                </v-card-title>
+                <v-card-subtitle class="mt-3 text-wrap text-body-2" style="white-space: break-spaces !important">{{
+                    tt(greetSubtext)
+                }}</v-card-subtitle>
+            </slot>
         </v-card-item>
 
         <slot>
@@ -54,7 +56,6 @@ import ModalDialog from "jsl/components/dialogs/ModalDialog.vue";
 import Button from "jsl/components/Button.vue";
 
 const model = defineModel();
-
 
 const props = defineProps({
     // Dialog max width.
