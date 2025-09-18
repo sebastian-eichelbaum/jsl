@@ -22,6 +22,7 @@ export function connectIPCPreload() {
         readJSONFile: (...args) => ipcRenderer.invoke("readJSONFile", ...args),
         writeTextFile: (...args) => ipcRenderer.invoke("writeTextFile", ...args),
         writeJSONFile: (...args) => ipcRenderer.invoke("writeJSONFile", ...args),
+        cwd: (...args) => ipcRenderer.invoke("cwd", ...args),
 
         // Windowing
         windowClose: (...args) => ipcRenderer.invoke("windowClose", ...args),
@@ -46,6 +47,8 @@ export function connectIPCMain(app) {
     const path = require("path");
     const os = require("os");
     const { shell } = require("electron");
+
+    const process = require("process");
 
     const makePath = (p) => {
         if (Array.isArray(p)) {
@@ -84,6 +87,10 @@ export function connectIPCMain(app) {
         return null;
     };
     ipcMain.handle("openFile", openFile);
+
+    ipcMain.handle("cwd", async (_ev) => {
+        return process.cwd();
+    });
 
     const rm = async (_ev, p, opts) => {
         p = makePath(p);

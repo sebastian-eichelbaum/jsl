@@ -452,6 +452,16 @@ export class Platform extends jslObject {
 
         return window.jslPlatform?.isDirEmpty?.(path);
     }
+
+    /**
+     * Get the current working dir
+     *
+     * @async
+     * @returns {Promise<string>} Resolves to the cwd of the current process
+     */
+    async cwd() {
+        return window.jslPlatform?.cwd?.();
+    }
 }
 
 // The platform instance

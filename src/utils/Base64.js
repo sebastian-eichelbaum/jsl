@@ -1,6 +1,26 @@
 import { assert, Test } from "jsl/Assert";
 
 /**
+ * Takes an Base64 string and makes it URL safe by replacing + with - and / with _
+ *
+ * @param {String} base64 - The base64 string to convert
+ * @returns {String} The URL-safe base64 string
+ */
+export function toURLSafeBase64(base64) {
+    return base64.replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+}
+
+/**
+ * Convert an URL-safe base64 string back to standard base64 by replacing - with + and _ with /
+ *
+ * @param {String} base64 - The URL-safe base64 string to convert
+ * @returns {String} The standard base64 string
+ */
+export function fromURLSafeBase64(base64) {
+    return base64.replace(/-/g, "+").replace(/_/g, "/");
+}
+
+/**
  * Encode an object as JSON in base 64. Ensures unicode is handled properly.
  *
  * @param {Object} value - The object to encude
