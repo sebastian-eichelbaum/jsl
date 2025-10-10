@@ -61,6 +61,8 @@ export const de = {
                 console: "Konsole",
                 consoleLog: "Konsolenausgabe",
                 unavailable: "Nicht verfügbar",
+                light: "Hell",
+                dark: "Dunkel",
             },
             prompt: {
                 areYouSure: "Bist du sicher?",

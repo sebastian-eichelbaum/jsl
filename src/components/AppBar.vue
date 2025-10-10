@@ -38,6 +38,14 @@ Both slots get "disabled" bound
                     :disabled="disabled"
                     v-bind="fwdBindProps('shopButtonsProps', $props)"
                 />
+                <LightDarkButton
+                    v-if="enableLightDarkButton && !noButtons"
+                    maxWidth="150px"
+                    rounded="xl"
+                    class="mr-5"
+                    :disabled="disabled"
+                    v-bind="fwdBindProps('lightDarkButtonProps', $props)"
+                />
                 <LanguageButton
                     v-if="!noLanguageButton && !noButtons"
                     maxWidth="150px"
@@ -87,6 +95,7 @@ import Link from "jsl/components/Link.vue";
 
 import UserButton from "jsl/components/user/UserButton.vue";
 import LanguageButton from "jsl/components/i18n/LanguageButton.vue";
+import LightDarkButton from "jsl/components/LightDarkButton.vue";
 import AppLogo from "jsl/components/AppLogo.vue";
 import WindowButtons from "jsl/components/WindowButtons.vue";
 import ShopButton from "jsl/components/ShopButton.vue";
@@ -121,6 +130,8 @@ const props = defineProps({
     noButtons: { type: Boolean, default: false },
     // Disable version display
     noVersion: { type: Boolean, default: false },
+    // The dark/light theme toggle button must be enabled explicitly
+    enableLightDarkButton: { type: Boolean, default: false },
 
     // Spacing between the prepend slot and the default buttons?
     noPrependSpacer: { type: Boolean, default: false },
@@ -142,6 +153,7 @@ const props = defineProps({
     // Other props to forward to nested elements
     ...fwdProps("appLogoProps"),
     ...fwdProps("languageButtonProps"),
+    ...fwdProps("lightDarkButtonProps"),
     ...fwdProps("userButtonProps"),
     ...fwdProps("shopButtonProps"),
 });
