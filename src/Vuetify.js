@@ -1,4 +1,3 @@
-import { usePreferredDark } from "@vueuse/core";
 import { createVuetify } from "vuetify";
 import * as components from "vuetify/components";
 import * as directives from "vuetify/directives";
@@ -93,7 +92,15 @@ export class Vuetify {
         if (storedTheme != null) {
             return storedTheme;
         }
-        return usePreferredDark() ? "dark" : "light";
+
+        return this.#darkMode ? "dark" : "light";
+    }
+
+    // So we use the media query directly.
+    get #darkMode() {
+        // NOTE: @vueuse's usePreferredDark always returns true (dark) - bug?
+        // return usePreferredDark();
+        return window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
     }
 
     /**
