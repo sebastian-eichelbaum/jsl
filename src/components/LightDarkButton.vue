@@ -56,7 +56,7 @@ const cropStyle = computed({
 });
 
 const showAsDark = computed(() => {
-    return vuetify.isDarkRef.value == true;
+    return vuetify.isDarkRef.value == false;
 });
 </script>
 
