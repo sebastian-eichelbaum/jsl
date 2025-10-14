@@ -10,19 +10,21 @@ Both slots get "disabled" bound
 -->
 <template>
     <v-app-bar :style="isFullscreen ? styleFullscreen : style" v-bind="{ ...$props, ...$attrs }">
-        <v-app-bar-title class="title">
-            <AppLogo
-                compact
-                height="32px"
-                max-height="32px"
-                :disabled="unattendedMode"
-                @click="onAppLogoClick"
-                :clickOnly="appLogoGoHome"
-                :showVersion="!noVersion"
-                :version="version"
-                v-bind="fwdBindProps('appLogoProps', $props)"
-            />
-        </v-app-bar-title>
+        <slot name="titleRegion" :disabled="disabled">
+            <v-app-bar-title class="title">
+                <AppLogo
+                    compact
+                    height="32px"
+                    max-height="32px"
+                    :disabled="unattendedMode"
+                    @click="onAppLogoClick"
+                    :clickOnly="appLogoGoHome"
+                    :showVersion="!noVersion"
+                    :version="version"
+                    v-bind="fwdBindProps('appLogoProps', $props)"
+                />
+            </v-app-bar-title>
+        </slot>
         <div class="draggableRegion">
             <slot name="center">&nbsp;</slot>
         </div>
