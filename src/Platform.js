@@ -79,6 +79,17 @@ export class Platform extends jslObject {
         return !isElectron();
     }
 
+    /**
+     * Check if the OS is in dark mode. Only works in browsers that support it.
+        *
+     * @see https://developer.mozilla.org/en-US/docs/Web/CSS/@media/prefers-color-scheme
+     *
+     * @returns {Boolean} True if dark mode is active
+     */
+    get isDarkMode() {
+        return window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+    }
+
     // Open a link either directly or in a new tab/external browser
     openLink(href, external) {
         if (!Test.isNonEmptyString(href)) {

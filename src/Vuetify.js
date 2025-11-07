@@ -1,4 +1,4 @@
-import { usePreferredDark } from "@vueuse/core";
+import { computed } from "vue";
 import { createVuetify } from "vuetify";
 import * as components from "vuetify/components";
 import * as directives from "vuetify/directives";
@@ -63,8 +63,14 @@ export class Vuetify {
             ],
 
             // The default theme. If null or empty, use the previously set theme or
-            // light if nothing was set previously.
+            // light/dark (depending on browser setting) if nothing was set previously.
             defaultTheme: null,
+
+            // The name of the default light theme. This must exist in themes. Is used when toggling light/dark mode.
+            defaultLightTheme: "light",
+
+            // The name of the default dark theme. This must exist in themes. Is used when toggling light/dark mode.
+            defaultDarkTheme: "dark",
         };
     }
 
@@ -93,7 +99,32 @@ export class Vuetify {
         if (storedTheme != null) {
             return storedTheme;
         }
-        return usePreferredDark() ? "dark" : "light";
+
+        return this.#darkMode ? this.m_config.defaultDarkTheme : this.m_config.defaultLightTheme;
+    }
+
+    /**
+     * Toggle between the preferred light and dark themes as defined in the config.
+     *
+     */
+    togglePreferredTheme() {
+        const current = this.theme;
+        const preferred =
+            current == this.m_config.defaultLightTheme
+                ? this.m_config.defaultDarkTheme
+                : this.m_config.defaultLightTheme;
+
+        localStorage.setItem("jsl.vuetify.theme", preferred);
+
+        // update vuetify
+        this.theme = preferred;
+    }
+
+    // So we use the media query directly.
+    get #darkMode() {
+        // NOTE: @vueuse's usePreferredDark always returns true (dark) - bug?
+        // return usePreferredDark();
+        return window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
     }
 
     /**
@@ -114,6 +145,26 @@ export class Vuetify {
      */
     get theme() {
         return this.m_vuetify.theme.global.name.value;
+    }
+
+    /**
+     * Get the current vuetify theme as reference reference.
+     *
+     * @returns {Object} The theme reference as defined by vuetify.
+     */
+    get themeRef() {
+        return this.m_vuetify.theme.global.name;
+    }
+
+    /**
+     * A computed reference that is true if the current theme is a dark theme.
+     *
+     * @returns {Object} The computed ref indicating if the current theme is dark.
+     */
+    get isDarkRef() {
+        return computed(() => {
+            return this.themeRef.value == this.m_config.defaultDarkTheme;
+        });
     }
 
     /**
@@ -143,7 +194,12 @@ export class Vuetify {
         if (!this.isValidTheme(name)) {
             return;
         }
-        this.m_vuetify.theme.global.name.value = name;
+
+        if (this.m_vuetify.theme.change != null) {
+            this.m_vuetify.theme.change(name);
+        } else {
+            this.m_vuetify.theme.global.name.value = name;
+        }
     }
 
     /**

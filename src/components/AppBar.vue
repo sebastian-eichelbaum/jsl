@@ -10,19 +10,21 @@ Both slots get "disabled" bound
 -->
 <template>
     <v-app-bar :style="isFullscreen ? styleFullscreen : style" v-bind="{ ...$props, ...$attrs }">
-        <v-app-bar-title class="title">
-            <AppLogo
-                compact
-                height="32px"
-                max-height="32px"
-                :disabled="unattendedMode"
-                @click="onAppLogoClick"
-                :clickOnly="appLogoGoHome"
-                :showVersion="!noVersion"
-                :version="version"
-                v-bind="fwdBindProps('appLogoProps', $props)"
-            />
-        </v-app-bar-title>
+        <slot name="titleRegion" :disabled="disabled">
+            <v-app-bar-title class="title">
+                <AppLogo
+                    compact
+                    height="32px"
+                    max-height="32px"
+                    :disabled="unattendedMode"
+                    @click="onAppLogoClick"
+                    :clickOnly="appLogoGoHome"
+                    :showVersion="!noVersion"
+                    :version="version"
+                    v-bind="fwdBindProps('appLogoProps', $props)"
+                />
+            </v-app-bar-title>
+        </slot>
         <div class="draggableRegion">
             <slot name="center">&nbsp;</slot>
         </div>
@@ -37,6 +39,14 @@ Both slots get "disabled" bound
                     class="mr-5"
                     :disabled="disabled"
                     v-bind="fwdBindProps('shopButtonsProps', $props)"
+                />
+                <LightDarkButton
+                    v-if="enableLightDarkButton && !noButtons"
+                    maxWidth="150px"
+                    rounded="xl"
+                    class="mr-5"
+                    :disabled="disabled"
+                    v-bind="fwdBindProps('lightDarkButtonProps', $props)"
                 />
                 <LanguageButton
                     v-if="!noLanguageButton && !noButtons"
@@ -87,6 +97,7 @@ import Link from "jsl/components/Link.vue";
 
 import UserButton from "jsl/components/user/UserButton.vue";
 import LanguageButton from "jsl/components/i18n/LanguageButton.vue";
+import LightDarkButton from "jsl/components/LightDarkButton.vue";
 import AppLogo from "jsl/components/AppLogo.vue";
 import WindowButtons from "jsl/components/WindowButtons.vue";
 import ShopButton from "jsl/components/ShopButton.vue";
@@ -121,6 +132,8 @@ const props = defineProps({
     noButtons: { type: Boolean, default: false },
     // Disable version display
     noVersion: { type: Boolean, default: false },
+    // The dark/light theme toggle button must be enabled explicitly
+    enableLightDarkButton: { type: Boolean, default: false },
 
     // Spacing between the prepend slot and the default buttons?
     noPrependSpacer: { type: Boolean, default: false },
@@ -142,6 +155,7 @@ const props = defineProps({
     // Other props to forward to nested elements
     ...fwdProps("appLogoProps"),
     ...fwdProps("languageButtonProps"),
+    ...fwdProps("lightDarkButtonProps"),
     ...fwdProps("userButtonProps"),
     ...fwdProps("shopButtonProps"),
 });

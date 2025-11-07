@@ -306,6 +306,7 @@ export class Localization {
         this.m_vuei18n = createI18n({
             locale: this.preferredLocale,
             fallbackLocale: this.m_config.fallback,
+            warnHtmlInMessage: "off", // Allow HTML in translations
             messages: messages,
         });
         this._setHTMLLang();
