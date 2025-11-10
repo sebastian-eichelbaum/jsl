@@ -41,7 +41,7 @@ This can be seen as an inspiration and tutorial on how to setup an app.
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, onMounted } from "vue";
 
 import { vuetify } from "jsl/Vuetify";
 
@@ -87,6 +87,8 @@ const props = defineProps({
     ...fwdProps("overlay"),
 });
 
+const emit = defineEmits(["keyUp", "keyDown"]);
+
 const userBackend = props.userService || backend?.user;
 const screen = computed(() => {
     if (userBackend) {
@@ -94,5 +96,23 @@ const screen = computed(() => {
     }
 
     return "main";
+});
+
+onMounted(() => {
+    // Setup key listeners
+    window.addEventListener(
+        "keyup",
+        (event) => {
+            emit("keyUp", event);
+        },
+        true,
+    );
+    window.addEventListener(
+        "keydown",
+        (event) => {
+            emit("keyDown", event);
+        },
+        true,
+    );
 });
 </script>
