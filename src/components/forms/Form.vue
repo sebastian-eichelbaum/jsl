@@ -320,6 +320,11 @@ const props = defineProps({
     // The object members are named as the fields "name" properties.
     values: { type: Object, default: reactive({}) },
 
+    // This function (if set) will be called for each field value when submitting. This is basically a work-around
+    // when writing custom fields. Ensure to use v-input as base wrapper around your custom field component. Set their
+    // "name" property. This is the property passed to the valueMapper function. Return the value from your model.
+    valueMapper: { type: Function, default: null },
+
     // This function (if set) will be called upon submission, if all values pass the validation. This should be an async
     // function that takes the data and performs the action. If it fails/throws, the form shows an error and emits
     // @failed. If it succeeds, the form sends @ok.
@@ -418,9 +423,13 @@ async function submit(submitEvent) {
             srcitems.forEach((item) => {
                 valid = valid && item.isValid === true;
 
-                // inputs that are not plain text will not provide "value"
-                // We prefer the form model value for this item if it exists.
-                values[item.id] = valuesModel?.value?.[item.id] || submitEvent.target.elements[item.id].value;
+                if (props.valueMapper instanceof Function) {
+                    values[item.id] = props.valueMapper(item.id, valuesModel?.value);
+                } else {
+                    // inputs that are not plain text will not provide "value"
+                    // We prefer the form model value for this item if it exists.
+                    values[item.id] = valuesModel?.value?.[item.id] || submitEvent.target.elements[item.id]?.value;
+                }
 
                 items[item.id] = {
                     valid: item.isValid === true,
