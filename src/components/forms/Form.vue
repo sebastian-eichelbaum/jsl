@@ -473,7 +473,7 @@ async function submit(submitEvent) {
 
                 setState(
                     _.merge(
-                        { reset: formState?.resetOnOK || true, busy: false, busyDelay: 500, error: null },
+                        { reset: formState?.resetOnOK ?? true, busy: false, busyDelay: 500, error: null },
                         {
                             // TODO: find a way to inject this from the action handler
                         },
