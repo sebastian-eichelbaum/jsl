@@ -18,12 +18,15 @@ NOTE: this link is unstyled. You should style it to match your theme's link-styl
 
 -->
 <template>
-    <ul class="horizontal obslnk a" @click="onClick">
-        <li v-for="(segment, i) in segs" :key="segment" :class="i === 0 ? 'first' : ''">
-            <span color="primary" class="item hidden">{{ segment }}</span>
-            <span class="hstd">{{ garbage(i) }}</span>
-        </li>
-    </ul>
+    <div>
+        <ul class="horizontal obslnk a" @click="onClick">
+            <li v-for="(segment, i) in segs" :key="segment" :class="i === 0 ? 'first' : ''">
+                <span color="primary" class="item hidden">{{ segment }}</span>
+                <span class="hstd">{{ garbage(i) }}</span>
+            </li>
+        </ul>
+        <span class="text-disabled ml-2" v-if="isLocked">({{ tt(interactionHint) }})</span>
+    </div>
 </template>
 
 <script setup>
@@ -31,6 +34,8 @@ import { computed, onMounted, onUnmounted, ref } from "vue";
 
 import { resolveColor } from "jsl/utils/Style";
 import { platform } from "jsl/Platform";
+
+import { tt } from "jsl/Localization";
 
 const props = defineProps({
     // A list of segments to concatenate to form the final mail/phone/url
@@ -47,6 +52,15 @@ const props = defineProps({
 
     // The color to use for this link
     color: { type: String, default: undefined },
+
+    // The string that will be replace by @ - only works when within a segment
+    at: { type: String, default: "<at>" },
+
+    // If given, the segments are ROT18 encoded and will be decoded
+    rotated: { type: Boolean, default: false },
+
+    // The hint to show when interaction is required to unlock the link
+    interactionHint: { default: tt("common.prompt.clickToUnveil") },
 });
 
 const garbage = (i, num) => {
@@ -62,12 +76,17 @@ const garbage = (i, num) => {
 
 const isLocked = ref(true);
 
+function decodedSegments() {
+    return props.segments.map((item) => {
+        const curSeg = item.replace(new RegExp(props.at, "g"), "@");
+        return (props.rotated ? rot18(curSeg) : curSeg).toLowerCase();
+    });
+}
+
 // This wraps around the given segments and replaces chars with other chars until the link is unlocked by interaction
 const segs = computed(() => {
     if (isLocked.value === false) {
-        return props.segments.map((item) => {
-            return item.toLowerCase();
-        });
+        return decodedSegments();
     }
 
     return props.segments.map((segment) => {
@@ -89,13 +108,7 @@ const resolvedColor = computed(() => {
 
 function onClick() {
     const prefix = props.type === "m" ? "mailto:" : props.type === "p" ? "tel:" : "";
-    const url =
-        prefix +
-        props.segments
-            .map((item) => {
-                return item.trim().toLowerCase();
-            })
-            .join("");
+    const url = prefix + decodedSegments().join("");
 
     platform.openLink(url, !props.targetSelf);
 }
@@ -104,6 +117,7 @@ function cleartListener() {
     document.removeEventListener("mouseenter", listener);
     document.removeEventListener("focus", listener);
     document.removeEventListener("touchstart", listener);
+    document.removeEventListener("click", listener);
     document.removeEventListener("wheel", listener);
 }
 
@@ -114,6 +128,15 @@ function listener(event) {
     // Unlock the link
 }
 
+// Simple ROT18 implementation for alphanumeric characters
+function rot18(s) {
+    return s.replace(/[A-Za-z]/g, function (c) {
+        return "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz".charAt(
+            ("NOPQRSTUVWXYZABCDEFGHIJKLMnopqrstuvwxyzabcdefghijklm".indexOf(c) + 26) % 52,
+        );
+    });
+}
+
 onMounted(() => {
     if (props.locked === false) {
         isLocked.value = false;
@@ -122,6 +145,7 @@ onMounted(() => {
     document.addEventListener("mouseenter", listener);
     document.addEventListener("focus", listener);
     document.addEventListener("touchstart", listener);
+    document.addEventListener("click", listener);
     document.addEventListener("wheel", listener);
 });
 

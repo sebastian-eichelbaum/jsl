@@ -74,6 +74,7 @@ export const de = {
                     "Ein Update wurde heruntergeladen. Das Update wird nach einem Neustart automatisch installiert.",
                 bookNow: "Jetzt buchen!",
                 sendBugReport: "Fehlerbericht senden",
+                clickToUnveil: "Klicken zum Anzeigen",
             },
             msg: {
                 greet: "Hallo {user}",

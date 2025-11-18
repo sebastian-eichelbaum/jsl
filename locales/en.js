@@ -74,6 +74,7 @@ export const en = {
                     "An update has been downloaded. The update will be installed automatically upon restart.",
                 bookNow: "Book now!",
                 sendBugReport: "Send Bug Report",
+                clickToUnveil: "Click to unveil",
             },
             msg: {
                 greet: "Hello {user}",
