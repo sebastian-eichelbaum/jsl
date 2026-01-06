@@ -9,7 +9,7 @@ Slots:
 * #itemDetails={item} - allows to customize the details section of the default item slot. Only used if #item is not
     provided.
 
-Example: 
+Example:
 
 <Form
     ... // see jsl Form
@@ -50,17 +50,17 @@ Example:
                 <slot name="chip" :props="{ ...props, ..._chipProps }" :item="item">
                     <v-chip
                         v-bind="{ ...props, ..._chipProps }"
-                        :color="item.raw._selectAsync_mapped.color || { ...props, ..._chipProps }.color"
-                        :prepend-icon="item.raw._selectAsync_mapped.icon || { ...props, ..._chipProps }.icon"
+                        :color="item.raw._selectAsync_mapped?.color || { ...props, ..._chipProps }.color"
+                        :prepend-icon="item.raw._selectAsync_mapped?.icon || { ...props, ..._chipProps }.icon"
                     >
                         <span class="text-truncate font-weight-bold">
-                            {{ item.raw._selectAsync_mapped.title }}
+                            {{ interpretTitle(item.raw._selectAsync_mapped) }}
                         </span>
                         <span
                             class="text-truncate font-weight-light text-subtitle-2"
-                            v-if="item.raw._selectAsync_mapped.description"
+                            v-if="item.raw._selectAsync_mapped?.description"
                         >
-                            &nbsp;({{ item.raw._selectAsync_mapped.description }})
+                            &nbsp;({{ item.raw._selectAsync_mapped?.description }})
                         </span>
                     </v-chip>
                 </slot>
@@ -70,32 +70,32 @@ Example:
                 <slot name="item" :props="props" :item="item">
                     <!-- Important: override title to avoid automatic title generation by vuetify -->
                     <v-list-item v-bind="{ ...props, ...itemProps }" title="">
-                        <template v-slot:prepend v-if="!$slots['item'] && item.raw._selectAsync_mapped.icon">
-                            <v-icon :icon="item.raw._selectAsync_mapped.icon"></v-icon>
+                        <template v-slot:prepend v-if="!$slots['item'] && item.raw._selectAsync_mapped?.icon">
+                            <v-icon :icon="item.raw._selectAsync_mapped?.icon"></v-icon>
                         </template>
 
                         <v-list-item-title>
                             <span class="text-truncate font-weight-bold">
-                                {{ item.raw._selectAsync_mapped.title }}
+                                {{ interpretTitle(item.raw._selectAsync_mapped?.title) }}
                             </span>
                             <span
                                 class="text-truncate font-weight-light text-subtitle-2"
-                                v-if="item.raw._selectAsync_mapped.description"
+                                v-if="item.raw._selectAsync_mapped?.description"
                             >
-                                &nbsp;({{ item.raw._selectAsync_mapped.description }})
+                                &nbsp;({{ item.raw._selectAsync_mapped?.description }})
                             </span>
                         </v-list-item-title>
 
                         <v-list-item-subtitle>
-                            <span class="text-truncate text-subtitle-2" v-if="item.raw._selectAsync_mapped.subtitle">
-                                {{ item.raw._selectAsync_mapped.subtitle }}
+                            <span class="text-truncate text-subtitle-2" v-if="item.raw._selectAsync_mapped?.subtitle">
+                                {{ item.raw._selectAsync_mapped?.subtitle }}
                             </span>
                         </v-list-item-subtitle>
                         <slot name="itemDetails" :item="item">
                             <span
-                                v-if="item.raw._selectAsync_mapped.details"
+                                v-if="item.raw._selectAsync_mapped?.details"
                                 class="text-body-2"
-                                v-html="item.raw._selectAsync_mapped.details"
+                                v-html="item.raw._selectAsync_mapped?.details"
                             >
                             </span>
                         </slot>
@@ -249,6 +249,13 @@ const _chipProps = fwdBindProps("chipProps", props, (allProps, fwdProps) => {
     };
 });
 
+function interpretTitle(mappedData) {
+    if (typeof mappedData === "string" || mappedData instanceof String) {
+        return mappedData;
+    }
+    return mappedData?.title || "<???>";
+}
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // API IO
 
@@ -321,7 +328,7 @@ async function fetchData(newVal) {
 
 function mapData(data) {
     if (!Array.isArray(data)) {
-        // console.log("");
+        // console.log("unmapped");
         // This only works for array data after fetching it. Non "multiple=true" selects do not store the source data as
         // array in their model, only the "title" of the data.
         // TODO: is there a way to make this work for single-selects?
@@ -329,6 +336,7 @@ function mapData(data) {
     }
 
     items.results = Array.from(data, (dat) => {
+        // console.log("mapping", dat);
         dat["_selectAsync_mapped"] = props.mapData(dat);
         dat["toString"] = () => dat._selectAsync_mapped.id;
         if (typeof props.modelValueMap == "function") {
